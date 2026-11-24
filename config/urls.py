@@ -3,7 +3,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path
 
+from apps.core.views import healthz
+
 urlpatterns = [
+    path("healthz/", healthz, name="healthz"),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 

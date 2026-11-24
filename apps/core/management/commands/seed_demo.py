@@ -2,9 +2,9 @@
 
     uv run python manage.py seed_demo
 
-Phase 0 scope: SiteSettings row and a dev superuser.
-Phase 1 adds catalog seeding (categories, stones, materials, products,
-placeholder images, delivery options) as further steps in SEEDERS.
+Creates the SiteSettings row, a dev superuser, a demo catalog (categories,
+stones, materials, ~20 products with variants and placeholder photos) and
+delivery options. Later phases add steps to `seeders`.
 """
 
 import sys
@@ -19,7 +19,9 @@ from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.catalog.seed import seed_catalog
 from apps.core.models import SiteSettings
+from apps.orders.seed import seed_delivery_options
 
 env = environ.Env()
 
@@ -42,7 +44,8 @@ class Command(BaseCommand):
         seeders: list[tuple[str, Callable[[], str]]] = [
             ("Site settings", self.seed_site_settings),
             ("Superuser", self.seed_superuser),
-            # Phase 1: ("Catalog", seed_catalog), ("Delivery options", seed_delivery), ...
+            ("Catalog", seed_catalog),
+            ("Delivery options", seed_delivery_options),
         ]
         for label, seeder in seeders:
             with transaction.atomic():

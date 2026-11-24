@@ -42,6 +42,7 @@ STORAGES = {
     },
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
+STORAGES["easy_thumbnails"] = STORAGES["default"]
 
 # --- Background jobs --------------------------------------------------------
 HUEY = {

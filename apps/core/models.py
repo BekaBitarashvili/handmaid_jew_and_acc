@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from .fields import MoneyField
+
 
 class SiteSettings(models.Model):
     """Singleton holding shop-wide settings editable by the owner (SPEC §5 core)."""
@@ -26,11 +28,11 @@ class SiteSettings(models.Model):
     legal_entity_name = models.CharField(_("legal entity name"), max_length=255, blank=True)
     legal_entity_id = models.CharField(_("legal entity ID"), max_length=32, blank=True)
 
-    free_shipping_threshold = models.PositiveIntegerField(
-        _("free shipping threshold (tetri)"),
+    free_shipping_threshold = MoneyField(
+        _("free shipping threshold (₾)"),
         null=True,
         blank=True,
-        help_text=_("Order subtotal in tetri (1 GEL = 100). Empty means no free shipping."),
+        help_text=_("Order subtotal in lari. Empty means no free shipping."),
     )
 
     owner_notification_email = models.EmailField(_("owner notification email"), blank=True)

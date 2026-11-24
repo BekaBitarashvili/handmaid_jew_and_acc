@@ -1,22 +1,31 @@
 from django.contrib import admin
-from django.db import models
+from django.contrib.auth.admin import GroupAdmin as DjangoGroupAdmin
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+from django.contrib.auth.models import Group, User
 from django.http import HttpRequest, HttpResponseRedirect
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.admin import TabbedTranslationAdmin
-from unfold.admin import ModelAdmin
+from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
 
+from .admin_base import BaseModelAdmin
 from .models import SiteSettings
 
+# Re-register auth models with unfold styling.
+admin.site.unregister(User)
+admin.site.unregister(Group)
 
-class BaseModelAdmin(ModelAdmin):
-    """Project-wide admin base: every app's admin should inherit from this."""
 
-    def formfield_for_dbfield(self, db_field, request, **kwargs):
-        # Owners type "instagram.com/…" — assume https (also Django 6.0's default).
-        if isinstance(db_field, models.URLField):
-            kwargs.setdefault("assume_scheme", "https")
-        return super().formfield_for_dbfield(db_field, request, **kwargs)
+@admin.register(User)
+class UserAdmin(DjangoUserAdmin, BaseModelAdmin):
+    form = UserChangeForm
+    add_form = UserCreationForm
+    change_password_form = AdminPasswordChangeForm
+
+
+@admin.register(Group)
+class GroupAdmin(DjangoGroupAdmin, BaseModelAdmin):
+    pass
 
 
 @admin.register(SiteSettings)

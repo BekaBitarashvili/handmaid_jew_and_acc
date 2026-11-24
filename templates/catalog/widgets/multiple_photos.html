@@ -1,0 +1,14 @@
+{% load i18n %}{% comment %}
+Multi-photo picker for the product form. The native file input's "Choose Files /
+No file chosen" follows the browser language and can't be translated, so it is
+visually hidden behind a translated button. accept="image/*" lets phones offer the camera.
+{% endcomment %}{% translate "No photos selected" as none_selected %}{% translate "Photos selected:" as some_selected %}
+<div class="flex flex-wrap items-center gap-3">
+  <label for="{{ widget.attrs.id }}" class="bg-primary-600 cursor-pointer font-medium px-3 py-2 rounded-default text-sm text-white hover:bg-primary-700">
+    {% translate "Choose photos" %}
+  </label>
+  <span class="text-sm text-base-500" data-photo-count>{{ none_selected }}</span>
+  <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}
+         class="sr-only"
+         onchange="this.parentElement.querySelector('[data-photo-count]').textContent = this.files.length ? '{{ some_selected|escapejs }} ' + this.files.length : '{{ none_selected|escapejs }}'">
+</div>

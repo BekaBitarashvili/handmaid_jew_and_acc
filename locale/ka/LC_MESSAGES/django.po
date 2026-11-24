@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 02:51+0400\n"
+"POT-Creation-Date: 2026-11-25 03:48+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,9 +21,452 @@ msgstr ""
 msgid "Cart"
 msgstr "კალათა"
 
-#: apps/catalog/apps.py
+#: apps/catalog/admin.py
+msgid "Photo tips: the same calm backdrop (linen, cream paper, old wood or stone), daylight, at least 3 shots per piece — detail, full piece, worn. At least 2000px on the long side."
+msgstr "ფოტოს რჩევები: ერთი და იგივე მშვიდი ფონი (სელის ქსოვილი, კრემისფერი ქაღალდი, ძველი ხე ან ქვა), დღის სინათლე, თითო ნივთზე მინიმუმ 3 კადრი — დეტალი, მთლიანი ნივთი, ტარებისას. გრძელი მხარე მინიმუმ 2000px."
+
+#: apps/catalog/admin.py
+msgid "Add photos"
+msgstr "ფოტოების დამატება"
+
+#: apps/catalog/admin.py
+msgid "This product can't be Active yet:"
+msgstr "ეს პროდუქტი ჯერ ვერ გახდება აქტიური:"
+
+#: apps/catalog/admin.py
+msgid "Only one variant can be the default."
+msgstr "მხოლოდ ერთი ვარიანტი შეიძლება იყოს ნაგულისხმევი."
+
+#: apps/catalog/admin.py
+msgid "A one-of-a-kind piece has a single variant. Uncheck “one of a kind” to add more."
+msgstr "ერთადერთ ეგზემპლარს მხოლოდ ერთი ვარიანტი აქვს. მეტის დასამატებლად მოხსენით მონიშვნა „ერთადერთი ეგზემპლარი“."
+
+#: apps/catalog/admin.py
+msgid "A one-of-a-kind piece can't have more than 1 in stock."
+msgstr "ერთადერთი ეგზემპლარის მარაგი 1-ზე მეტი ვერ იქნება."
+
+#: apps/catalog/admin.py apps/catalog/models.py
+msgid "photo"
+msgstr "ფოტო"
+
+#: apps/catalog/admin.py
+msgid "photos — drag to reorder; the first is the main photo"
+msgstr "ფოტოები — თანმიმდევრობის შესაცვლელად გადაათრიეთ; პირველი ფოტო მთავარია"
+
+#: apps/catalog/admin.py
+msgid "preview"
+msgstr "გადახედვა"
+
+#: apps/catalog/admin.py apps/catalog/models.py
+msgid "variant"
+msgstr "ვარიანტი"
+
+#: apps/catalog/admin.py
+msgid "variants and stock"
+msgstr "ვარიანტები და მარაგი"
+
+#: apps/catalog/admin.py
+msgid "Basics"
+msgstr "ძირითადი"
+
+#: apps/catalog/admin.py
+msgid "Story & details"
+msgstr "ისტორია და დეტალები"
+
+#: apps/catalog/admin.py
+msgid "Stones & materials"
+msgstr "ქვები და მასალები"
+
+#: apps/catalog/admin.py
+msgid "Search engines (SEO)"
+msgstr "საძიებო სისტემები (SEO)"
+
+#: apps/catalog/admin.py
+msgid "System"
+msgstr "სისტემური"
+
+#: apps/catalog/admin.py apps/catalog/models.py
+msgid "product"
+msgstr "პროდუქტი"
+
+#: apps/catalog/admin.py apps/catalog/models.py
+msgid "status"
+msgstr "სტატუსი"
+
+#: apps/catalog/admin.py
+msgid "available"
+msgstr "ხელმისაწვდომი"
+
+#: apps/catalog/admin.py
+#, python-format
+msgid "“%(name)s” is not a readable image and was skipped."
+msgstr "„%(name)s“ არ არის წაკითხვადი სურათი და გამოტოვებულია."
+
+#: apps/catalog/admin.py
+#, python-format
+msgid "A photo is %(w)s×%(h)s px — below the recommended 2000px; it may look soft on large screens."
+msgstr "ფოტოს ზომაა %(w)s×%(h)s px — რეკომენდებულ 2000px-ზე ნაკლები; დიდ ეკრანზე შეიძლება ბუნდოვნად გამოჩნდეს."
+
+#: apps/catalog/admin.py
+msgid "Show in the shop"
+msgstr "მაღაზიაში ჩვენება"
+
+#: apps/catalog/admin.py
+#, python-format
+msgid "%d product is now visible."
+msgid_plural "%d products are now visible."
+msgstr[0] "%d პროდუქტი ახლა ჩანს მაღაზიაში."
+msgstr[1] "%d პროდუქტი ახლა ჩანს მაღაზიაში."
+
+#: apps/catalog/admin.py
+msgid "Hide from the shop"
+msgstr "მაღაზიიდან დამალვა"
+
+#: apps/catalog/admin.py
+msgid "Selected products are hidden."
+msgstr "არჩეული პროდუქტები დამალულია."
+
+#: apps/catalog/admin.py
+msgid "Mark as sold (move to archive)"
+msgstr "გაყიდულად მონიშვნა (არქივში გადატანა)"
+
+#: apps/catalog/admin.py
+#, python-format
+msgid "%(sku)s is reserved by an unpaid order and was not changed."
+msgstr "%(sku)s დაჯავშნილია გადაუხდელი შეკვეთით და არ შეცვლილა."
+
+#: apps/catalog/admin.py
+msgid "Selected products moved to the archive."
+msgstr "არჩეული პროდუქტები არქივში გადავიდა."
+
+#: apps/catalog/admin.py
+msgid "Duplicate as a new draft"
+msgstr "დუბლირება ახალ მონახაზად"
+
+#: apps/catalog/admin.py
+msgid "Draft copy created:"
+msgstr "შეიქმნა ასლი-მონახაზი:"
+
+#: apps/catalog/admin.py
+#, python-format
+msgid "%d draft copies created."
+msgstr "შეიქმნა %d ასლი-მონახაზი."
+
+#: apps/catalog/admin.py apps/catalog/models.py
+msgid "products"
+msgstr "პროდუქტები"
+
+#: apps/catalog/apps.py config/settings/base.py
 msgid "Catalog"
 msgstr "კატალოგი"
+
+#: apps/catalog/models.py
+msgid "Exactly 3 capital Latin letters, e.g. NEC."
+msgstr "ზუსტად 3 ლათინური მთავრული ასო, მაგ. NEC."
+
+#: apps/catalog/models.py
+msgid "A hex color like #C8862A."
+msgstr "ფერი hex ფორმატში, მაგ. #C8862A."
+
+#: apps/catalog/models.py apps/orders/models.py
+msgid "name"
+msgstr "დასახელება"
+
+#: apps/catalog/models.py
+msgid "URL slug"
+msgstr "URL-ის ნაწილი (slug)"
+
+#: apps/catalog/models.py
+msgid "Filled in automatically from the name when left empty."
+msgstr "თუ ცარიელს დატოვებთ, ავტომატურად შეივსება დასახელებიდან."
+
+#: apps/catalog/models.py
+msgid "description"
+msgstr "აღწერა"
+
+#: apps/catalog/models.py
+msgid "SKU code"
+msgstr "SKU კოდი"
+
+#: apps/catalog/models.py
+msgid "3 letters that start every product code in this category, e.g. NEC."
+msgstr "3 ასო, რომლითაც იწყება ამ კატეგორიის ყველა პროდუქტის კოდი, მაგ. NEC."
+
+#: apps/catalog/models.py
+msgid "image"
+msgstr "სურათი"
+
+#: apps/catalog/models.py
+msgid "parent category"
+msgstr "მშობელი კატეგორია"
+
+#: apps/catalog/models.py
+msgid "Only top-level categories can be parents (two levels at most)."
+msgstr "მშობელი შეიძლება იყოს მხოლოდ ზედა დონის კატეგორია (მაქსიმუმ ორი დონე)."
+
+#: apps/catalog/models.py apps/orders/models.py
+msgid "order"
+msgstr "რიგი"
+
+#: apps/catalog/models.py
+msgid "visible in the shop"
+msgstr "ჩანს მაღაზიაში"
+
+#: apps/catalog/models.py
+msgid "category"
+msgstr "კატეგორია"
+
+#: apps/catalog/models.py
+msgid "categories"
+msgstr "კატეგორიები"
+
+#: apps/catalog/models.py
+msgid "A category cannot be its own parent."
+msgstr "კატეგორია საკუთარი თავის მშობელი ვერ იქნება."
+
+#: apps/catalog/models.py
+msgid "Categories can be at most two levels deep."
+msgstr "კატეგორიები მაქსიმუმ ორდონიანი შეიძლება იყოს."
+
+#: apps/catalog/models.py
+msgid "This category has subcategories, so it must stay top-level."
+msgstr "ამ კატეგორიას ქვეკატეგორიები აქვს, ამიტომ ზედა დონეზე უნდა დარჩეს."
+
+#: apps/catalog/models.py
+msgid "short description"
+msgstr "მოკლე აღწერა"
+
+#: apps/catalog/models.py
+msgid "story"
+msgstr "ისტორია"
+
+#: apps/catalog/models.py
+msgid "Origin, history and character of the stone."
+msgstr "ქვის წარმომავლობა, ისტორია და ხასიათი."
+
+#: apps/catalog/models.py
+msgid "color"
+msgstr "ფერი"
+
+#: apps/catalog/models.py
+msgid "Used for small color swatches, e.g. #C8862A."
+msgstr "გამოიყენება ფერის პატარა ნიმუშებისთვის, მაგ. #C8862A."
+
+#: apps/catalog/models.py
+msgid "stone"
+msgstr "ქვა"
+
+#: apps/catalog/models.py
+msgid "stones"
+msgstr "ქვები"
+
+#: apps/catalog/models.py
+msgid "material"
+msgstr "მასალა"
+
+#: apps/catalog/models.py
+msgid "materials"
+msgstr "მასალები"
+
+#: apps/catalog/models.py
+msgid "Draft"
+msgstr "მონახაზი"
+
+#: apps/catalog/models.py
+msgid "Active"
+msgstr "აქტიური"
+
+#: apps/catalog/models.py
+msgid "Hidden"
+msgstr "დამალული"
+
+#: apps/catalog/models.py
+msgid "Sold (archive)"
+msgstr "გაყიდული (არქივი)"
+
+#: apps/catalog/models.py
+msgid "Automatic (first 30 days after publishing)"
+msgstr "ავტომატურად (გამოქვეყნებიდან პირველი 30 დღე)"
+
+#: apps/catalog/models.py
+msgid "Always show"
+msgstr "ყოველთვის ჩანდეს"
+
+#: apps/catalog/models.py
+msgid "Never show"
+msgstr "არასოდეს ჩანდეს"
+
+#: apps/catalog/models.py
+msgid "product code (SKU)"
+msgstr "პროდუქტის კოდი (SKU)"
+
+#: apps/catalog/models.py
+msgid "Created automatically, e.g. NEC-2026-0001. Cannot be changed after the product is created."
+msgstr "იქმნება ავტომატურად, მაგ. NEC-2026-0001. პროდუქტის შექმნის შემდეგ მისი შეცვლა შეუძლებელია."
+
+#: apps/catalog/models.py
+msgid "One sentence shown under the name."
+msgstr "ერთი წინადადება, რომელიც დასახელების ქვეშ ჩანს."
+
+#: apps/catalog/models.py
+msgid "How this piece was made."
+msgstr "როგორ შეიქმნა ეს ნივთი."
+
+#: apps/catalog/models.py
+msgid "care instructions"
+msgstr "მოვლის ინსტრუქცია"
+
+#: apps/catalog/models.py
+msgid "dimensions"
+msgstr "ზომები"
+
+#: apps/catalog/models.py
+msgid "Free text, e.g. \"Length 45 cm + 5 cm extender\"."
+msgstr "თავისუფალი ტექსტი, მაგ. „სიგრძე 45 სმ + 5 სმ დამაგრძელებელი“."
+
+#: apps/catalog/models.py
+msgid "weight (g)"
+msgstr "წონა (გ)"
+
+#: apps/catalog/models.py
+msgid "hours to make"
+msgstr "დამზადების დრო (საათი)"
+
+#: apps/catalog/models.py apps/orders/models.py
+msgid "price (₾)"
+msgstr "ფასი (₾)"
+
+#: apps/catalog/models.py
+msgid "In lari, e.g. 145 or 145.50."
+msgstr "ლარებში, მაგ. 145 ან 145.50."
+
+#: apps/catalog/models.py
+msgid "one of a kind"
+msgstr "ერთადერთი ეგზემპლარი"
+
+#: apps/catalog/models.py
+msgid "Checked: a single, unrepeatable piece — stock is always 1 and it moves to the archive once sold. Unchecked: you can make several identical pieces, so stock can be more than 1."
+msgstr "მონიშნული: ერთადერთი, განუმეორებელი ნივთი — მარაგი ყოველთვის 1-ია და გაყიდვის შემდეგ არქივში გადადის. მოუნიშნავი: შეგიძლიათ რამდენიმე იდენტური ნივთის დამზადება, ამიტომ მარაგი შეიძლება 1-ზე მეტი იყოს."
+
+#: apps/catalog/models.py
+msgid "featured"
+msgstr "გამორჩეული"
+
+#: apps/catalog/models.py
+msgid "\"New\" label"
+msgstr "„ახალი“ ნიშანი"
+
+#: apps/catalog/models.py
+msgid "allow 'commission a similar piece'"
+msgstr "„მსგავსი ნივთის შეკვეთის“ შესაძლებლობა"
+
+#: apps/catalog/models.py
+msgid "SEO title"
+msgstr "SEO სათაური"
+
+#: apps/catalog/models.py
+msgid "SEO description"
+msgstr "SEO აღწერა"
+
+#: apps/catalog/models.py
+msgid "created"
+msgstr "შექმნილია"
+
+#: apps/catalog/models.py
+msgid "updated"
+msgstr "განახლებულია"
+
+#: apps/catalog/models.py
+msgid "first published"
+msgstr "პირველად გამოქვეყნდა"
+
+#: apps/catalog/models.py
+msgid "variant name"
+msgstr "ვარიანტის დასახელება"
+
+#: apps/catalog/models.py
+msgid "e.g. \"Beige / M\". Leave empty when the product has no variants."
+msgstr "მაგ. „ბეჟი / M“. დატოვეთ ცარიელი, თუ პროდუქტს ვარიანტები არ აქვს."
+
+#: apps/catalog/models.py
+msgid "code suffix"
+msgstr "კოდის სუფიქსი"
+
+#: apps/catalog/models.py
+msgid "Added to the product code."
+msgstr "ემატება პროდუქტის კოდს."
+
+#: apps/catalog/models.py
+msgid "own price (₾)"
+msgstr "საკუთარი ფასი (₾)"
+
+#: apps/catalog/models.py
+msgid "Only if this variant costs differently from the product."
+msgstr "მხოლოდ მაშინ, თუ ამ ვარიანტის ფასი პროდუქტის ფასისგან განსხვავდება."
+
+#: apps/catalog/models.py
+msgid "in stock"
+msgstr "მარაგში"
+
+#: apps/catalog/models.py
+msgid "reserved"
+msgstr "დაჯავშნილი"
+
+#: apps/catalog/models.py
+msgid "Held by unpaid orders; changes automatically."
+msgstr "დაკავებულია გადაუხდელი შეკვეთებით; იცვლება ავტომატურად."
+
+#: apps/catalog/models.py
+msgid "default"
+msgstr "ნაგულისხმევი"
+
+#: apps/catalog/models.py
+msgid "variants"
+msgstr "ვარიანტები"
+
+#: apps/catalog/models.py
+msgid "description for screen readers"
+msgstr "აღწერა ეკრანის წამკითხველისთვის"
+
+#: apps/catalog/models.py
+msgid "What the photo shows, e.g. \"Amber necklace on linen, close-up\"."
+msgstr "რას აჩვენებს ფოტო, მაგ. „ქარვის ყელსაბამი სელზე, ახლო ხედი“."
+
+#: apps/catalog/models.py
+msgid "The first photo is the main one."
+msgstr "პირველი ფოტო მთავარია."
+
+#: apps/catalog/models.py
+msgid "Show this photo when the variant is selected."
+msgstr "ეს ფოტო გამოჩნდეს ამ ვარიანტის არჩევისას."
+
+#: apps/catalog/models.py
+msgid "photos"
+msgstr "ფოტოები"
+
+#: apps/catalog/models.py
+msgid "This variant belongs to another product."
+msgstr "ეს ვარიანტი სხვა პროდუქტს ეკუთვნის."
+
+#: apps/catalog/services/products.py
+msgid "Add the Georgian name."
+msgstr "დაამატეთ ქართული დასახელება."
+
+#: apps/catalog/services/products.py
+msgid "Choose a category."
+msgstr "აირჩიეთ კატეგორია."
+
+#: apps/catalog/services/products.py
+msgid "Set a price above 0."
+msgstr "მიუთითეთ 0-ზე მეტი ფასი."
+
+#: apps/catalog/services/products.py
+msgid "Add at least one photo."
+msgstr "დაამატეთ მინიმუმ ერთი ფოტო."
+
+#: apps/catalog/services/products.py
+msgid "Every photo needs a Georgian description for screen readers."
+msgstr "ყველა ფოტოს სჭირდება ქართული აღწერა ეკრანის წამკითხველისთვის."
 
 #: apps/core/admin.py
 msgid "Brand"
@@ -56,6 +499,10 @@ msgstr "ტექნიკური სამუშაოები"
 #: apps/core/apps.py
 msgid "Core"
 msgstr "ძირითადი"
+
+#: apps/core/fields.py
+msgid "Use at most 2 decimal places."
+msgstr "გამოიყენეთ მაქსიმუმ 2 ათწილადი ნიშანი."
 
 #: apps/core/models.py
 msgid "brand name"
@@ -102,12 +549,12 @@ msgid "legal entity ID"
 msgstr "საიდენტიფიკაციო კოდი"
 
 #: apps/core/models.py
-msgid "free shipping threshold (tetri)"
-msgstr "უფასო მიწოდების ზღვარი (თეთრი)"
+msgid "free shipping threshold (₾)"
+msgstr "უფასო მიწოდების ზღვარი (₾)"
 
 #: apps/core/models.py
-msgid "Order subtotal in tetri (1 GEL = 100). Empty means no free shipping."
-msgstr "შეკვეთის ჯამი თეთრებში (1 ლარი = 100 თეთრი). ცარიელი ველი ნიშნავს, რომ უფასო მიწოდება არ მოქმედებს."
+msgid "Order subtotal in lari. Empty means no free shipping."
+msgstr "შეკვეთის ჯამი ლარებში. ცარიელი ველი ნიშნავს, რომ უფასო მიწოდება არ მოქმედებს."
 
 #: apps/core/models.py
 msgid "owner notification email"
@@ -133,7 +580,7 @@ msgstr "ტექნიკური სამუშაოების რეჟ�
 msgid "site settings"
 msgstr "საიტის პარამეტრები"
 
-#: apps/core/models.py
+#: apps/core/models.py config/settings/base.py
 msgid "Site settings"
 msgstr "საიტის პარამეტრები"
 
@@ -145,7 +592,7 @@ msgstr "მაღაზია"
 msgid "Archive"
 msgstr "არქივი"
 
-#: apps/core/templatetags/navigation.py
+#: apps/core/templatetags/navigation.py config/settings/base.py
 msgid "Stones"
 msgstr "ქვები"
 
@@ -153,9 +600,57 @@ msgstr "ქვები"
 msgid "About"
 msgstr "ჩვენ შესახებ"
 
-#: apps/orders/apps.py
+#: apps/orders/admin.py tests/core/test_georgian.py
+msgid "price"
+msgstr "ფასი"
+
+#: apps/orders/apps.py config/settings/base.py
 msgid "Orders"
 msgstr "შეკვეთები"
+
+#: apps/orders/models.py
+msgid "code"
+msgstr "კოდი"
+
+#: apps/orders/models.py
+msgid "Internal identifier, e.g. courier_tbilisi. Do not change once used."
+msgstr "შიდა იდენტიფიკატორი, მაგ. courier_tbilisi. გამოყენების შემდეგ არ შეცვალოთ."
+
+#: apps/orders/models.py
+msgid "free above the free-shipping threshold"
+msgstr "უფასოა უფასო მიწოდების ზღვარს ზემოთ"
+
+#: apps/orders/models.py
+msgid "The threshold is set in Site settings."
+msgstr "ზღვარი მითითებულია საიტის პარამეტრებში."
+
+#: apps/orders/models.py
+msgid "delivery time"
+msgstr "მიწოდების ვადა"
+
+#: apps/orders/models.py
+msgid "e.g. \"1–2 business days\"."
+msgstr "მაგ. „1–2 სამუშაო დღე“."
+
+#: apps/orders/models.py
+msgid "needs a delivery address"
+msgstr "საჭიროებს მიწოდების მისამართს"
+
+#: apps/orders/models.py
+msgid "Off for pickup."
+msgstr "თვითგატანისთვის გამორთეთ."
+
+#: apps/orders/models.py
+msgid "available at checkout"
+msgstr "ხელმისაწვდომია შეკვეთისას"
+
+#: apps/orders/models.py
+msgid "delivery option"
+msgstr "მიწოდების მეთოდი"
+
+#: apps/orders/models.py
+msgid "delivery options"
+msgstr "მიწოდების მეთოდები"
 
 #: apps/pages/apps.py
 msgid "Pages"
@@ -180,6 +675,34 @@ msgstr "ქართული"
 #: config/settings/base.py
 msgid "English"
 msgstr "ინგლისური"
+
+#: config/settings/base.py
+msgid "Shop admin"
+msgstr "მაღაზიის მართვა"
+
+#: config/settings/base.py
+msgid "Products"
+msgstr "პროდუქტები"
+
+#: config/settings/base.py
+msgid "Categories"
+msgstr "კატეგორიები"
+
+#: config/settings/base.py
+msgid "Materials"
+msgstr "მასალები"
+
+#: config/settings/base.py
+msgid "Delivery options"
+msgstr "მიწოდების მეთოდები"
+
+#: config/settings/base.py
+msgid "Settings"
+msgstr "პარამეტრები"
+
+#: config/settings/base.py
+msgid "Users"
+msgstr "მომხმარებლები"
 
 #: templates/404.html
 msgid "Page not found"
@@ -206,9 +729,17 @@ msgstr "ხელნაკეთი სამკაულები ბუნე�
 msgid "Skip to content"
 msgstr "შინაარსზე გადასვლა"
 
-#: templates/components/footer.html
-msgid "Language"
-msgstr "ენა"
+#: templates/catalog/widgets/multiple_photos.html
+msgid "Choose photos"
+msgstr "ფოტოების არჩევა"
+
+#: templates/catalog/widgets/multiple_photos.html
+msgid "No photos selected"
+msgstr "ფოტოები არ არის არჩეული"
+
+#: templates/catalog/widgets/multiple_photos.html
+msgid "Photos selected:"
+msgstr "არჩეული ფოტოები:"
 
 #: templates/components/footer.html
 msgid "ID"
@@ -305,3 +836,47 @@ msgstr "ხელნაკეთი ატელიე"
 #: templates/pages/home.html
 msgid "Each piece is made by hand, most of them only once."
 msgstr "ყოველი ნივთი ხელით არის შექმნილი — უმეტესობა მხოლოდ ერთ ეგზემპლარად."
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Paragraph"
+msgstr "აბზაცი"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Bold"
+msgstr "მუქი"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Italic"
+msgstr "დახრილი"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Link"
+msgstr "ბმული"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Heading"
+msgstr "სათაური"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Unordered list"
+msgstr "მარკირებული სია"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Ordered list"
+msgstr "შეკვეთები"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Undo"
+msgstr "გაუქმება"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Redo"
+msgstr "გამეორება"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Enter an URL"
+msgstr "შეიყვანეთ ბმული"
+
+#: templates/unfold/forms/helpers/toolbar.html
+msgid "Unlink"
+msgstr "ბმულის მოხსნა"

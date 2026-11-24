@@ -1,0 +1,120 @@
+# Georgian translations for third-party admin UI (django-unfold, Django admin)
+# that our own catalog in locale/ cannot hold: makemessages --no-obsolete would
+# drop msgids that are not in this project's source. Listed after locale/ in
+# LOCALE_PATHS. Re-check when upgrading django-unfold.
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ka\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+msgid "Available shortcuts"
+msgstr "ხელმისაწვდომი მალსახმობები"
+
+msgid "Bold"
+msgstr "მუქი"
+
+msgid "Changelist shortcuts"
+msgstr "სიის მალსახმობები"
+
+msgid "Click to cancel"
+msgstr "გასაუქმებლად დააწკაპეთ"
+
+msgid "Command tool shortcuts"
+msgstr "ბრძანებების ხელსაწყოს მალსახმობები"
+
+msgid "Create new record"
+msgstr "ახალი ჩანაწერის შექმნა"
+
+msgid "Dark"
+msgstr "მუქი თემა"
+
+msgid "Enter an URL"
+msgstr "შეიყვანეთ ბმული"
+
+msgid "Filters"
+msgstr "ფილტრები"
+
+msgid "Global shortcuts"
+msgstr "ზოგადი მალსახმობები"
+
+msgid "Heading"
+msgstr "სათაური"
+
+msgid "Italic"
+msgstr "დახრილი"
+
+msgid "Light"
+msgstr "ღია თემა"
+
+msgid "Link"
+msgstr "ბმული"
+
+msgid "Navigate"
+msgstr "ნავიგაცია"
+
+msgid "Open command tool"
+msgstr "ბრძანებების ხელსაწყოს გახსნა"
+
+msgid "Open selection"
+msgstr "არჩეულის გახსნა"
+
+msgid "Open selection in new tab"
+msgstr "არჩეულის ახალ ჩანართში გახსნა"
+
+msgid "Open shortcuts list"
+msgstr "მალსახმობების სიის გახსნა"
+
+msgid "Ordered list"
+msgstr "დანომრილი სია"
+
+msgid "Paragraph"
+msgstr "აბზაცი"
+
+msgid "Redo"
+msgstr "გამეორება"
+
+msgid "Select"
+msgstr "არჩევა"
+
+msgid "Select action"
+msgstr "აირჩიეთ მოქმედება"
+
+msgid "Select action to run"
+msgstr "აირჩიეთ შესასრულებელი მოქმედება"
+
+msgid "Select all objects on this page for an action"
+msgstr "ამ გვერდის ყველა ჩანაწერის მონიშვნა"
+
+msgid "Select record"
+msgstr "ჩანაწერის არჩევა"
+
+msgid "Select value"
+msgstr "აირჩიეთ მნიშვნელობა"
+
+msgid "This item will be deleted."
+msgstr "ეს ელემენტი წაიშლება."
+
+msgid "Toggle dark/light mode"
+msgstr "მუქი/ღია თემის გადართვა"
+
+msgid "Toggle filter"
+msgstr "ფილტრის გადართვა"
+
+msgid "Toggle sidebar"
+msgstr "გვერდითი პანელის გადართვა"
+
+msgid "Type to search"
+msgstr "აკრიფეთ საძიებლად"
+
+msgid "Undo"
+msgstr "გაუქმება"
+
+msgid "Unlink"
+msgstr "ბმულის მოხსნა"
+
+msgid "Unordered list"
+msgstr "მარკირებული სია"
+
+msgid "Add another %(verbose_name)s"
+msgstr "კიდევ ერთის დამატება: %(verbose_name)s"

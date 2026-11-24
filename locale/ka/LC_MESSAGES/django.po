@@ -1,0 +1,170 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-25 02:23+0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+
+#: apps/cart/apps.py
+msgid "Cart"
+msgstr "კალათა"
+
+#: apps/catalog/apps.py
+msgid "Catalog"
+msgstr "კატალოგი"
+
+#: apps/core/admin.py
+msgid "Brand"
+msgstr "ბრენდი"
+
+#: apps/core/admin.py
+msgid "Contact"
+msgstr "კონტაქტი"
+
+#: apps/core/admin.py
+msgid "Social"
+msgstr "სოციალური ქსელები"
+
+#: apps/core/admin.py
+msgid "Legal entity"
+msgstr "იურიდიული პირი"
+
+#: apps/core/admin.py
+msgid "Shipping"
+msgstr "მიწოდება"
+
+#: apps/core/admin.py
+msgid "Owner notifications"
+msgstr "შეტყობინებები მფლობელისთვის"
+
+#: apps/core/admin.py
+msgid "Maintenance"
+msgstr "ტექნიკური სამუშაოები"
+
+#: apps/core/apps.py
+msgid "Core"
+msgstr "ძირითადი"
+
+#: apps/core/models.py
+msgid "brand name"
+msgstr "ბრენდის სახელი"
+
+#: apps/core/models.py
+msgid "logo"
+msgstr "ლოგო"
+
+#: apps/core/models.py
+msgid "Optional. The brand name is shown as text when no logo is set."
+msgstr "არასავალდებულო. თუ ლოგო არ არის ატვირთული, ბრენდის სახელი ტექსტად გამოჩნდება."
+
+#: apps/core/models.py
+msgid "contact phone"
+msgstr "საკონტაქტო ტელეფონი"
+
+#: apps/core/models.py
+msgid "contact email"
+msgstr "საკონტაქტო ელფოსტა"
+
+#: apps/core/models.py
+msgid "contact address"
+msgstr "საკონტაქტო მისამართი"
+
+#: apps/core/models.py
+msgid "Instagram"
+msgstr "Instagram"
+
+#: apps/core/models.py
+msgid "Facebook"
+msgstr "Facebook"
+
+#: apps/core/models.py
+msgid "TikTok"
+msgstr "TikTok"
+
+#: apps/core/models.py
+msgid "legal entity name"
+msgstr "იურიდიული პირის დასახელება"
+
+#: apps/core/models.py
+msgid "legal entity ID"
+msgstr "საიდენტიფიკაციო კოდი"
+
+#: apps/core/models.py
+msgid "free shipping threshold (tetri)"
+msgstr "უფასო მიწოდების ზღვარი (თეთრი)"
+
+#: apps/core/models.py
+msgid "Order subtotal in tetri (1 GEL = 100). Empty means no free shipping."
+msgstr "შეკვეთის ჯამი თეთრებში (1 ლარი = 100 თეთრი). ცარიელი ველი ნიშნავს, რომ უფასო მიწოდება არ მოქმედებს."
+
+#: apps/core/models.py
+msgid "owner notification email"
+msgstr "მფლობელის ელფოსტა შეტყობინებებისთვის"
+
+#: apps/core/models.py
+msgid "owner notification phone"
+msgstr "მფლობელის ტელეფონი შეტყობინებებისთვის"
+
+#: apps/core/models.py
+msgid "announcement bar"
+msgstr "განცხადების ზოლი"
+
+#: apps/core/models.py
+msgid "Optional one-line message at the top of every page."
+msgstr "არასავალდებულო ერთხაზიანი შეტყობინება ყველა გვერდის ზედა ნაწილში."
+
+#: apps/core/models.py
+msgid "maintenance mode"
+msgstr "ტექნიკური სამუშაოების რეჟიმი"
+
+#: apps/core/models.py
+msgid "site settings"
+msgstr "საიტის პარამეტრები"
+
+#: apps/core/models.py
+msgid "Site settings"
+msgstr "საიტის პარამეტრები"
+
+#: apps/orders/apps.py
+msgid "Orders"
+msgstr "შეკვეთები"
+
+#: apps/pages/apps.py
+msgid "Pages"
+msgstr "გვერდები"
+
+#: apps/payments/apps.py
+msgid "Payments"
+msgstr "გადახდები"
+
+#: apps/promotions/apps.py
+msgid "Promotions"
+msgstr "აქციები"
+
+#: apps/wishlist/apps.py
+msgid "Wishlist"
+msgstr "სურვილების სია"
+
+#: config/settings/base.py
+msgid "Georgian"
+msgstr "ქართული"
+
+#: config/settings/base.py
+msgid "English"
+msgstr "ინგლისური"
+
+#: templates/pages/home.html
+msgid "Handmade jewelry with natural stones"
+msgstr "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"

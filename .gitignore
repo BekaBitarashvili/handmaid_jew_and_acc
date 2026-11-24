@@ -24,6 +24,8 @@ staticfiles/
 *.log
 db.sqlite3
 db.sqlite3-journal
+# Compiled translations: built by `scripts/i18n.py compile`, the Dockerfile and CI.
+*.mo
 
 # --- Tooling caches ---
 .pytest_cache/

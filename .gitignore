@@ -50,6 +50,9 @@ node_modules/
 test-results/
 playwright-report/
 
+# --- Local scratch (screenshots, reports) ---
+.scratch/
+
 # --- Editors / OS ---
 .idea/
 .vscode/

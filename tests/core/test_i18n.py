@@ -29,6 +29,24 @@ def test_language_cookie_is_remembered(client):
     assert response.url == "/en/"
 
 
+def test_browser_language_is_ignored(client):
+    # An English browser with no cookie still starts in Georgian.
+    response = client.get("/", headers={"accept-language": "en-US,en;q=0.9"})
+    assert response.url == "/ka/"
+
+
+def test_cookie_wins_over_browser_language(client):
+    client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"
+    response = client.get("/", headers={"accept-language": "ka"})
+    assert response.url == "/en/"
+
+
+def test_unprefixed_404_renders_in_georgian_for_english_browser(client):
+    response = client.get("/no-such-page/", headers={"accept-language": "en"})
+    assert response.status_code == 404
+    assert '<html lang="ka">' in response.content.decode()
+
+
 def test_set_language_switches_prefix_and_sets_cookie(client):
     response = client.post("/i18n/setlang/", {"language": "en", "next": "/ka/"})
     assert response.status_code == 302

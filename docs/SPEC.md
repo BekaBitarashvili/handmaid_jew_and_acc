@@ -32,6 +32,8 @@ social-feed integrations (owner handles social media separately), reviews.
 
 - Languages: `ka` (default), `en`. URL prefix: `/ka/...`, `/en/...` (`i18n_patterns`, default language prefixed too for clean SEO).
 - Language switcher in header; remembers choice via cookie.
+- Language resolution: URL prefix → language cookie → `ka`. The browser's `Accept-Language` is
+  deliberately ignored, so every first visit lands on `/ka/` (`apps.core.middleware.LocaleMiddleware`).
 - UI strings → `gettext`. Content fields (name, description, story, care, SEO fields, category/stone names, page bodies, FAQ) → `django-modeltranslation` with `_ka` / `_en` columns. Fallback to `ka` when `en` is empty.
 - Slugs: translated per language (`slug_ka`, `slug_en`); latin transliteration for `ka` slugs (custom transliteration helper, e.g. "ქარვა" → `karva`).
 - `hreflang` alternates on every page; sitemap per language.

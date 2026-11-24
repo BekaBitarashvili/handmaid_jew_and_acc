@@ -1,0 +1,331 @@
+/*
+ * "Quiet Atelier" design system (SPEC §9). Compiled by scripts/tailwind.py
+ * into static/dist/css/main.css. Kept outside static/ so collectstatic never
+ * sees the uncompiled `@import "tailwindcss"`.
+ */
+@import "tailwindcss" source(none);
+@import "./fonts.css";
+
+@source "../../templates";
+@source "../../apps";
+@source "../../static/js";
+
+@theme {
+  /* Only the brand palette exists: no stray Tailwind colors, no pure white/black. */
+  --color-*: initial;
+
+  /* Surfaces */
+  --color-ivory: #faf6ef; /* page background */
+  --color-cream: #f2ebdf; /* alternating sections, cards */
+  --color-sand: #e3d5c1; /* hairline borders, dividers, input outlines */
+
+  /* Text — every *-text / cocoa / espresso token is >= 4.5:1 on ivory AND cream */
+  --color-espresso: #2e211a; /* headings, primary buttons, footer bg   14.5 / 13.1 */
+  --color-cocoa: #5a4232; /* body text, secondary buttons             8.6 / 7.8 */
+  --color-taupe-text: #7a6650; /* secondary text, meta               5.1 / 4.6 */
+  --color-gold-text: #80653c; /* sale price, focus ring, gold links  5.1 / 4.6 */
+  --color-sold-text: #72675e; /* "Sold" label, disabled text         5.1 / 4.6 */
+  --color-error: #9e3b2e; /* form errors (muted brick)               6.3 / 5.7 */
+
+  /* Decorative only — never for text (fail 4.5:1) */
+  --color-taupe: #a8927a; /* icons beside a text label, ornaments */
+  --color-gold: #b08d57; /* hover lines, ornaments; < 5% of a screen. OK as text on espresso (5.0) */
+  --color-sold: #8c7f74; /* sold overlays, strike-through lines */
+
+  /* Fonts */
+  --font-*: initial;
+  --font-serif: "Cormorant Garamond", "Noto Serif Georgian", Georgia, serif;
+  --font-sans: "FiraGO", system-ui, sans-serif;
+
+  /* Fluid type scale, 375px -> 1280px (SPEC §9.3) */
+  --text-display: clamp(3rem, 1.964rem + 4.42vw, 5.5rem);
+  --text-display--line-height: 1.05;
+  --text-h1: clamp(2.25rem, 1.732rem + 2.21vw, 3.5rem);
+  --text-h1--line-height: 1.15;
+  --text-h2: clamp(1.75rem, 1.439rem + 1.326vw, 2.5rem);
+  --text-h2--line-height: 1.15;
+  --text-h3: clamp(1.25rem, 1.094rem + 0.663vw, 1.625rem);
+  --text-h3--line-height: 1.15;
+  --text-body: clamp(1rem, 0.974rem + 0.11vw, 1.0625rem);
+  --text-body--line-height: 1.65;
+  --text-small: clamp(0.8125rem, 0.787rem + 0.11vw, 0.875rem);
+  --text-small--line-height: 1.5;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+
+  /* Layout */
+  --container-site: 82.5rem; /* 1320px */
+  --container-prose: 62ch;
+  --radius-xs: 1px;
+  --radius-sm: 2px; /* max radius: crisp, jewelry-box corners */
+
+  /* Motion (SPEC §9.6) */
+  --ease-atelier: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --default-transition-duration: 400ms;
+  --default-transition-timing-function: var(--ease-atelier);
+  --animate-reveal: reveal 600ms var(--ease-atelier) both;
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+}
+
+/* --- Base ------------------------------------------------------------------ */
+@layer base {
+  html {
+    background-color: var(--color-ivory);
+    color: var(--color-cocoa);
+    font-family: var(--font-sans);
+    font-size: 100%;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-ivory);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 300; /* light headings, never bold */
+    color: var(--color-espresso);
+    text-wrap: balance;
+  }
+  h1 {
+    font-size: var(--text-h1);
+    line-height: var(--text-h1--line-height);
+  }
+  h2 {
+    font-size: var(--text-h2);
+    line-height: var(--text-h2--line-height);
+  }
+  h3 {
+    font-size: var(--text-h3);
+    line-height: var(--text-h3--line-height);
+    font-weight: 400;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-sand);
+    color: var(--color-espresso);
+  }
+
+  /* Focus ring: gold, visible on every interactive element (SPEC §12). */
+  :focus-visible {
+    outline: 2px solid var(--color-gold-text);
+    outline-offset: 3px;
+  }
+
+  [x-cloak] {
+    display: none !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 1ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* --- Components ------------------------------------------------------------ */
+@layer components {
+  .container-site {
+    margin-inline: auto;
+    width: 100%;
+    max-width: var(--container-site);
+    padding-inline: 1rem;
+    @media (width >= 48rem) {
+      padding-inline: 2rem;
+    }
+  }
+
+  .prose-column {
+    max-width: var(--container-prose);
+  }
+
+  .section {
+    padding-block: 4rem; /* 64px mobile */
+    @media (width >= 48rem) {
+      padding-block: 6rem;
+    }
+    @media (width >= 80rem) {
+      padding-block: 8rem; /* up to 160px for hero-adjacent sections via utilities */
+    }
+  }
+
+  .display {
+    font-family: var(--font-serif);
+    font-size: var(--text-display);
+    line-height: var(--text-display--line-height);
+    font-weight: 300;
+    color: var(--color-espresso);
+  }
+
+  /* Small uppercase label. Georgian has no case: no uppercase, tighter tracking. */
+  .label {
+    font-family: var(--font-sans);
+    font-size: var(--text-label);
+    line-height: var(--text-label--line-height);
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    &:lang(ka) {
+      letter-spacing: 0.04em;
+      text-transform: none;
+    }
+  }
+
+  /* Prices: sans, tabular figures, ₾ after the number (format_gel). */
+  .price {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums lining-nums;
+    white-space: nowrap;
+    color: var(--color-espresso);
+  }
+  /* Sale must not rely on color alone: old price is struck through,
+     new price is heavier and labelled for screen readers in the template. */
+  .price-old {
+    color: var(--color-taupe-text);
+    text-decoration: line-through;
+    text-decoration-color: var(--color-sold);
+    text-decoration-thickness: 1px;
+  }
+  .price-sale {
+    color: var(--color-gold-text);
+    font-weight: 500;
+  }
+
+  /* Buttons: rectangular, generous, quiet. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.75rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-xs);
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    transition-property: background-color, color, border-color;
+    cursor: pointer;
+    &:disabled,
+    &[aria-disabled="true"] {
+      cursor: not-allowed;
+      background-color: var(--color-cream);
+      border-color: var(--color-sand);
+      color: var(--color-sold-text);
+    }
+  }
+  .btn-primary {
+    background-color: var(--color-espresso);
+    color: var(--color-ivory);
+    &:hover:not(:disabled) {
+      background-color: var(--color-cocoa);
+    }
+  }
+  .btn-secondary {
+    background-color: transparent;
+    border-color: var(--color-cocoa);
+    color: var(--color-cocoa);
+    &:hover:not(:disabled) {
+      background-color: var(--color-cocoa);
+      color: var(--color-ivory);
+    }
+  }
+
+  /* Text link: 1px gold underline that grows from the left on hover. */
+  .link {
+    color: var(--color-espresso);
+    background-image: linear-gradient(var(--color-gold), var(--color-gold));
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    padding-bottom: 2px;
+    transition: background-size 500ms var(--ease-atelier);
+    &:hover,
+    &:focus-visible {
+      background-size: 100% 1px;
+    }
+  }
+
+  /* Forms: hairline inputs, 48px tall, labels above (SPEC §9.5). */
+  .field-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-cocoa);
+  }
+  .field-input {
+    display: block;
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.625rem 0.875rem;
+    background-color: var(--color-ivory);
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-xs);
+    color: var(--color-espresso);
+    transition-property: border-color;
+    &::placeholder {
+      color: var(--color-taupe-text);
+    }
+    &:hover {
+      border-color: var(--color-taupe);
+    }
+    &:focus-visible {
+      outline-offset: 0;
+      border-color: var(--color-gold-text);
+    }
+    &[aria-invalid="true"] {
+      border-color: var(--color-error);
+    }
+  }
+  .field-error {
+    margin-top: 0.375rem;
+    font-size: var(--text-small);
+    color: var(--color-error);
+  }
+  .field-help {
+    margin-top: 0.375rem;
+    font-size: var(--text-small);
+    color: var(--color-taupe-text);
+  }
+
+  .hairline {
+    border-color: var(--color-sand);
+  }
+
+  /* Skip link: hidden until focused. */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -10rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--color-espresso);
+    color: var(--color-ivory);
+    &:focus {
+      top: 1rem;
+    }
+  }
+}

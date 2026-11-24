@@ -38,7 +38,8 @@ ENV DJANGO_SETTINGS_MODULE=config.settings.prod \
     AWS_ACCESS_KEY_ID=build \
     AWS_SECRET_ACCESS_KEY=build \
     AWS_STORAGE_BUCKET_NAME=build
-RUN python manage.py compilemessages --ignore=.venv \
+RUN python scripts/tailwind.py build \
+    && python manage.py compilemessages --ignore=.venv \
     && python manage.py collectstatic --noinput
 
 # --- runtime: slim image, non-root -----------------------------------------

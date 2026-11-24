@@ -54,9 +54,9 @@ Browser ── HTMX/Alpine ──► Django (Gunicorn) ──► PostgreSQL
 .
 ├── CLAUDE.md
 ├── docs/SPEC.md
-├── pyproject.toml / uv.lock
-├── docker-compose.yml, Dockerfile, .env.example
-├── config/                 # settings/{base,dev,prod}.py, urls.py, wsgi.py
+├── pyproject.toml / uv.lock / .python-version (3.12)
+├── compose.yml, Dockerfile, .env.example
+├── config/                 # settings/{base,dev,test,prod}.py, urls.py, wsgi.py
 ├── apps/
 │   ├── core/               # SiteSettings, base templates context, utils (money, transliteration)
 │   ├── catalog/            # Category, Stone, Material, Product, ProductVariant, ProductImage, inventory services
@@ -67,7 +67,10 @@ Browser ── HTMX/Alpine ──► Django (Gunicorn) ──► PostgreSQL
 │   ├── wishlist/           # cookie/session-based wishlist
 │   └── pages/              # About, FAQ, Contact, legal pages, Stone glossary views, ContactMessage, CommissionRequest
 ├── templates/              # base.html, components/, per-app folders
-├── static/                 # src css (tailwind), js (alpine components), fonts, svg
+├── assets/css/             # Tailwind source (main.css with @theme tokens, fonts.css) — outside static/
+├── static/                 # fonts/, vendor/ (htmx, alpine), js/ (alpine components), dist/ (built css, gitignored)
+├── scripts/                # tailwind.py (CLI install/watch/build), i18n.py (gettext via Docker), subset_fonts.py
+├── bin/                    # downloaded Tailwind binary (gitignored)
 ├── locale/ka/LC_MESSAGES/
 └── tests/
 ```
@@ -116,7 +119,7 @@ Session key `cart`: `{variant_id: qty}` + `gift_wrap`, `promo_code`. Cart servic
 - **Order**:
   - number (human-friendly, unique: `A-260001` style, sequential per year), public_token (UUID, for status page link)
   - language, status (see §7), payment_status (`pending`|`paid`|`failed`|`refunded`)
-  - customer: first_name, last_name, email, phone (Georgian format validation, `+995`), 
+  - customer: first_name, last_name, email, phone (Georgian format validation, `+995`),
   - shipping: city, address_line, notes; delivery_method (`courier_tbilisi` | `courier_regions` | `pickup`) — configurable list with prices in `DeliveryOption` model
   - gift: gift_wrap (bool), gift_note (≤ 300 chars), hide_prices_on_slip (bool)
   - subtotal, discount_total, promo_code (FK nullable, snapshot `promo_code_text`), gift_wrap_price, shipping_price, total
@@ -212,7 +215,7 @@ class PaymentProvider(Protocol):
     def verify_callback(self, request: HttpRequest) -> CallbackData: ...
     def refund(self, payment: Payment, amount: int) -> None: ...  # Phase 3 (optional)
 ```
-- `bog.py`: Bank of Georgia Online Payments API (OAuth2 client credentials → create order → redirect). 
+- `bog.py`: Bank of Georgia Online Payments API (OAuth2 client credentials → create order → redirect).
 - `tbc.py`: TBC E-Commerce (TPay) API (API key + OAuth token → create payment → redirect).
 - **Before implementing, read the current official API docs for both banks** (endpoints, signature verification, sandbox credentials). Do not guess endpoints.
 - Credentials via env: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET`, `TBC_API_KEY`, `TBC_CLIENT_ID`, `TBC_CLIENT_SECRET`, sandbox flags.
@@ -228,25 +231,49 @@ class PaymentProvider(Protocol):
 Elegant · vintage-modern · warm · handmade · unhurried. Reference feeling: a small atelier with linen, old wood and daylight — an editorial magazine, not a marketplace. **The jewelry is the only loud thing on the page.**
 
 ### 9.2 Color tokens
+Tokens follow Tailwind v4's `--color-*` convention (defined in `assets/css/main.css` `@theme`),
+so each one is also a utility: `bg-ivory`, `text-espresso`, `border-sand`, …
+Contrast ratios are measured against ivory / cream.
+
+**Surfaces**
 | Token | Hex | Use |
 |---|---|---|
-| `--ivory` | `#FAF6EF` | Page background |
-| `--cream` | `#F2EBDF` | Section alternation, cards |
-| `--sand` | `#E3D5C1` | Borders, dividers, input outlines |
-| `--taupe` | `#A8927A` | Secondary text, icons |
-| `--cocoa` | `#5A4232` | Body text on light, secondary buttons |
-| `--espresso` | `#2E211A` | Headings, primary buttons, footer bg |
-| `--gold` | `#B08D57` | **Accent only**: hover lines, small ornaments, sale price, focus ring |
-| `--sold` | `#8C7F74` | Sold / disabled |
-| `--error` | `#9E3B2E` | Form errors (muted brick, not alarm red) |
+| `--color-ivory` | `#FAF6EF` | Page background |
+| `--color-cream` | `#F2EBDF` | Section alternation, cards |
+| `--color-sand` | `#E3D5C1` | Borders, dividers, input outlines |
 
-Rules: never pure white/black. Gold covers < 5% of any screen. All text pairs meet WCAG AA (verify `--taupe` only for ≥ 16px text).
+**Text** — every token here passes WCAG AA (≥ 4.5:1) on **both** ivory and cream
+| Token | Hex | Use | Ratio |
+|---|---|---|---|
+| `--color-espresso` | `#2E211A` | Headings, primary buttons, footer bg | 14.5 / 13.1 |
+| `--color-cocoa` | `#5A4232` | Body text, secondary buttons | 8.6 / 7.8 |
+| `--color-taupe-text` | `#7A6650` | Secondary text, meta, placeholders | 5.1 / 4.6 |
+| `--color-gold-text` | `#80653C` | Sale price, focus ring, gold-coloured text | 5.1 / 4.6 |
+| `--color-sold-text` | `#72675E` | "Sold" label, disabled text | 5.1 / 4.6 |
+| `--color-error` | `#9E3B2E` | Form errors (muted brick, not alarm red) | 6.3 / 5.7 |
+
+**Decorative only** — never for text on light backgrounds (they fail 4.5:1)
+| Token | Hex | Use | Ratio |
+|---|---|---|---|
+| `--color-taupe` | `#A8927A` | Icons next to a text label, ornaments, hover borders | 2.8 / 2.5 |
+| `--color-gold` | `#B08D57` | **Accent**: hover underlines, small ornaments | 2.9 / 2.6 |
+| `--color-sold` | `#8C7F74` | Sold overlays, strike-through lines | 3.6 / 3.3 |
+
+Rules: never pure white/black (Tailwind's default palette is removed, so only these
+tokens exist). Gold covers < 5% of any screen. Text always uses a token from the
+"Text" table; `--color-gold` is fine as text only on espresso (5.0:1, footer).
+**Sale prices must not rely on color alone**: the old price is struck through and the
+new price is set in a heavier weight (500) in `--color-gold-text`, with a visually
+hidden "Sale price" / "Original price" label for screen readers.
 
 ### 9.3 Typography
 Georgian-capable fonts are mandatory — test each with: `ხელნაკეთი სამკაულები ბუნებრივი ქვებით`.
-- **Display / headings (serif)**: Latin: *Cormorant Garamond* (300–500). Georgian: *Noto Serif Georgian* (300–500). Set via `font-family: "Cormorant Garamond", "Noto Serif Georgian", serif;` — browser picks per-glyph. Tune sizes so both scripts feel balanced (Georgian often needs ~0.9× size).
+- **Display / headings (serif)**: Latin: *Cormorant Garamond* (300–500). Georgian: *Noto Serif Georgian* (300–500). Set via `font-family: "Cormorant Garamond", "Noto Serif Georgian", serif;` — browser picks per-glyph. Tune sizes so both scripts feel balanced (Georgian often needs ~0.9× size) — implemented with `size-adjust: 90%` on the Noto Serif Georgian `@font-face`.
 - **Body / UI (sans)**: *FiraGO* (covers Latin + Georgian in one family, 300/400/500).
 - Self-host all fonts (woff2, subset), `font-display: swap`, preload the two most used.
+  Built by `scripts/subset_fonts.py` from commit-pinned upstream sources into `static/fonts/`
+  (committed, with OFL licences): separate Latin and Georgian subsets per family, selected
+  by `unicode-range`; variable fonts limited to weights 300–500.
 - Scale (fluid, `clamp`): display 48–88px, h1 36–56, h2 28–40, h3 20–26, body 16–17, small 13–14. Line-height body 1.65, headings 1.15. Headings light weight (300–400), never bold.
 - Small uppercase labels (Latin only — Georgian has no case): letter-spacing 0.14em, 12px. For Georgian labels use letter-spacing 0.04em instead.
 - Prices: sans, tabular figures, `₾` after number: `145 ₾`.

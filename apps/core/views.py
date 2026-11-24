@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db import connection
 from django.http import Http404, HttpRequest, HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.templatetags.static import static
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
@@ -21,6 +22,26 @@ def healthz(request: HttpRequest) -> JsonResponse:
     except Exception:
         return JsonResponse({"status": "error", "database": "unavailable"}, status=503)
     return JsonResponse({"status": "ok"})
+
+
+def _static_redirect(path: str):
+    """Browsers and iOS request some icons at the site root; point them at static files.
+
+    Temporary (302) redirect, cached for a day: the hashed static URL changes when
+    the icon is replaced, so a permanent redirect would pin the old file.
+    """
+
+    @require_GET
+    def view(request: HttpRequest) -> HttpResponse:
+        response = redirect(static(path))
+        response["Cache-Control"] = "public, max-age=86400"
+        return response
+
+    return view
+
+
+favicon_ico = _static_redirect("brand/favicon.ico")
+apple_touch_icon = _static_redirect("brand/apple-touch-icon.png")
 
 
 def _swatches(names: tuple[str, ...]) -> list[dict]:

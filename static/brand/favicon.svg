@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Placeholder brand mark: the faceted stone from the section ornament,
+       espresso (#2E211A) on ivory (#FAF6EF). Replace this file with the logo
+       mark, then run: uv run python scripts/build_favicons.py -->
+  <style>
+    /* Tab-sized (16px): drop the inner facets, they blur into grey. Mirrored
+       for the 16px .ico frame by SMALL_SIZE_CSS in scripts/build_favicons.py. */
+    @media (max-width: 24px) {
+      .facets { display: none; }
+      .outline { stroke-width: 2; }
+    }
+  </style>
+  <rect width="32" height="32" fill="#FAF6EF"/>
+  <g transform="translate(1.6 1.6) scale(1.2)" fill="none" stroke="#2E211A"
+     stroke-linecap="round" stroke-linejoin="round">
+    <path class="outline" d="M12 3 4.5 9 12 21l7.5-12L12 3ZM4.5 9h15" stroke-width="1.5"/>
+    <path class="facets" d="M9 9l3-6 3 6M9 9l3 12 3-12" stroke-width="1"/>
+  </g>
+</svg>

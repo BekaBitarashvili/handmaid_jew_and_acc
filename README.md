@@ -41,3 +41,11 @@ uv run python scripts/i18n.py make               # extract strings into locale/k
 uv run python scripts/i18n.py compile            # compile translations
 docker compose --profile app up --build          # production-like run (gunicorn + worker) on :8000
 ```
+
+## Site icon (favicon)
+
+`static/brand/favicon.svg` is the single source (currently a placeholder stone mark).
+To use the real logo: replace that SVG (square, opaque background), run
+`uv run python scripts/build_favicons.py` to regenerate `favicon.ico` and
+`apple-touch-icon.png`, and commit the three files. The `<link>` tags live in
+`templates/components/favicons.html`.

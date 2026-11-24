@@ -1,0 +1,6 @@
+{% load static %}{% comment %}
+Site icons. Source of truth: static/brand/favicon.svg — regenerate the .ico and
+apple-touch-icon with `uv run python scripts/build_favicons.py`.
+{% endcomment %}<link rel="icon" href="{% static 'brand/favicon.ico' %}" sizes="32x32">
+<link rel="icon" href="{% static 'brand/favicon.svg' %}" type="image/svg+xml">
+<link rel="apple-touch-icon" href="{% static 'brand/apple-touch-icon.png' %}">

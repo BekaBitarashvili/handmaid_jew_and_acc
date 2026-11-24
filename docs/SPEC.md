@@ -70,8 +70,8 @@ Browser ── HTMX/Alpine ──► Django (Gunicorn) ──► PostgreSQL
 │   └── pages/              # About, FAQ, Contact, legal pages, Stone glossary views, ContactMessage, CommissionRequest
 ├── templates/              # base.html, components/, per-app folders
 ├── assets/css/             # Tailwind source (main.css with @theme tokens, fonts.css) — outside static/
-├── static/                 # fonts/, vendor/ (htmx, alpine), js/ (alpine components), dist/ (built css, gitignored)
-├── scripts/                # tailwind.py (CLI install/watch/build), i18n.py (gettext via Docker), subset_fonts.py
+├── static/                 # brand/ (favicon.svg source + generated .ico/.png), fonts/, vendor/ (htmx, alpine), js/, dist/ (built css, gitignored)
+├── scripts/                # tailwind.py (CLI install/watch/build), i18n.py (gettext via Docker), subset_fonts.py, build_favicons.py
 ├── bin/                    # downloaded Tailwind binary (gitignored)
 ├── locale/ka/LC_MESSAGES/
 └── tests/

@@ -6,6 +6,7 @@
   <title>{% block title %}{{ site_settings.brand_name }}{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}{% translate 'Handmade jewelry with natural stones' %}{% endblock %}">
   <meta name="theme-color" content="#FAF6EF">
+  {% include "components/favicons.html" %}
 
   {# Preload the two most used fonts for the active language (SPEC §9.3). #}
   {% if LANGUAGE_CODE == "ka" %}

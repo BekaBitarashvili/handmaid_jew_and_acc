@@ -4,11 +4,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from apps.core.views import healthz
+from apps.core.views import apple_touch_icon, favicon_ico, healthz
 
 # Language-neutral URLs.
 urlpatterns = [
     path("healthz/", healthz, name="healthz"),
+    path("favicon.ico", favicon_ico),
+    path("apple-touch-icon.png", apple_touch_icon),
     path("i18n/", include("django.conf.urls.i18n")),  # POST /i18n/setlang/
     path(settings.ADMIN_URL, admin.site.urls),
 ]

@@ -40,8 +40,12 @@
         <a href="{{ wishlist_url }}" class="p-2 text-cocoa hover:text-espresso">{% include "components/icon.html" with name="heart" %}<span class="sr-only">{% translate "Wishlist" %}</span></a>
       {% endif %}
       {% include "components/language_switcher.html" with class="hidden gap-2 md:flex" %}
+      {# The cart always holds the right edge, mirroring the menu button on mobile. #}
       {% if cart_url %}
         <a href="{{ cart_url }}" class="relative -mr-2 p-2 text-cocoa hover:text-espresso">{% include "components/icon.html" with name="bag" %}<span class="sr-only">{% translate "Cart" %}</span></a>
+      {% else %}
+        {# TODO(Phase 1): replace with the cart drawer trigger + count (SPEC §6.3). #}
+        <span class="-mr-2 p-2 text-cocoa" aria-hidden="true" data-cart-placeholder>{% include "components/icon.html" with name="bag" %}</span>
       {% endif %}
     </div>
   </div>

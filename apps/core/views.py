@@ -6,7 +6,14 @@ from django.templatetags.static import static
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET
 
-from .design_tokens import DECORATIVE, SURFACES, TEXT, color_tokens, contrast
+from .design_tokens import (
+    DECORATIVE,
+    SURFACES,
+    TEXT,
+    color_tokens,
+    contrast,
+    georgian_size_adjust,
+)
 
 GEORGIAN_SAMPLE = "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"
 LATIN_SAMPLE = "Handmade jewelry with natural stones"
@@ -69,6 +76,9 @@ def styleguide(request: HttpRequest) -> HttpResponse:
         "text_colors": _swatches(TEXT),
         "decorative_colors": _swatches(DECORATIVE),
         "weights": (300, 400, 500),
+        # Candidate size-adjust values for Noto Serif Georgian next to Cormorant.
+        "size_adjust_options": (86, 88, 90, 92, 94),
+        "active_size_adjust": georgian_size_adjust(),
         "type_scale": (
             ("display", "display", "48–88px"),
             ("h1", "text-h1", "36–56px"),

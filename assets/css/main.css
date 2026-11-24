@@ -37,8 +37,10 @@
   --font-serif: "Cormorant Garamond", "Noto Serif Georgian", Georgia, serif;
   --font-sans: "FiraGO", system-ui, sans-serif;
 
-  /* Fluid type scale, 375px -> 1280px (SPEC §9.3) */
-  --text-display: clamp(3rem, 1.964rem + 4.42vw, 5.5rem);
+  /* Fluid type scale, 375px -> 1280px (SPEC §9.3).
+     Display holds 48px up to 640px, then grows to 88px at 1280px, so tablets
+     get ~56px (768) / ~72px (1024) instead of crowding the edges. */
+  --text-display: clamp(3rem, 0.5rem + 6.25vw, 5.5rem);
   --text-display--line-height: 1.05;
   --text-h1: clamp(2.25rem, 1.732rem + 2.21vw, 3.5rem);
   --text-h1--line-height: 1.15;
@@ -150,9 +152,12 @@
     margin-inline: auto;
     width: 100%;
     max-width: var(--container-site);
-    padding-inline: 1rem;
+    padding-inline: 1rem; /* 16px mobile */
     @media (width >= 48rem) {
-      padding-inline: 2rem;
+      padding-inline: 2.5rem; /* 40px tablet */
+    }
+    @media (width >= 80rem) {
+      padding-inline: 3rem; /* 48px desktop */
     }
   }
 
@@ -176,9 +181,12 @@
     line-height: var(--text-display--line-height);
     font-weight: 300;
     color: var(--color-espresso);
+    text-wrap: balance; /* even lines instead of one long + one short */
   }
 
-  /* Small uppercase label. Georgian has no case: no uppercase, tighter tracking. */
+  /* Small uppercase label. Georgian has no case: no uppercase, tighter tracking.
+     Small Georgian in FiraGO reads heavy next to the light serif: one weight
+     lighter and 1px larger (design review, Phase 0). */
   .label {
     font-family: var(--font-sans);
     font-size: var(--text-label);
@@ -187,6 +195,8 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     &:lang(ka) {
+      font-size: calc(var(--text-label) + 1px);
+      font-weight: 400;
       letter-spacing: 0.04em;
       text-transform: none;
     }
@@ -228,6 +238,11 @@
     letter-spacing: 0.06em;
     transition-property: background-color, color, border-color;
     cursor: pointer;
+    &:lang(ka) {
+      font-size: calc(var(--text-small) + 1px);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+    }
     &:disabled,
     &[aria-disabled="true"] {
       cursor: not-allowed;
@@ -275,6 +290,9 @@
     font-size: var(--text-small);
     font-weight: 500;
     color: var(--color-cocoa);
+    &:lang(ka) {
+      font-weight: 400;
+    }
   }
   .field-input {
     display: block;

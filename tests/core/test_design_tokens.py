@@ -40,3 +40,21 @@ def test_no_pure_white_or_black():
 def test_contrast_reference_values():
     assert contrast("#FFFFFF", "#000000") == pytest.approx(21.0)
     assert contrast("#777777", "#777777") == pytest.approx(1.0)
+
+
+def test_georgian_size_adjust_is_read_from_fonts_css():
+    from apps.core.design_tokens import georgian_size_adjust
+
+    assert georgian_size_adjust() == 94
+
+
+def test_small_georgian_text_is_lighter():
+    css = MAIN_CSS.read_text(encoding="utf-8")
+    label = css[css.index(".label {") :]
+    label_ka = label[label.index("&:lang(ka)") : label.index("}", label.index("&:lang(ka)"))]
+    assert "font-weight: 400" in label_ka
+    assert "calc(var(--text-label) + 1px)" in label_ka
+    btn = css[css.index(".btn {") :]
+    btn_ka = btn[btn.index("&:lang(ka)") : btn.index("}", btn.index("&:lang(ka)"))]
+    assert "font-weight: 400" in btn_ka
+    assert "letter-spacing: 0.06em" in btn_ka

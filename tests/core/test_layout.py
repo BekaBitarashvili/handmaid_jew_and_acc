@@ -96,3 +96,31 @@ class TestStyleguide:
         assert "ხელნაკეთი სამკაულები ბუნებრივი ქვებით" in html
         assert "--color-gold-text" in html
         assert "fails AA" not in html
+
+
+class TestDesignReviewPhase0:
+    def test_footer_has_no_language_switcher(self, client):
+        html = client.get("/ka/").content.decode()
+        footer = html[html.index("<footer") :]
+        assert "/i18n/setlang/" not in footer
+
+    def test_header_still_has_language_switcher(self, client):
+        html = client.get("/ka/").content.decode()
+        header = html[html.index("<header") : html.index("</header>")]
+        assert "/i18n/setlang/" in header
+
+    def test_mobile_header_reserves_cart_slot(self, client):
+        html = client.get("/ka/").content.decode()
+        header = html[html.index("<header") : html.index("</header>")]
+        # Decorative until the cart exists (Phase 1): hidden from assistive tech, not a fake link.
+        slot = header[
+            header.index("data-cart-placeholder") - 60 : header.index("data-cart-placeholder")
+        ]
+        assert 'aria-hidden="true"' in slot
+        assert "<span" in slot
+
+    def test_styleguide_marks_active_size_adjust(self, client, settings):
+        settings.DEBUG = True
+        html = client.get("/en/_styleguide/").content.decode()
+        assert "94% · active" in html
+        assert html.count(" · active") == 1

@@ -16,15 +16,17 @@
 }
 
 /* --- Serif, Georgian: Noto Serif Georgian (variable 300-500) ---
- * Georgian glyphs look larger than Cormorant at the same size; size-adjust
- * balances the two scripts inside one font stack (SPEC: "~0.9x").           */
+ * size-adjust balances the two scripts inside one font stack. At 94% the
+ * Georgian ascenders (ხ ლ ბ: 0.772em x 0.94 = 0.726em) line up with Cormorant's
+ * (d l: 0.725em), so mixed lines read as one height. Compare 86-94% in the
+ * styleguide's "Serif balance" section (SPEC §9.3).                         */
 @font-face {
   font-family: "Noto Serif Georgian";
   src: url("../../fonts/noto-serif-georgian.woff2") format("woff2");
   font-weight: 300 500;
   font-style: normal;
   font-display: swap;
-  size-adjust: 90%;
+  size-adjust: 94%;
   unicode-range: U+0589, U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
 }
 

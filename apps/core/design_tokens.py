@@ -40,6 +40,16 @@ def color_tokens() -> dict[str, ColorToken]:
     }
 
 
+FONTS_CSS = Path(settings.BASE_DIR) / "assets" / "css" / "fonts.css"
+
+
+def georgian_size_adjust() -> int:
+    """The size-adjust (%) applied to Noto Serif Georgian in fonts.css."""
+    css = FONTS_CSS.read_text(encoding="utf-8")
+    block = css[css.index('font-family: "Noto Serif Georgian"') :]
+    return int(re.search(r"size-adjust:\s*(\d+)%", block)[1])
+
+
 def _luminance(hex_color: str) -> float:
     channels = [int(hex_color[i : i + 2], 16) / 255 for i in (1, 3, 5)]
     linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]

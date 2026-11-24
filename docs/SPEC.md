@@ -270,14 +270,14 @@ hidden "Sale price" / "Original price" label for screen readers.
 
 ### 9.3 Typography
 Georgian-capable fonts are mandatory — test each with: `ხელნაკეთი სამკაულები ბუნებრივი ქვებით`.
-- **Display / headings (serif)**: Latin: *Cormorant Garamond* (300–500). Georgian: *Noto Serif Georgian* (300–500). Set via `font-family: "Cormorant Garamond", "Noto Serif Georgian", serif;` — browser picks per-glyph. Tune sizes so both scripts feel balanced (Georgian often needs ~0.9× size) — implemented with `size-adjust: 90%` on the Noto Serif Georgian `@font-face`.
+- **Display / headings (serif)**: Latin: *Cormorant Garamond* (300–500). Georgian: *Noto Serif Georgian* (300–500). Set via `font-family: "Cormorant Garamond", "Noto Serif Georgian", serif;` — browser picks per-glyph. Tune sizes so both scripts feel balanced (Georgian often needs ~0.9× size) — implemented with `size-adjust: 94%` on the Noto Serif Georgian `@font-face` — at 94% Georgian ascenders align with Cormorant's (chosen in the Phase 0 design review; the styleguide shows 86–94% side by side).
 - **Body / UI (sans)**: *FiraGO* (covers Latin + Georgian in one family, 300/400/500).
 - Self-host all fonts (woff2, subset), `font-display: swap`, preload the two most used.
   Built by `scripts/subset_fonts.py` from commit-pinned upstream sources into `static/fonts/`
   (committed, with OFL licences): separate Latin and Georgian subsets per family, selected
   by `unicode-range`; variable fonts limited to weights 300–500.
-- Scale (fluid, `clamp`): display 48–88px, h1 36–56, h2 28–40, h3 20–26, body 16–17, small 13–14. Line-height body 1.65, headings 1.15. Headings light weight (300–400), never bold.
-- Small uppercase labels (Latin only — Georgian has no case): letter-spacing 0.14em, 12px. For Georgian labels use letter-spacing 0.04em instead.
+- Scale (fluid, `clamp`): display 48–88px, h1 36–56, h2 28–40, h3 20–26, body 16–17, small 13–14. Line-height body 1.65, headings 1.15. Headings light weight (300–400), never bold. Display holds 48px up to 640px and reaches 88px at 1280px (≈56px at 768, ≈72px at 1024), with `text-wrap: balance`, so tablets never crowd the edges. Container side padding: 16px mobile, 40px from 768px, 48px from 1280px.
+- Small uppercase labels (Latin only — Georgian has no case): letter-spacing 0.14em, 12px. For Georgian labels use letter-spacing 0.04em instead. Small Georgian text in FiraGO is set one step lighter: for `:lang(ka)`, labels and button text use weight 400 (not 500) at +1px, buttons keep letter-spacing 0.06em; form labels use 400.
 - Prices: sans, tabular figures, `₾` after number: `145 ₾`.
 
 ### 9.4 Layout & spacing

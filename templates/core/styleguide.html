@@ -1,8 +1,22 @@
 {% extends "base.html" %}
-{% load i18n money %}
+{% load i18n money static %}
 
 {% block title %}Styleguide — {{ site_settings.brand_name }}{% endblock %}
-{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block head %}
+<meta name="robots" content="noindex">
+<style>
+  /* Comparison faces for the serif balance section: same file, different size-adjust. */
+  {% for v in size_adjust_options %}
+  @font-face {
+    font-family: "NSG {{ v }}";
+    src: url("{% static 'fonts/noto-serif-georgian.woff2' %}") format("woff2");
+    font-weight: 300 500;
+    size-adjust: {{ v }}%;
+    unicode-range: U+0589, U+10A0-10FF, U+1C90-1CBF, U+2D00-2D2F;
+  }
+  {% endfor %}
+</style>
+{% endblock %}
 
 {% block content %}
 {# Current breakpoint, for checking 375 / 768 / 1280 (SPEC §12). #}
@@ -47,6 +61,22 @@
           </div>
         {% endfor %}
       </div>
+    </div>
+  </section>
+
+  {# -------------------------------------------------------- Serif balance #}
+  <section aria-labelledby="sg-balance">
+    <h2 id="sg-balance">Serif balance · Georgian size-adjust</h2>
+    <p class="mt-2 text-small text-taupe-text">Cormorant Garamond with Noto Serif Georgian at different <code>size-adjust</code> values. The active value is marked. Pick the row where both scripts look the same size.</p>
+    <div class="mt-10 space-y-6">
+      {% for v in size_adjust_options %}
+        <div class="grid items-baseline gap-2 border-t border-sand pt-4 md:grid-cols-[6rem_1fr]">
+          <p class="text-small text-taupe-text">{{ v }}%{% if v == active_size_adjust %} · active{% endif %}</p>
+          <p class="text-h1 font-light text-espresso" style='font-family: "Cormorant Garamond", "NSG {{ v }}", serif'>
+            ქარვა Amber · ხელნაკეთი Handmade
+          </p>
+        </div>
+      {% endfor %}
     </div>
   </section>
 

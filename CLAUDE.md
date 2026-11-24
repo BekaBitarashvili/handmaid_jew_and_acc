@@ -43,8 +43,13 @@ uv run python manage.py migrate
 uv run python manage.py runserver
 uv run pytest
 uv run ruff check . && uv run ruff format .
-docker compose up -d db redis
+docker compose up -d db redis mailpit
+uv run python scripts/tailwind.py watch      # CSS in dev (`build` = minified, used by Docker/CI)
+uv run python scripts/i18n.py make|compile   # gettext runs inside Docker (no gettext on Windows)
+uv run python manage.py seed_demo            # dev data, idempotent
 ```
+Local services use `127.0.0.1`, not `localhost` (on Windows `localhost` tries IPv6 first: +5s per DB connection).
+Styleguide (DEBUG only): `/ka/_styleguide/`, `/en/_styleguide/`.
 
 ## Design non-negotiables (details in SPEC.md §9)
 - Generous whitespace, slow & subtle motion, no auto-rotating carousels, no pop-ups on load.

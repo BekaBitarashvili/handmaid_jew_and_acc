@@ -1,0 +1,92 @@
+name: jewelry-shop
+
+# Daily development: `docker compose up -d db redis mailpit`, Django runs on the host.
+# Production-like smoke test of the image: `docker compose --profile app up --build`
+#   (prod settings over plain HTTP: pages and /healthz/ work; admin login needs HTTPS,
+#    which comes with the Caddy setup at deploy time).
+# Translations: `uv run python scripts/i18n.py make|compile` (uses the `tools` service).
+
+x-app: &app
+  build:
+    context: .
+    target: runtime
+  env_file:
+    - path: .env
+      required: false
+  environment:
+    DJANGO_SETTINGS_MODULE: config.settings.prod
+    DATABASE_URL: postgres://${POSTGRES_USER:-shop}:${POSTGRES_PASSWORD:-shop}@db:5432/${POSTGRES_DB:-shop}
+    REDIS_URL: redis://redis:6379/0
+    EMAIL_URL: smtp://mailpit:1025
+    DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
+    SECURE_SSL_REDIRECT: "False"
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+  profiles: [app]
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-shop}
+      POSTGRES_USER: ${POSTGRES_USER:-shop}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shop}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:1025:1025"  # SMTP
+      - "127.0.0.1:8025:8025"  # web inbox
+    restart: unless-stopped
+
+  web:
+    <<: *app
+    command: >-
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --access-logfile -"
+    ports:
+      - "127.0.0.1:8000:8000"
+
+  worker:
+    <<: *app
+    command: ["python", "manage.py", "run_huey"]
+
+  tools:
+    build:
+      context: .
+      target: tools
+    working_dir: /app
+    volumes:
+      - .:/app
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.dev
+    entrypoint: ["python", "manage.py"]
+    profiles: [tools]
+
+volumes:
+  pgdata:

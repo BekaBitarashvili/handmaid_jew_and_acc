@@ -80,7 +80,7 @@ TEMPLATES = [
 # --- Database ---------------------------------------------------------------
 
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres://shop:shop@localhost:5432/shop"),
+    "default": env.db("DATABASE_URL", default="postgres://shop:shop@127.0.0.1:5432/shop"),
 }
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("DB_CONN_MAX_AGE", default=60)
 DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
@@ -138,7 +138,7 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # --- Background jobs (huey) -------------------------------------------------
 
-REDIS_URL = env("REDIS_URL", default="redis://localhost:6379/0")
+REDIS_URL = env("REDIS_URL", default="redis://127.0.0.1:6379/0")
 HUEY = {
     "huey_class": "huey.RedisHuey",
     "name": "shop",

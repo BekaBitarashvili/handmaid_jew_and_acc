@@ -1,7 +1,16 @@
-{% load i18n %}<!doctype html>
-<html lang="{{ LANGUAGE_CODE }}">
-<head><meta charset="utf-8"><title>{{ site_settings.brand_name }}</title></head>
-<body>
-  <h1>{% translate "Handmade jewelry with natural stones" %}</h1>
-</body>
-</html>
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+  {# Placeholder until the editorial home page (Phase 2, SPEC §6.1). #}
+  <section class="section">
+    <div class="container-site text-center">
+      <p class="label text-taupe-text">{% translate "Handmade atelier" %}</p>
+      <h1 class="display mx-auto mt-6 max-w-4xl">{% translate "Handmade jewelry with natural stones" %}</h1>
+      {% include "components/ornament.html" with class="mt-12" %}
+      <p class="prose-column mx-auto mt-12 text-cocoa">
+        {% translate "Each piece is made by hand, most of them only once." %}
+      </p>
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,18 @@
+<h3 class="mt-10">{{ title }}</h3>
+<ul class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {% for s in swatches %}
+    <li class="border border-sand">
+      <div class="flex h-20 items-end p-3" style="background-color: var({{ s.token.css_var }})">
+        {% if text_check %}<span class="font-serif text-h3" style="color: var({{ s.token.css_var }}); background: var(--color-ivory); padding: 0 .5rem">Aa ქა</span>{% endif %}
+      </div>
+      <div class="space-y-1 bg-ivory p-3 text-small">
+        <p class="font-medium text-espresso"><code>{{ s.token.css_var }}</code> · {{ s.token.hex }}</p>
+        {% if s.token.note %}<p class="text-taupe-text">{{ s.token.note }}</p>{% endif %}
+        <p class="price text-cocoa">
+          ivory {{ s.on_ivory|floatformat:2 }} · cream {{ s.on_cream|floatformat:2 }}
+          {% if text_check %}{% if s.on_ivory >= 4.5 and s.on_cream >= 4.5 %}<span class="text-cocoa">· AA ✓</span>{% else %}<span class="text-error">· fails AA</span>{% endif %}{% endif %}
+        </p>
+      </div>
+    </li>
+  {% endfor %}
+</ul>

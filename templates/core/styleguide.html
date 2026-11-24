@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+{% load i18n money %}
+
+{% block title %}Styleguide — {{ site_settings.brand_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+
+{% block content %}
+{# Current breakpoint, for checking 375 / 768 / 1280 (SPEC §12). #}
+<div class="fixed bottom-3 left-3 z-50 bg-espresso px-3 py-1 font-sans text-small text-ivory" aria-hidden="true">
+  <span class="md:hidden">&lt; 768 · mobile</span><span class="hidden md:inline xl:hidden">768–1279 · tablet</span><span class="hidden xl:inline">≥ 1280 · desktop</span>
+</div>
+
+<div class="container-site space-y-24 py-16">
+  <header>
+    <p class="label text-taupe-text">Quiet Atelier · SPEC §9</p>
+    <h1 class="mt-4">Styleguide</h1>
+    <p class="prose-column mt-4">DEBUG-only reference. Check every block in both languages
+      (<a class="link" href="/ka/_styleguide/">ka</a> / <a class="link" href="/en/_styleguide/">en</a>)
+      and at 375, 768 and 1280px.</p>
+  </header>
+
+  {# ---------------------------------------------------------------- Fonts #}
+  <section aria-labelledby="sg-fonts">
+    <h2 id="sg-fonts">Fonts</h2>
+    <p class="mt-2 text-small text-taupe-text">Each line must render in the intended family — no system fallback glyphs.</p>
+
+    <div class="mt-10 grid gap-12 lg:grid-cols-2">
+      <div>
+        <p class="label text-taupe-text">Serif · Cormorant Garamond + Noto Serif Georgian (size-adjust 90%)</p>
+        {% for w in weights %}
+          <div class="mt-6 border-t border-sand pt-4 font-serif text-h2 text-espresso" style="font-weight: {{ w }}">
+            <p class="text-small font-sans text-taupe-text" style="font-weight: 400">{{ w }}</p>
+            <p lang="ka">{{ georgian_sample }}</p>
+            <p lang="en">{{ latin_sample }}</p>
+            <p lang="ka">ქარვა · Amber · 145 ₾</p>
+          </div>
+        {% endfor %}
+      </div>
+      <div>
+        <p class="label text-taupe-text">Sans · FiraGO</p>
+        {% for w in weights %}
+          <div class="mt-6 border-t border-sand pt-4 font-sans text-h3 text-espresso" style="font-weight: {{ w }}">
+            <p class="text-small text-taupe-text" style="font-weight: 400">{{ w }}</p>
+            <p lang="ka">{{ georgian_sample }}</p>
+            <p lang="en">{{ latin_sample }}</p>
+            <p class="price">1 250 ₾ · 0123456789</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {# ----------------------------------------------------------- Type scale #}
+  <section aria-labelledby="sg-type">
+    <h2 id="sg-type">Type scale</h2>
+    <div class="mt-10 space-y-10">
+      {% for name, css_class, range in type_scale %}
+        <div class="grid gap-2 border-t border-sand pt-4 md:grid-cols-[10rem_1fr]">
+          <p class="text-small text-taupe-text">{{ name }} · {{ range }}</p>
+          <div class="{{ css_class }} {% if name == 'display' or name == 'h1' or name == 'h2' or name == 'h3' %}font-serif font-light text-espresso{% endif %}">
+            <p lang="ka">{{ georgian_sample }}</p>
+            <p lang="en">{{ latin_sample }}</p>
+          </div>
+        </div>
+      {% endfor %}
+      <div class="grid gap-2 border-t border-sand pt-4 md:grid-cols-[10rem_1fr]">
+        <p class="text-small text-taupe-text">label</p>
+        <div class="flex flex-wrap gap-8">
+          <span class="label text-cocoa" lang="en">New · One of a kind</span>
+          <span class="label text-cocoa" lang="ka">ახალი · ერთადერთი</span>
+        </div>
+      </div>
+      <div class="grid gap-2 border-t border-sand pt-4 md:grid-cols-[10rem_1fr]">
+        <p class="text-small text-taupe-text">paragraph · 62ch</p>
+        <div class="prose-column space-y-4">
+          <p lang="ka">ყოველი ნივთი ხელით არის შექმნილი ბუნებრივი ქვებისგან. ქარვა, ლაჟვარდი და მთის ბროლი — თითოეულ ქვას თავისი ისტორია აქვს, რომელსაც სამკაული ატარებს.</p>
+          <p lang="en">Every piece is made by hand from natural stones. Amber, lapis lazuli and rock crystal — each stone carries its own story, and the jewelry carries it on.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# --------------------------------------------------------------- Colors #}
+  <section aria-labelledby="sg-colors">
+    <h2 id="sg-colors">Colors</h2>
+    <p class="mt-2 text-small text-taupe-text">Contrast is computed live from <code>assets/css/main.css</code>. Text needs ≥ 4.5 on both ivory and cream.</p>
+    {% include "core/_swatch_group.html" with title="Surfaces" swatches=surfaces text_check=False %}
+    {% include "core/_swatch_group.html" with title="Text — AA on ivory and cream" swatches=text_colors text_check=True %}
+    {% include "core/_swatch_group.html" with title="Decorative only — never for text" swatches=decorative_colors text_check=False %}
+  </section>
+
+  {# ------------------------------------------------------ Buttons & links #}
+  <section aria-labelledby="sg-buttons">
+    <h2 id="sg-buttons">Buttons &amp; links</h2>
+    <div class="mt-10 flex flex-wrap items-center gap-6">
+      <button type="button" class="btn btn-primary">{% translate "Add to cart" %}</button>
+      <button type="button" class="btn btn-secondary">{% translate "Commission a similar piece" %}</button>
+      <button type="button" class="btn btn-primary" disabled>{% translate "Sold" %}</button>
+      <a href="#sg-buttons" class="link">{% translate "Read the story" %}</a>
+    </div>
+    <div class="mt-8 bg-espresso p-8">
+      <button type="button" class="btn border-ivory text-ivory hover:bg-ivory hover:text-espresso">On espresso</button>
+      <a href="#sg-buttons" class="link ml-6 text-ivory">Footer link</a>
+    </div>
+  </section>
+
+  {# --------------------------------------------------------------- Prices #}
+  <section aria-labelledby="sg-prices">
+    <h2 id="sg-prices">Prices &amp; availability</h2>
+    <p class="mt-2 text-small text-taupe-text">Sale never relies on color alone: struck-through old price, heavier new price, screen-reader labels.</p>
+    <dl class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <dt class="text-small text-taupe-text">Regular</dt>
+        <dd class="price mt-2 text-h3">{{ 14500|gel }}</dd>
+      </div>
+      <div>
+        <dt class="text-small text-taupe-text">Sale</dt>
+        <dd class="mt-2 flex items-baseline gap-3 text-h3">
+          <span class="price price-old text-body"><span class="sr-only">{% translate "Original price" %}: </span>{{ 18000|gel }}</span>
+          <span class="price price-sale"><span class="sr-only">{% translate "Sale price" %}: </span>{{ 14400|gel }}</span>
+          <span class="label text-gold-text">−20%</span>
+        </dd>
+      </div>
+      <div>
+        <dt class="text-small text-taupe-text">Decimals</dt>
+        <dd class="price mt-2 text-h3">{{ 12550|gel }}</dd>
+      </div>
+      <div>
+        <dt class="text-small text-taupe-text">Availability</dt>
+        <dd class="mt-2 space-y-1">
+          <p class="label text-cocoa">{% translate "One of a kind" %}</p>
+          <p class="label text-cocoa">{% translate "In stock" %}</p>
+          <p class="label text-sold-text">{% translate "Sold" %}</p>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  {# ---------------------------------------------------------------- Forms #}
+  <section aria-labelledby="sg-forms">
+    <h2 id="sg-forms">Form fields</h2>
+    <form class="mt-10 grid max-w-2xl gap-6 md:grid-cols-2" onsubmit="return false">
+      <div>
+        <label for="sg-name" class="field-label">{% translate "First name" %}</label>
+        <input id="sg-name" class="field-input" type="text" placeholder="ნინო" autocomplete="off">
+      </div>
+      <div>
+        <label for="sg-phone" class="field-label">{% translate "Phone" %}</label>
+        <input id="sg-phone" class="field-input" type="tel" placeholder="+995 5__ __ __ __" aria-describedby="sg-phone-help" autocomplete="off">
+        <p id="sg-phone-help" class="field-help">{% translate "We'll text you when the order ships." %}</p>
+      </div>
+      <div class="md:col-span-2">
+        <label for="sg-email" class="field-label">{% translate "Email" %}</label>
+        <input id="sg-email" class="field-input" type="email" value="nino@" aria-invalid="true" aria-describedby="sg-email-error" autocomplete="off">
+        <p id="sg-email-error" class="field-error">{% translate "Enter a valid email address." %}</p>
+      </div>
+      <label class="flex items-start gap-3 text-small md:col-span-2">
+        <input type="checkbox" class="mt-1 size-4 accent-espresso">
+        <span>{% translate "I agree to the Terms and the Privacy Policy" %}</span>
+      </label>
+    </form>
+  </section>
+
+  {# ------------------------------------------------------- Product card #}
+  <section aria-labelledby="sg-card">
+    <h2 id="sg-card">Product card</h2>
+    <ul class="mt-10 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 xl:grid-cols-4">
+      {% for i in "1234" %}
+        <li>
+          <a href="#sg-card" class="group block">
+            <div class="relative aspect-[4/5] overflow-hidden bg-cream">
+              <div class="flex h-full items-center justify-center transition-transform duration-800 group-hover:scale-[1.03]">
+                {% include "components/ornament.html" %}
+              </div>
+              <span class="absolute right-3 top-3 text-cocoa">{% include "components/icon.html" with name="heart" size=20 %}</span>
+            </div>
+            <p class="label mt-4 text-taupe-text">{% if i == "1" %}{% translate "New" %}{% elif i == "4" %}{% translate "Sold" %}{% else %}{% translate "One of a kind" %}{% endif %}</p>
+            <h3 class="mt-1 text-h3">{% if i == "2" %}ქარვის ყელსაბამი{% else %}Amber necklace{% endif %}</h3>
+            {% if i == "3" %}
+              <p class="mt-1 flex gap-2"><span class="price price-old text-small">{{ 18000|gel }}</span><span class="price price-sale">{{ 14400|gel }}</span></p>
+            {% elif i == "4" %}
+              <p class="price mt-1 text-sold-text">{{ 14500|gel }}</p>
+            {% else %}
+              <p class="price mt-1">{{ 14500|gel }}</p>
+            {% endif %}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  {# ----------------------------------------------------- Ornament, icons #}
+  <section aria-labelledby="sg-ornament">
+    <h2 id="sg-ornament">Ornament &amp; icons</h2>
+    {% include "components/ornament.html" with class="mt-10" %}
+    <div class="mt-10 flex flex-wrap gap-8 text-cocoa">
+      {% include "components/icon.html" with name="menu" %}
+      {% include "components/icon.html" with name="x" %}
+      {% include "components/icon.html" with name="search" %}
+      {% include "components/icon.html" with name="heart" %}
+      {% include "components/icon.html" with name="bag" %}
+      {% include "components/icon.html" with name="arrow-right" %}
+      {% include "components/icon.html" with name="check" %}
+    </div>
+  </section>
+
+  {# ---------------------------------------------------------------- Motion #}
+  <section aria-labelledby="sg-motion" x-data="{ key: 0 }">
+    <h2 id="sg-motion">Motion</h2>
+    <p class="mt-2 text-small text-taupe-text">Reveal: fade + 12px rise, 600ms, cubic-bezier(.2,.6,.2,1), staggered 80ms. Disabled under prefers-reduced-motion.</p>
+    <button type="button" class="btn btn-secondary mt-6" @click="key++">Replay</button>
+    <template x-for="run in [key]" :key="run">
+      <div class="mt-8 grid grid-cols-3 gap-4">
+        <div class="aspect-[4/5] animate-reveal bg-cream"></div>
+        <div class="aspect-[4/5] animate-reveal bg-cream [animation-delay:80ms]"></div>
+        <div class="aspect-[4/5] animate-reveal bg-cream [animation-delay:160ms]"></div>
+      </div>
+    </template>
+  </section>
+</div>
+{% endblock %}

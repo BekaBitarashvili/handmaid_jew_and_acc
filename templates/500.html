@@ -1,0 +1,24 @@
+{% load static %}<!doctype html>
+{% comment %}
+Rendered by Django's server_error handler WITHOUT a request context: no
+site_settings, no current language, no database. Keep it self-contained and
+bilingual.
+{% endcomment %}
+<html lang="ka">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>500</title>
+  <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
+</head>
+<body class="flex min-h-dvh items-center">
+  <main class="container-site py-24 text-center">
+    <p class="label text-taupe-text">500</p>
+    <h1 class="mt-6">დროებითი შეფერხება</h1>
+    <p class="prose-column mx-auto mt-4">გთხოვთ, სცადოთ ცოტა ხანში.</p>
+    <h2 class="mt-12" lang="en">Something went wrong</h2>
+    <p class="prose-column mx-auto mt-4" lang="en">Please try again in a few minutes.</p>
+    <a href="/" class="btn btn-secondary mt-12">ქართული / English</a>
+  </main>
+</body>
+</html>

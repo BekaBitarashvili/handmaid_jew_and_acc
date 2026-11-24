@@ -1,0 +1,18 @@
+{% load i18n %}{% comment %}
+POSTs to Django's set_language view: stores the choice in a cookie and redirects
+to the same page in the other language (set_language translates `next`).
+{% endcomment %}{% get_current_language as current %}{% get_available_languages as languages %}{% get_language_info_list for languages as language_infos %}
+<form action="{% url 'set_language' %}" method="post" class="flex items-center {{ class|default:'gap-3' }}">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  {% for lang in language_infos %}
+    {% if not forloop.first %}<span class="text-taupe" aria-hidden="true">/</span>{% endif %}
+    <button type="submit" name="language" value="{{ lang.code }}" lang="{{ lang.code }}"
+            class="label cursor-pointer py-2 transition-colors {% if lang.code == current %}text-espresso{% else %}text-taupe-text hover:text-espresso{% endif %}"
+            {% if lang.code == current %}aria-current="true"{% endif %}
+            title="{{ lang.name_local }}">
+      <span aria-hidden="true">{{ lang.code|upper }}</span>
+      <span class="sr-only">{{ lang.name_local }}</span>
+    </button>
+  {% endfor %}
+</form>

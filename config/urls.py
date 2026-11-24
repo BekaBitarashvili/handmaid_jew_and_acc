@@ -15,6 +15,7 @@ urlpatterns = [
 
 # Public site: /ka/... and /en/... (SPEC §3: default language is prefixed too).
 urlpatterns += i18n_patterns(
+    path("", include("apps.core.urls")),
     path("", include("apps.pages.urls")),
     prefix_default_language=True,
 )

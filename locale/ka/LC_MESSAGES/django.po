@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 02:23+0400\n"
+"POT-Creation-Date: 2026-11-25 02:51+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: apps/cart/apps.py
+#: apps/cart/apps.py templates/components/header.html
 msgid "Cart"
 msgstr "კალათა"
 
@@ -29,7 +29,7 @@ msgstr "კატალოგი"
 msgid "Brand"
 msgstr "ბრენდი"
 
-#: apps/core/admin.py
+#: apps/core/admin.py templates/components/footer.html
 msgid "Contact"
 msgstr "კონტაქტი"
 
@@ -137,6 +137,22 @@ msgstr "საიტის პარამეტრები"
 msgid "Site settings"
 msgstr "საიტის პარამეტრები"
 
+#: apps/core/templatetags/navigation.py
+msgid "Shop"
+msgstr "მაღაზია"
+
+#: apps/core/templatetags/navigation.py
+msgid "Archive"
+msgstr "არქივი"
+
+#: apps/core/templatetags/navigation.py
+msgid "Stones"
+msgstr "ქვები"
+
+#: apps/core/templatetags/navigation.py
+msgid "About"
+msgstr "ჩვენ შესახებ"
+
 #: apps/orders/apps.py
 msgid "Orders"
 msgstr "შეკვეთები"
@@ -153,7 +169,7 @@ msgstr "გადახდები"
 msgid "Promotions"
 msgstr "აქციები"
 
-#: apps/wishlist/apps.py
+#: apps/wishlist/apps.py templates/components/header.html
 msgid "Wishlist"
 msgstr "სურვილების სია"
 
@@ -165,6 +181,127 @@ msgstr "ქართული"
 msgid "English"
 msgstr "ინგლისური"
 
+#: templates/404.html
+msgid "Page not found"
+msgstr "გვერდი ვერ მოიძებნა"
+
+#: templates/404.html
+msgid "This page could not be found"
+msgstr "ეს გვერდი ვერ მოიძებნა"
+
+#: templates/404.html
+msgid "The piece you are looking for may have found its owner, or the link has changed."
+msgstr "შესაძლოა, ნივთმა, რომელსაც ეძებთ, უკვე იპოვა თავისი მფლობელი, ან ბმული შეიცვალა."
+
+#: templates/404.html
+msgid "Back to the home page"
+msgstr "მთავარ გვერდზე დაბრუნება"
+
+#: templates/base.html templates/components/footer.html
 #: templates/pages/home.html
 msgid "Handmade jewelry with natural stones"
 msgstr "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"
+
+#: templates/base.html
+msgid "Skip to content"
+msgstr "შინაარსზე გადასვლა"
+
+#: templates/components/footer.html
+msgid "Language"
+msgstr "ენა"
+
+#: templates/components/footer.html
+msgid "ID"
+msgstr "ს/კ"
+
+#: templates/components/header.html
+msgid "Open menu"
+msgstr "მენიუს გახსნა"
+
+#: templates/components/header.html
+msgid "Main"
+msgstr "მთავარი ნავიგაცია"
+
+#: templates/components/header.html
+msgid "Home"
+msgstr "მთავარი"
+
+#: templates/components/header.html
+msgid "Search"
+msgstr "ძიება"
+
+#: templates/components/header.html
+msgid "Menu"
+msgstr "მენიუ"
+
+#: templates/components/header.html
+msgid "Close menu"
+msgstr "მენიუს დახურვა"
+
+#: templates/core/styleguide.html
+msgid "Add to cart"
+msgstr "კალათაში დამატება"
+
+#: templates/core/styleguide.html
+msgid "Commission a similar piece"
+msgstr "მსგავსი ნივთის შეკვეთა"
+
+#: templates/core/styleguide.html
+msgid "Sold"
+msgstr "გაყიდულია"
+
+#: templates/core/styleguide.html
+msgid "Read the story"
+msgstr "ისტორიის წაკითხვა"
+
+#: templates/core/styleguide.html
+msgid "Original price"
+msgstr "საწყისი ფასი"
+
+#: templates/core/styleguide.html
+msgid "Sale price"
+msgstr "ფასდაკლებული ფასი"
+
+#: templates/core/styleguide.html
+msgid "One of a kind"
+msgstr "ერთადერთი ეგზემპლარი"
+
+#: templates/core/styleguide.html
+msgid "In stock"
+msgstr "მარაგშია"
+
+#: templates/core/styleguide.html
+msgid "First name"
+msgstr "სახელი"
+
+#: templates/core/styleguide.html
+msgid "Phone"
+msgstr "ტელეფონი"
+
+#: templates/core/styleguide.html
+msgid "We'll text you when the order ships."
+msgstr "შეკვეთის გაგზავნისას SMS-ით შეგატყობინებთ."
+
+#: templates/core/styleguide.html
+msgid "Email"
+msgstr "ელფოსტა"
+
+#: templates/core/styleguide.html
+msgid "Enter a valid email address."
+msgstr "შეიყვანეთ სწორი ელფოსტის მისამართი."
+
+#: templates/core/styleguide.html
+msgid "I agree to the Terms and the Privacy Policy"
+msgstr "ვეთანხმები წესებსა და პირობებს და კონფიდენციალურობის პოლიტიკას"
+
+#: templates/core/styleguide.html
+msgid "New"
+msgstr "ახალი"
+
+#: templates/pages/home.html
+msgid "Handmade atelier"
+msgstr "ხელნაკეთი ატელიე"
+
+#: templates/pages/home.html
+msgid "Each piece is made by hand, most of them only once."
+msgstr "ყოველი ნივთი ხელით არის შექმნილი — უმეტესობა მხოლოდ ერთ ეგზემპლარად."

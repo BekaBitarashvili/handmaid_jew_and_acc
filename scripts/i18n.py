@@ -23,6 +23,7 @@ COMMANDS = {
         "--locale=ka",
         "--add-location=file",
         "--no-obsolete",
+        "--no-wrap",  # one line per entry: cleaner diffs, easier to edit
         *(f"--ignore={pattern}" for pattern in IGNORE),
     ],
     "compile": ["compilemessages", "--locale=ka", "--ignore=.venv"],

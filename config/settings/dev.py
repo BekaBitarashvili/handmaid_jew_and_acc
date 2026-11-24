@@ -14,3 +14,5 @@ HUEY = {"immediate": True, "name": "shop"}
 INSTALLED_APPS = [*INSTALLED_APPS, "debug_toolbar"]
 MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware", *MIDDLEWARE]
 INTERNAL_IPS = ["127.0.0.1"]
+# Start as a small handle on the right edge instead of covering the page.
+DEBUG_TOOLBAR_CONFIG = {"SHOW_COLLAPSED": True}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Page not found" %} — {{ site_settings.brand_name }}{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container-site text-center">
+      <p class="label text-taupe-text">404</p>
+      <h1 class="mt-6">{% translate "This page could not be found" %}</h1>
+      <p class="prose-column mx-auto mt-6">
+        {% translate "The piece you are looking for may have found its owner, or the link has changed." %}
+      </p>
+      {% include "components/ornament.html" with class="mt-12" %}
+      <a href="{% url 'pages:home' %}" class="btn btn-secondary mt-12">{% translate "Back to the home page" %}</a>
+    </div>
+  </section>
+{% endblock %}

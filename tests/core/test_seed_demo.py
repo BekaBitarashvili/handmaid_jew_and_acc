@@ -14,6 +14,23 @@ def debug(settings):
     settings.DEBUG = True
 
 
+@pytest.fixture(autouse=True)
+def fast_placeholders(monkeypatch):
+    """Full-size placeholder photos take seconds each; their look is tested separately."""
+    from tests.catalog.factories import make_jpeg
+
+    def tiny(*args, **kwargs):
+        return make_jpeg(size=(40, 40), name="demo.jpg")
+
+    for target in (
+        "apps.catalog.seed.product_photo",
+        "apps.catalog.seed.category_tile",
+        "apps.pages.seed.hero_image",
+        "apps.promotions.seed.banner_image",
+    ):
+        monkeypatch.setattr(target, tiny)
+
+
 @pytest.fixture
 def superuser_env(monkeypatch):
     monkeypatch.setenv("DEV_SUPERUSER_USERNAME", "owner")
@@ -64,3 +81,26 @@ def test_skips_superuser_without_password(debug, monkeypatch):
     output = run()
     assert "skipped" in output
     assert not get_user_model().objects.exists()
+
+
+def test_seed_builds_home_content(debug, superuser_env):
+    from apps.catalog.models import Category
+    from apps.pages.models import HeroSlide
+    from apps.promotions.models import Sale
+
+    run()
+    assert HeroSlide.objects.count() == 3
+    assert Category.objects.filter(show_on_home=True).count() == 4
+    sale = Sale.objects.get()
+    assert sale.show_on_home and sale.percent == 30
+    assert SiteSettings.load().intro_text_en
+
+
+def test_reset_catalog_rebuilds(debug, superuser_env):
+    from apps.catalog.models import Product
+
+    run()
+    first = set(Product.objects.values_list("pk", flat=True))
+    call_command("seed_demo", "--no-input", "--reset-catalog", stdout=StringIO())
+    assert Product.objects.count() == len(first)
+    assert not first & set(Product.objects.values_list("pk", flat=True))

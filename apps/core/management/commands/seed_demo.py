@@ -19,9 +19,22 @@ from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.catalog.models import (
+    Category,
+    Material,
+    Product,
+    ProductImage,
+    ProductVariant,
+    SkuSequence,
+    Stone,
+)
 from apps.catalog.seed import seed_catalog
 from apps.core.models import SiteSettings
 from apps.orders.seed import seed_delivery_options
+from apps.pages.models import HeroSlide
+from apps.pages.seed import seed_hero
+from apps.promotions.models import Sale
+from apps.promotions.seed import seed_sale
 
 env = environ.Env()
 
@@ -30,6 +43,11 @@ class Command(BaseCommand):
     help = "Seed demo data for local development (refuses to run when DEBUG is off)."
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            "--reset-catalog",
+            action="store_true",
+            help="Delete the demo catalog, sales and hero slides first (dev only), then reseed.",
+        )
         parser.add_argument(
             "--no-input",
             action="store_true",
@@ -40,11 +58,15 @@ class Command(BaseCommand):
         if not settings.DEBUG:
             raise CommandError("seed_demo only runs with DEBUG=True (development).")
         self.interactive = not options["no_input"] and sys.stdin.isatty()
+        if options["reset_catalog"]:
+            self.reset_catalog()
 
         seeders: list[tuple[str, Callable[[], str]]] = [
             ("Site settings", self.seed_site_settings),
             ("Superuser", self.seed_superuser),
             ("Catalog", seed_catalog),
+            ("Hero slides", seed_hero),
+            ("Sale", seed_sale),
             ("Delivery options", seed_delivery_options),
         ]
         for label, seeder in seeders:
@@ -52,6 +74,16 @@ class Command(BaseCommand):
                 result = seeder()
             self.stdout.write(f"{label}: {result}")
         self.stdout.write(self.style.SUCCESS("Demo data ready."))
+
+    @transaction.atomic
+    def reset_catalog(self) -> None:
+        for model in (Sale, HeroSlide, ProductImage, ProductVariant):
+            model.objects.all().delete()
+        Product.objects.all().delete()
+        Category.objects.filter(parent__isnull=False).delete()
+        for model in (Category, Stone, Material, SkuSequence):
+            model.objects.all().delete()
+        self.stdout.write("Demo catalog, sales and hero slides removed.")
 
     def seed_site_settings(self) -> str:
         existed = SiteSettings.objects.filter(pk=SiteSettings.SINGLETON_PK).exists()
@@ -62,6 +94,8 @@ class Command(BaseCommand):
             "contact_email": "hello@example.com",
             "contact_address": "Tbilisi (demo address)",
             "instagram_url": "https://instagram.com/example",
+            "pinterest_url": "https://pinterest.com/example",
+            "facebook_url": "https://facebook.com/example",
         }
         filled = [field for field, value in demo.items() if not getattr(site, field)]
         for field in filled:

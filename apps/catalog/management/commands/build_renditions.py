@@ -19,4 +19,18 @@ class Command(BaseCommand):
             built = generate_all(image.image)
             picture(image.image)  # warm the cache
             self.stdout.write(f"[{index}/{total}] {image.image.name}: {built} renditions")
-        self.stdout.write(self.style.SUCCESS(f"Done: {total} photos."))
+        # Home page: hero slides (wide + phone crops), category tiles, sale banners.
+        from apps.catalog.images import BANNER_WIDTHS, responsive
+        from apps.catalog.models import Category
+        from apps.pages.models import HeroSlide
+        from apps.promotions.models import Sale
+
+        for slide in HeroSlide.objects.all():
+            responsive(slide.image, (16, 7))
+            responsive(slide.image_mobile or slide.image, (4, 5), widths=(480, 768, 1080))
+        for category in Category.objects.exclude(image=""):
+            responsive(category.image, (1, 1), widths=BANNER_WIDTHS)
+        for sale in Sale.objects.exclude(banner_image=""):
+            responsive(sale.banner_image, (16, 5))
+            responsive(sale.banner_image, (4, 5), widths=(480, 768, 1080))
+        self.stdout.write(self.style.SUCCESS(f"Done: {total} photos + home page images."))

@@ -4,13 +4,12 @@ Texts are neutral placeholders: stone descriptions mention only origin and color
 never healing or "energy" claims. Prices are demo values.
 """
 
-import io
 from datetime import timedelta
 
-from django.core.files.base import ContentFile
 from django.db import transaction
 from django.utils import timezone
-from PIL import Image, ImageDraw, ImageFont
+
+from apps.core.placeholders import category_tile, product_photo
 
 from .models import Category, Material, Product, ProductImage, ProductVariant, Stone
 from .services.products import ensure_default_variant, prepare_product_for_save
@@ -22,7 +21,7 @@ CATEGORIES = [
     ("EAR", "საყურეები", "Earrings", None),
     ("BRA", "სამაჯურები", "Bracelets", None),
     ("VIN", "ვინტაჟი", "Vintage", None),
-    ("SCA", "ნაქსოვი თავსაფრები", "Knitted headscarves", None),
+    ("SCA", "თავსაფრები და ნაქსოვი", "Headscarves & crochet", None),
     ("BRO", "ბროშები", "Brooches", "VIN"),
 ]
 
@@ -243,26 +242,16 @@ PRODUCTS = [
     ),
 ]
 
-BACKDROPS = ((242, 235, 223), (227, 213, 193))  # cream, sand
+# Home-page tiles (redesign): code -> (home order, line drawing on the placeholder).
+HOME_TILES = {
+    "NEC": (1, "necklace"),
+    "EAR": (2, "earring"),
+    "BRA": (3, "bracelet"),
+    "SCA": (4, "scarf"),
+}
+PHOTOS_PER_PRODUCT = 2
 SHORT_EN = {False: "Handmade, one of a kind.", True: "Handmade in small batches."}
 SHORT_KA = {False: "ხელნაკეთი, ერთადერთი ეგზემპლარი.", True: "ხელნაკეთი, მცირე პარტიით."}
-
-
-def placeholder_photo(color_hex: str, label: str, backdrop: tuple[int, int, int]) -> ContentFile:
-    """4:5 placeholder: a faceted 'stone' in the stone's color on a calm backdrop."""
-    width, height = 1600, 2000
-    image = Image.new("RGB", (width, height), backdrop)
-    draw = ImageDraw.Draw(image)
-    rgb = tuple(int(color_hex[i : i + 2], 16) for i in (1, 3, 5))
-    cx, cy, r = width // 2, height // 2 - 80, 360
-    gem = [(cx, cy - r), (cx + r, cy - r // 3), (cx, cy + r), (cx - r, cy - r // 3)]
-    draw.polygon(gem, fill=rgb, outline=(46, 33, 26), width=4)
-    draw.line([(cx - r, cy - r // 3), (cx + r, cy - r // 3)], fill=(46, 33, 26), width=3)
-    font = ImageFont.load_default(size=44)
-    draw.text((cx, height - 220), label, fill=(122, 102, 80), font=font, anchor="mm")
-    buffer = io.BytesIO()
-    image.save(buffer, format="JPEG", quality=85, optimize=True)
-    return ContentFile(buffer.getvalue(), name=f"demo-{label.lower()}.jpg")
 
 
 @transaction.atomic
@@ -278,6 +267,13 @@ def seed_catalog() -> str:
             fill_translated_slugs(category)
             category.save()
             created["categories"] += 1
+        if code in HOME_TILES and not category.show_on_home:
+            home_order, drawing = HOME_TILES[code]
+            category.show_on_home = True
+            category.home_order = home_order
+            if not category.image:
+                category.image = category_tile(drawing, home_order, f"demo-tile-{code.lower()}.jpg")
+            category.save()
         categories[code] = category
 
     stones: dict[str, Stone] = {}
@@ -329,6 +325,7 @@ def seed_catalog() -> str:
             status=status,
             is_unique=variants is None,
             is_featured=index in (0, 1, 15),
+            is_preowned=code in ("VIN", "BRO"),
             hours_to_make=4 + index % 6,
         )
         prepare_product_for_save(product, is_new=True)
@@ -355,10 +352,12 @@ def seed_catalog() -> str:
             variant.save(update_fields=["stock"])
 
         color = stones[stone_names[0]].color_hex if stone_names else "#B08D57"
-        for photo_index, backdrop in enumerate(BACKDROPS):
+        for photo_index in range(PHOTOS_PER_PRODUCT):
             ProductImage.objects.create(
                 product=product,
-                image=placeholder_photo(color, product.sku, backdrop),
+                image=product_photo(
+                    color, index * 7 + photo_index, f"demo-{product.sku.lower()}-{photo_index}.jpg"
+                ),
                 alt_ka=f"{ka} — ფოტო {photo_index + 1}",
                 alt_en=f"{en} — photo {photo_index + 1}",
                 sort_order=photo_index,

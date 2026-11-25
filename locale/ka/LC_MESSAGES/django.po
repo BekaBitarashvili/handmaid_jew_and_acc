@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 22:49+0400\n"
+"POT-Creation-Date: 2026-11-25 23:53+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,13 +17,13 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
-#: apps/cart/apps.py templates/components/header.html
+#: apps/cart/apps.py
 msgid "Cart"
 msgstr "კალათა"
 
 #: apps/catalog/admin.py
-msgid "Photo tips: the same calm backdrop (linen, cream paper, old wood or stone), daylight, at least 3 shots per piece — detail, full piece, worn. At least 2000px on the long side."
-msgstr "ფოტოს რჩევები: ერთი და იგივე მშვიდი ფონი (სელის ქსოვილი, კრემისფერი ქაღალდი, ძველი ხე ან ქვა), დღის სინათლე, თითო ნივთზე მინიმუმ 3 კადრი — დეტალი, მთლიანი ნივთი, ტარებისას. გრძელი მხარე მინიმუმ 2000px."
+msgid "Photo tips: square photos with the piece in the centre, the same calm backdrop (linen, paper, old wood or stone), daylight, at least 3 shots per piece — detail, full piece, worn. At least 2000px on each side."
+msgstr "ფოტოს რჩევები: კვადრატული ფოტოები, ნივთი ცენტრში, ერთი და იგივე მშვიდი ფონი (სელის ქსოვილი, ქაღალდი, ძველი ხე ან ქვა), დღის სინათლე, თითო ნივთზე მინიმუმ 3 კადრი — დეტალი, მთლიანი ნივთი, ტარებისას. თითოეული მხარე მინიმუმ 2000px."
 
 #: apps/catalog/admin.py
 msgid "Add photos"
@@ -45,7 +45,7 @@ msgstr "ერთადერთ ეგზემპლარს მხოლო�
 msgid "A one-of-a-kind piece can't have more than 1 in stock."
 msgstr "ერთადერთი ეგზემპლარის მარაგი 1-ზე მეტი ვერ იქნება."
 
-#: apps/catalog/admin.py apps/catalog/models.py
+#: apps/catalog/admin.py apps/catalog/models.py apps/pages/models.py
 msgid "photo"
 msgstr "ფოტო"
 
@@ -89,7 +89,7 @@ msgstr "სისტემური"
 msgid "product"
 msgstr "პროდუქტი"
 
-#: apps/catalog/admin.py apps/catalog/models.py
+#: apps/catalog/admin.py apps/catalog/models.py apps/promotions/admin.py
 msgid "status"
 msgstr "სტატუსი"
 
@@ -127,8 +127,8 @@ msgid "Selected products are hidden."
 msgstr "არჩეული პროდუქტები დამალულია."
 
 #: apps/catalog/admin.py
-msgid "Mark as sold (move to archive)"
-msgstr "გაყიდულად მონიშვნა (არქივში გადატანა)"
+msgid "Mark as sold"
+msgstr "გაყიდულად მონიშვნა"
 
 #: apps/catalog/admin.py
 #, python-format
@@ -136,8 +136,8 @@ msgid "%(sku)s is reserved by an unpaid order and was not changed."
 msgstr "%(sku)s დაჯავშნილია გადაუხდელი შეკვეთით და არ შეცვლილა."
 
 #: apps/catalog/admin.py
-msgid "Selected products moved to the archive."
-msgstr "არჩეული პროდუქტები არქივში გადავიდა."
+msgid "Selected products are marked as sold."
+msgstr "არჩეული პროდუქტები მონიშნულია გაყიდულად."
 
 #: apps/catalog/admin.py
 msgid "Duplicate as a new draft"
@@ -152,7 +152,8 @@ msgstr "შეიქმნა ასლი-მონახაზი:"
 msgid "%d draft copies created."
 msgstr "შეიქმნა %d ასლი-მონახაზი."
 
-#: apps/catalog/admin.py apps/catalog/models.py
+#: apps/catalog/admin.py apps/catalog/models.py apps/promotions/admin.py
+#: apps/promotions/models.py
 msgid "products"
 msgstr "პროდუქტები"
 
@@ -204,7 +205,7 @@ msgstr "მშობელი კატეგორია"
 msgid "Only top-level categories can be parents (two levels at most)."
 msgstr "მშობელი შეიძლება იყოს მხოლოდ ზედა დონის კატეგორია (მაქსიმუმ ორი დონე)."
 
-#: apps/catalog/models.py apps/orders/models.py
+#: apps/catalog/models.py apps/orders/models.py apps/pages/models.py
 msgid "order"
 msgstr "რიგი"
 
@@ -213,12 +214,28 @@ msgid "visible in the shop"
 msgstr "ჩანს მაღაზიაში"
 
 #: apps/catalog/models.py
+msgid "tile on the home page"
+msgstr "ფილა მთავარ გვერდზე"
+
+#: apps/catalog/models.py
+msgid "The home page shows up to 4 category tiles; a square photo is needed."
+msgstr "მთავარ გვერდზე ჩანს მაქსიმუმ 4 კატეგორიის ფილა; საჭიროა კვადრატული ფოტო."
+
+#: apps/catalog/models.py
+msgid "order on the home page"
+msgstr "რიგი მთავარ გვერდზე"
+
+#: apps/catalog/models.py
 msgid "category"
 msgstr "კატეგორია"
 
-#: apps/catalog/models.py
+#: apps/catalog/models.py apps/promotions/models.py
 msgid "categories"
 msgstr "კატეგორიები"
+
+#: apps/catalog/models.py
+msgid "This URL is reserved for New Arrivals / Sale."
+msgstr "ეს მისამართი დაკავებულია „ახალი ნივთებისა“ და „ფასდაკლების“ გვერდებისთვის."
 
 #: apps/catalog/models.py
 msgid "A category cannot be its own parent."
@@ -280,9 +297,10 @@ msgstr "აქტიური"
 msgid "Hidden"
 msgstr "დამალული"
 
-#: apps/catalog/models.py
-msgid "Sold (archive)"
-msgstr "გაყიდული (არქივი)"
+#: apps/catalog/models.py templates/catalog/product_detail.html
+#: templates/core/styleguide.html
+msgid "Sold"
+msgstr "გაყიდულია"
 
 #: apps/catalog/models.py
 msgid "Automatic (first 30 days after publishing)"
@@ -345,8 +363,8 @@ msgid "one of a kind"
 msgstr "ერთადერთი ეგზემპლარი"
 
 #: apps/catalog/models.py
-msgid "Checked: a single, unrepeatable piece — stock is always 1 and it moves to the archive once sold. Unchecked: you can make several identical pieces, so stock can be more than 1."
-msgstr "მონიშნული: ერთადერთი, განუმეორებელი ნივთი — მარაგი ყოველთვის 1-ია და გაყიდვის შემდეგ არქივში გადადის. მოუნიშნავი: შეგიძლიათ რამდენიმე იდენტური ნივთის დამზადება, ამიტომ მარაგი შეიძლება 1-ზე მეტი იყოს."
+msgid "Checked: a single, unrepeatable piece — stock is always 1 and it leaves the shop once sold. Unchecked: you can make several identical pieces, so stock can be more than 1."
+msgstr "მონიშნული: ერთადერთი, განუმეორებელი ნივთი — მარაგი ყოველთვის 1-ია და გაყიდვის შემდეგ მაღაზიიდან ქრება. მოუნიშნავი: შეგიძლიათ რამდენიმე იდენტური ნივთის დამზადება, ამიტომ მარაგი შეიძლება 1-ზე მეტი იყოს."
 
 #: apps/catalog/models.py
 msgid "featured"
@@ -376,7 +394,7 @@ msgstr "SEO სათაური"
 msgid "SEO description"
 msgstr "SEO აღწერა"
 
-#: apps/catalog/models.py
+#: apps/catalog/models.py apps/promotions/models.py
 msgid "created"
 msgstr "შექმნილია"
 
@@ -393,8 +411,8 @@ msgid "sold"
 msgstr "გაყიდვის დრო"
 
 #: apps/catalog/models.py
-msgid "Set automatically; orders the archive."
-msgstr "ივსება ავტომატურად; არქივი ამით ლაგდება."
+msgid "Set automatically when the piece is sold."
+msgstr "ივსება ავტომატურად ნივთის გაყიდვისას."
 
 #: apps/catalog/models.py
 msgid "variant name"
@@ -464,37 +482,15 @@ msgstr "ფოტოები"
 msgid "This variant belongs to another product."
 msgstr "ეს ვარიანტი სხვა პროდუქტს ეკუთვნის."
 
-#: apps/catalog/seo.py apps/catalog/views.py
-#: apps/core/templatetags/navigation.py templates/catalog/product_detail.html
-#: templates/catalog/shop.html templates/components/footer.html
-#: templates/components/header.html
+#: apps/catalog/seo.py apps/core/templatetags/navigation.py
+#: templates/catalog/product_detail.html
 msgid "Shop"
 msgstr "მაღაზია"
 
-#: apps/catalog/seo.py templates/base.html templates/components/footer.html
+#: apps/catalog/seo.py apps/pages/views.py templates/base.html
 #: templates/pages/home.html
 msgid "Handmade jewelry with natural stones"
 msgstr "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"
-
-#: apps/catalog/seo.py apps/core/templatetags/navigation.py
-#: templates/catalog/archive.html templates/components/footer.html
-msgid "Archive"
-msgstr "არქივი"
-
-#: apps/catalog/seo.py
-msgid "Pieces that have found their owners."
-msgstr "ნივთები, რომლებმაც თავიანთი მფლობელი იპოვეს."
-
-#: apps/catalog/seo.py apps/core/templatetags/navigation.py
-#: config/settings/base.py templates/catalog/stone_detail.html
-#: templates/catalog/stone_list.html templates/components/footer.html
-#: templates/components/header.html
-msgid "Stones"
-msgstr "ქვები"
-
-#: apps/catalog/seo.py
-msgid "The natural stones we work with."
-msgstr "ბუნებრივი ქვები, რომლებითაც ვმუშაობთ."
 
 #: apps/catalog/services/products.py
 msgid "Add the Georgian name."
@@ -518,29 +514,6 @@ msgstr "ყველა ფოტოს სჭირდება ქართუ
 
 #: apps/catalog/templatetags/catalog_tags.py
 #, python-format
-msgid "from %(price)s"
-msgstr "%(price)s-დან"
-
-#: apps/catalog/templatetags/catalog_tags.py
-#: templates/catalog/product_detail.html templates/core/styleguide.html
-msgid "Sold"
-msgstr "გაყიდულია"
-
-#: apps/catalog/templatetags/catalog_tags.py
-#: templates/catalog/product_detail.html
-msgid "Out of stock"
-msgstr "მარაგში არ არის"
-
-#: apps/catalog/templatetags/catalog_tags.py templates/core/styleguide.html
-msgid "New"
-msgstr "ახალი"
-
-#: apps/catalog/templatetags/catalog_tags.py templates/core/styleguide.html
-msgid "One of a kind"
-msgstr "ერთადერთი ეგზემპლარი"
-
-#: apps/catalog/templatetags/catalog_tags.py
-#, python-format
 msgid "A piece like %(sku)s"
 msgstr "%(sku)s-ის მსგავსი ნივთი"
 
@@ -549,18 +522,38 @@ msgid "A custom piece"
 msgstr "ინდივიდუალური შეკვეთა"
 
 #: apps/catalog/views.py
+msgctxt "page title"
+msgid "Shop"
+msgstr "მაღაზია"
+
+#: apps/catalog/views.py
+msgctxt "page title"
+msgid "New Arrivals"
+msgstr "ახალი ნივთები"
+
+#: apps/catalog/views.py
+msgctxt "page title"
+msgid "Sale"
+msgstr "ფასდაკლება"
+
+#: apps/catalog/views.py
 #, python-format
 msgid "%(count)d piece"
 msgid_plural "%(count)d pieces"
 msgstr[0] "%(count)d ნივთი"
 msgstr[1] "%(count)d ნივთი"
 
+#: apps/catalog/views.py
+#, python-format
+msgid "Search: “%(query)s”"
+msgstr "ძიება: „%(query)s“"
+
 #: apps/core/admin.py
 msgid "Brand"
 msgstr "ბრენდი"
 
-#: apps/core/admin.py templates/components/footer.html
-#: templates/components/header.html
+#: apps/core/admin.py apps/core/templatetags/navigation.py apps/pages/views.py
+#: templates/components/footer.html templates/pages/contact.html
 msgid "Contact"
 msgstr "კონტაქტი"
 
@@ -625,6 +618,10 @@ msgid "Facebook"
 msgstr "Facebook"
 
 #: apps/core/models.py
+msgid "Pinterest"
+msgstr "Pinterest"
+
+#: apps/core/models.py
 msgid "TikTok"
 msgstr "TikTok"
 
@@ -653,6 +650,14 @@ msgid "owner notification phone"
 msgstr "მფლობელის ტელეფონი შეტყობინებებისთვის"
 
 #: apps/core/models.py
+msgid "home page intro line"
+msgstr "შესავალი ხაზი მთავარ გვერდზე"
+
+#: apps/core/models.py
+msgid "One or two sentences under the hero, between the star and the hairlines."
+msgstr "ერთი-ორი წინადადება მთავარი ბანერის ქვემოთ, ვარსკვლავსა და წვრილ ხაზებს შორის."
+
+#: apps/core/models.py
 msgid "announcement bar"
 msgstr "განცხადების ზოლი"
 
@@ -672,8 +677,17 @@ msgstr "საიტის პარამეტრები"
 msgid "Site settings"
 msgstr "საიტის პარამეტრები"
 
-#: apps/core/templatetags/navigation.py templates/components/footer.html
-#: templates/components/header.html
+#: apps/core/templatetags/navigation.py
+msgctxt "main nav"
+msgid "New Arrivals"
+msgstr "სიახლეები"
+
+#: apps/core/templatetags/navigation.py
+msgid "Sale"
+msgstr "ფასდაკლება"
+
+#: apps/core/templatetags/navigation.py apps/pages/views.py
+#: templates/pages/about.html
 msgid "About"
 msgstr "ჩვენ შესახებ"
 
@@ -729,19 +743,213 @@ msgstr "მიწოდების მეთოდი"
 msgid "delivery options"
 msgstr "მიწოდების მეთოდები"
 
+#: apps/pages/admin.py
+msgid "Buttons"
+msgstr "ღილაკები"
+
 #: apps/pages/apps.py
 msgid "Pages"
 msgstr "გვერდები"
+
+#: apps/pages/models.py
+msgid "A shop path such as /shop/new/ (the language is added automatically) or a full https:// address."
+msgstr "მაღაზიის მისამართი, მაგ. /shop/new/ (ენა ავტომატურად დაემატება), ან სრული https:// მისამართი."
+
+#: apps/pages/models.py
+msgid "Wide photo, at least 2400px across. The text sits on its left side."
+msgstr "ფართო ფოტო, სიგანე მინიმუმ 2400px. ტექსტი მის მარცხენა მხარეს განთავსდება."
+
+#: apps/pages/models.py
+msgid "phone photo"
+msgstr "ფოტო ტელეფონისთვის"
+
+#: apps/pages/models.py
+msgid "Optional portrait version for phones; otherwise the wide photo is cropped."
+msgstr "არასავალდებულო ვერტიკალური ვერსია ტელეფონებისთვის; თუ არ არის, ფართო ფოტო მოიჭრება."
+
+#: apps/pages/models.py
+msgid "title"
+msgstr "სათაური"
+
+#: apps/pages/models.py
+msgid "subtitle"
+msgstr "ქვესათაური"
+
+#: apps/pages/models.py
+msgid "first button text"
+msgstr "პირველი ღილაკის ტექსტი"
+
+#: apps/pages/models.py
+msgid "first button link"
+msgstr "პირველი ღილაკის ბმული"
+
+#: apps/pages/models.py
+msgid "second button text"
+msgstr "მეორე ღილაკის ტექსტი"
+
+#: apps/pages/models.py
+msgid "second button link"
+msgstr "მეორე ღილაკის ბმული"
+
+#: apps/pages/models.py
+msgid "shown"
+msgstr "ჩანს"
+
+#: apps/pages/models.py
+msgid "hero slide"
+msgstr "მთავარი ბანერის სლაიდი"
+
+#: apps/pages/models.py
+msgid "hero slides"
+msgstr "მთავარი ბანერის სლაიდები"
+
+#: apps/pages/views.py templates/components/header.html
+#: templates/pages/account.html
+msgid "Account"
+msgstr "ანგარიში"
 
 #: apps/payments/apps.py
 msgid "Payments"
 msgstr "გადახდები"
 
+#: apps/promotions/admin.py
+msgid "Choose what the sale applies to: the whole shop, categories or products."
+msgstr "აირჩიეთ, რაზე ვრცელდება ფასდაკლება: მთელ მაღაზიაზე, კატეგორიებზე თუ პროდუქტებზე."
+
+#: apps/promotions/admin.py
+msgid "Running"
+msgstr "მიმდინარე"
+
+#: apps/promotions/admin.py
+msgid "Scheduled"
+msgstr "დაგეგმილი"
+
+#: apps/promotions/admin.py
+msgid "Ended"
+msgstr "დასრულებული"
+
+#: apps/promotions/admin.py
+msgid "Switched off"
+msgstr "გამორთული"
+
+#: apps/promotions/admin.py
+msgid "Discount"
+msgstr "ფასდაკლება"
+
+#: apps/promotions/admin.py
+msgid "Applies to"
+msgstr "ვრცელდება"
+
+#: apps/promotions/admin.py
+msgid "Period"
+msgstr "პერიოდი"
+
+#: apps/promotions/admin.py
+msgid "Home page banner"
+msgstr "ბანერი მთავარ გვერდზე"
+
+#: apps/promotions/admin.py
+msgid "discount"
+msgstr "ფასდაკლება"
+
 #: apps/promotions/apps.py
 msgid "Promotions"
 msgstr "აქციები"
 
+#: apps/promotions/models.py
+msgid "Percent off"
+msgstr "პროცენტული ფასდაკლება"
+
+#: apps/promotions/models.py
+msgid "Fixed amount off (₾)"
+msgstr "ფიქსირებული თანხა (₾)"
+
+#: apps/promotions/models.py
+msgid "internal name"
+msgstr "შიდა დასახელება"
+
+#: apps/promotions/models.py
+msgid "Only you see this, e.g. \"Spring 2026\"."
+msgstr "ამას მხოლოდ თქვენ ხედავთ, მაგ. „გაზაფხული 2026“."
+
+#: apps/promotions/models.py
+msgid "discount type"
+msgstr "ფასდაკლების ტიპი"
+
+#: apps/promotions/models.py
+msgid "percent off"
+msgstr "ფასდაკლება (%)"
+
+#: apps/promotions/models.py
+msgid "amount off (₾)"
+msgstr "ფასდაკლება (₾)"
+
+#: apps/promotions/models.py
+msgid "the whole shop"
+msgstr "მთელი მაღაზია"
+
+#: apps/promotions/models.py
+msgid "Subcategories are included."
+msgstr "ქვეკატეგორიებიც შედის."
+
+#: apps/promotions/models.py
+msgid "starts"
+msgstr "იწყება"
+
+#: apps/promotions/models.py
+msgid "ends"
+msgstr "მთავრდება"
+
+#: apps/promotions/models.py
+msgid "Empty = until you switch it off."
+msgstr "ცარიელი = სანამ არ გამორთავთ."
+
+#: apps/promotions/models.py
+msgid "switched on"
+msgstr "ჩართულია"
+
+#: apps/promotions/models.py
+msgid "show the banner on the home page"
+msgstr "ბანერის ჩვენება მთავარ გვერდზე"
+
+#: apps/promotions/models.py
+msgid "Shown only while the sale is running."
+msgstr "ჩანს მხოლოდ ფასდაკლების მიმდინარეობისას."
+
+#: apps/promotions/models.py
+msgid "banner title"
+msgstr "ბანერის სათაური"
+
+#: apps/promotions/models.py
+msgid "banner subtitle"
+msgstr "ბანერის ქვესათაური"
+
+#: apps/promotions/models.py
+msgid "banner photo"
+msgstr "ბანერის ფოტო"
+
+#: apps/promotions/models.py
+msgid "sale"
+msgstr "ფასდაკლება"
+
+#: apps/promotions/models.py
+msgid "sales"
+msgstr "ფასდაკლებები"
+
+#: apps/promotions/models.py
+msgid "Enter the percent off."
+msgstr "მიუთითეთ ფასდაკლების პროცენტი."
+
+#: apps/promotions/models.py
+msgid "Enter the amount off."
+msgstr "მიუთითეთ ფასდაკლების თანხა."
+
+#: apps/promotions/models.py
+msgid "The end must be after the start."
+msgstr "დასრულება დაწყების შემდეგ უნდა იყოს."
+
 #: apps/wishlist/apps.py templates/components/header.html
+#: templates/pages/account.html
 msgid "Wishlist"
 msgstr "სურვილების სია"
 
@@ -761,13 +969,30 @@ msgstr "მაღაზიის მართვა"
 msgid "Products"
 msgstr "პროდუქტები"
 
-#: config/settings/base.py
+#: config/settings/base.py templates/catalog/shop.html
+#: templates/pages/home.html
 msgid "Categories"
 msgstr "კატეგორიები"
 
 #: config/settings/base.py
+msgid "Stones"
+msgstr "ქვები"
+
+#: config/settings/base.py
 msgid "Materials"
 msgstr "მასალები"
+
+#: config/settings/base.py
+msgid "Sales"
+msgstr "ფასდაკლებები"
+
+#: config/settings/base.py
+msgid "Home page"
+msgstr "მთავარი გვერდი"
+
+#: config/settings/base.py
+msgid "Hero slides"
+msgstr "მთავარი ბანერი"
 
 #: config/settings/base.py
 msgid "Delivery options"
@@ -806,10 +1031,6 @@ msgid "Type"
 msgstr "ტიპი"
 
 #: templates/catalog/_filter_fields.html
-msgid "Category"
-msgstr "კატეგორია"
-
-#: templates/catalog/_filter_fields.html
 msgid "Stone"
 msgstr "ქვა"
 
@@ -830,20 +1051,8 @@ msgid "Maximum price"
 msgstr "მაქსიმალური ფასი"
 
 #: templates/catalog/_filter_fields.html
-msgid "Availability"
-msgstr "ხელმისაწვდომობა"
-
-#: templates/catalog/_filter_fields.html
-msgid "Available only"
-msgstr "მხოლოდ ხელმისაწვდომი"
-
-#: templates/catalog/_filter_fields.html
 msgid "Apply"
 msgstr "გამოყენება"
-
-#: templates/catalog/_filter_fields.html templates/catalog/shop.html
-msgid "Clear all"
-msgstr "ყველას გასუფთავება"
 
 #: templates/catalog/_gallery.html
 msgid "Photos"
@@ -854,7 +1063,7 @@ msgstr "ფოტოები"
 msgid "Photo %(n)s of %(total)s"
 msgstr "ფოტო %(n)s / %(total)s"
 
-#: templates/catalog/_gallery.html
+#: templates/catalog/_gallery.html templates/pages/home.html
 msgid "carousel"
 msgstr "კარუსელი"
 
@@ -862,7 +1071,7 @@ msgstr "კარუსელი"
 msgid "Product photos"
 msgstr "პროდუქტის ფოტოები"
 
-#: templates/catalog/_gallery.html
+#: templates/catalog/_gallery.html templates/pages/home.html
 msgid "slide"
 msgstr "სლაიდი"
 
@@ -943,46 +1152,51 @@ msgid "Price: high to low"
 msgstr "ფასი: კლებადობით"
 
 #: templates/catalog/_results_partial.html
+msgid "Nothing found for this search."
+msgstr "ამ ძიებით ვერაფერი მოიძებნა."
+
+#: templates/catalog/_results_partial.html
+msgid "No pieces are on sale right now."
+msgstr "ახლა ფასდაკლებით ნივთი არ არის."
+
+#: templates/catalog/_results_partial.html
+msgid "No new pieces right now."
+msgstr "ახალი ნივთები ჯერ არ არის."
+
+#: templates/catalog/_results_partial.html
 msgid "No pieces match these filters."
 msgstr "ამ ფილტრებით ნივთი ვერ მოიძებნა."
 
 #: templates/catalog/_results_partial.html
-msgid "Clear all filters"
-msgstr "ფილტრების გასუფთავება"
-
-#: templates/catalog/archive.html
-msgid "Found their owners"
-msgstr "იპოვეს მფლობელი"
-
-#: templates/catalog/archive.html
-msgid "Every piece here was made once and has been sold. If one speaks to you, a similar piece can be made — with its own stones and its own character."
-msgstr "აქ წარმოდგენილი ყოველი ნივთი ერთხელ შეიქმნა და უკვე გაიყიდა. თუ რომელიმე მოგეწონათ, შეგვიძლია მსგავსი ნივთი შევქმნათ — საკუთარი ქვებითა და საკუთარი ხასიათით."
-
-#: templates/catalog/archive.html
-msgid "Commission a piece"
-msgstr "ნივთის შეკვეთა"
-
-#: templates/catalog/archive.html
-msgid "Show the whole archive"
-msgstr "მთელი არქივის ჩვენება"
-
-#: templates/catalog/archive.html
-msgid "The archive is empty for now."
-msgstr "არქივი ჯერ ცარიელია."
+msgid "See the whole shop"
+msgstr "მთელი მაღაზიის ნახვა"
 
 #: templates/catalog/product_detail.html
 #, python-format
 msgid "Preview — this product is not visible in the shop (%(status)s)."
 msgstr "გადახედვა — ეს პროდუქტი მაღაზიაში არ ჩანს (%(status)s)."
 
-#: templates/catalog/product_detail.html templates/catalog/shop.html
-#: templates/catalog/stone_detail.html
+#: templates/catalog/product_detail.html
 msgid "Breadcrumb"
 msgstr "ნავიგაციის ჯაჭვი"
+
+#: templates/catalog/product_detail.html templates/components/price.html
+#: templates/core/styleguide.html templates/pages/home.html
+msgid "Original price"
+msgstr "საწყისი ფასი"
+
+#: templates/catalog/product_detail.html templates/components/price.html
+#: templates/core/styleguide.html templates/pages/home.html
+msgid "Sale price"
+msgstr "ფასდაკლებული ფასი"
 
 #: templates/catalog/product_detail.html templates/core/styleguide.html
 msgid "In stock"
 msgstr "მარაგშია"
+
+#: templates/catalog/product_detail.html
+msgid "Out of stock"
+msgstr "მარაგში არ არის"
 
 #: templates/catalog/product_detail.html
 msgid "One of a kind — only 1"
@@ -1004,7 +1218,7 @@ msgstr "მარაგში არ არის"
 msgid "Add to cart"
 msgstr "კალათაში დამატება"
 
-#: templates/catalog/product_detail.html templates/components/product_card.html
+#: templates/catalog/product_detail.html
 msgid "Add to wishlist"
 msgstr "სურვილების სიაში დამატება"
 
@@ -1012,8 +1226,7 @@ msgstr "სურვილების სიაში დამატება"
 msgid "Online ordering opens soon."
 msgstr "ონლაინ შეკვეთა მალე გაიხსნება."
 
-#: templates/catalog/product_detail.html templates/components/product_card.html
-#: templates/core/styleguide.html
+#: templates/catalog/product_detail.html templates/core/styleguide.html
 msgid "Commission a similar piece"
 msgstr "მსგავსი ნივთის შეკვეთა"
 
@@ -1026,40 +1239,20 @@ msgid "You may also like"
 msgstr "შეიძლება მოგეწონოთ"
 
 #: templates/catalog/shop.html
+msgid "All"
+msgstr "ყველა"
+
+#: templates/catalog/shop.html
 msgid "Close filters"
 msgstr "ფილტრების დახურვა"
 
 #: templates/catalog/shop.html
+msgid "Clear all"
+msgstr "ყველას გასუფთავება"
+
+#: templates/catalog/shop.html
 msgid "Show"
 msgstr "ჩვენება"
-
-#: templates/catalog/stone_detail.html
-#, python-format
-msgid "Pieces with %(name)s"
-msgstr "ნივთები ქვით: %(name)s"
-
-#: templates/catalog/stone_detail.html
-msgid "Nothing with this stone is available right now."
-msgstr "ამ ქვით ნივთი ახლა ხელმისაწვდომი არ არის."
-
-#: templates/catalog/stone_detail.html
-msgid "Earlier pieces with this stone in the archive"
-msgstr "ამ ქვით შექმნილი ადრინდელი ნივთები არქივში"
-
-#: templates/catalog/stone_list.html
-msgid "Stone glossary"
-msgstr "ქვების ლექსიკონი"
-
-#: templates/catalog/stone_list.html
-msgid "The natural stones we work with — where they come from and what makes each one different."
-msgstr "ბუნებრივი ქვები, რომლებითაც ვმუშაობთ — საიდან მოდის თითოეული და რით განსხვავდება ერთმანეთისგან."
-
-#: templates/catalog/stone_list.html
-#, python-format
-msgid "%(counter)s piece available"
-msgid_plural "%(counter)s pieces available"
-msgstr[0] "%(counter)s ხელმისაწვდომი ნივთი"
-msgstr[1] "%(counter)s ხელმისაწვდომი ნივთი"
 
 #: templates/catalog/widgets/multiple_photos.html
 msgid "No photos selected"
@@ -1074,10 +1267,6 @@ msgid "Choose photos"
 msgstr "ფოტოების არჩევა"
 
 #: templates/components/footer.html
-msgid "All pieces"
-msgstr "ყველა ნივთი"
-
-#: templates/components/footer.html
 msgid "Information"
 msgstr "ინფორმაცია"
 
@@ -1088,6 +1277,10 @@ msgstr "მიწოდება და დაბრუნება"
 #: templates/components/footer.html
 msgid "FAQ"
 msgstr "ხშირად დასმული კითხვები"
+
+#: templates/components/footer.html templates/components/header.html
+msgid "Home"
+msgstr "მთავარი"
 
 #: templates/components/footer.html
 msgid "ID"
@@ -1126,34 +1319,51 @@ msgid "Main"
 msgstr "მთავარი ნავიგაცია"
 
 #: templates/components/header.html
-msgid "Home"
-msgstr "მთავარი"
-
-#: templates/components/header.html
 msgid "Search"
 msgstr "ძიება"
 
+#: templates/components/header.html
+#, python-format
+msgid "Cart, %(n)s item"
+msgid_plural "Cart, %(n)s items"
+msgstr[0] "კალათა, %(n)s ნივთი"
+msgstr[1] "კალათა, %(n)s ნივთი"
+
+#: templates/components/header.html
+msgid "Search the shop"
+msgstr "მაღაზიაში ძიება"
+
+#: templates/components/header.html
+msgid "Search: necklace, amber, silver…"
+msgstr "ძიება: ყელსაბამი, ქარვა, ვერცხლი…"
+
+#: templates/components/header.html
+msgid "Close search"
+msgstr "ძიების დახურვა"
+
+#: templates/components/price.html
+#, python-format
+msgid "from %(price)s"
+msgstr "%(price)s-დან"
+
 #: templates/components/product_card.html
-msgid "Wishlist arrives soon"
-msgstr "სურვილების სია მალე დაემატება"
+#, python-format
+msgid "View %(name)s"
+msgstr "%(name)s — ნახვა"
 
 #: templates/core/styleguide.html
 msgid "Read the story"
 msgstr "ისტორიის წაკითხვა"
 
 #: templates/core/styleguide.html
-msgid "Original price"
-msgstr "საწყისი ფასი"
-
-#: templates/core/styleguide.html
-msgid "Sale price"
-msgstr "ფასდაკლებული ფასი"
+msgid "One of a kind"
+msgstr "ერთადერთი ეგზემპლარი"
 
 #: templates/core/styleguide.html
 msgid "First name"
 msgstr "სახელი"
 
-#: templates/core/styleguide.html
+#: templates/core/styleguide.html templates/pages/contact.html
 msgid "Phone"
 msgstr "ტელეფონი"
 
@@ -1161,7 +1371,7 @@ msgstr "ტელეფონი"
 msgid "We'll text you when the order ships."
 msgstr "შეკვეთის გაგზავნისას SMS-ით შეგატყობინებთ."
 
-#: templates/core/styleguide.html
+#: templates/core/styleguide.html templates/pages/contact.html
 msgid "Email"
 msgstr "ელფოსტა"
 
@@ -1173,13 +1383,66 @@ msgstr "შეიყვანეთ სწორი ელფოსტის მ
 msgid "I agree to the Terms and the Privacy Policy"
 msgstr "ვეთანხმები წესებსა და პირობებს და კონფიდენციალურობის პოლიტიკას"
 
-#: templates/pages/home.html
-msgid "Handmade atelier"
-msgstr "ხელნაკეთი ატელიე"
+#: templates/core/styleguide.html
+msgid "New"
+msgstr "ახალი"
+
+#: templates/pages/about.html
+msgid "The story of the atelier will appear here soon."
+msgstr "ატელიეს ისტორია აქ მალე გამოჩნდება."
+
+#: templates/pages/about.html
+msgid "Visit the shop"
+msgstr "მაღაზიაში გადასვლა"
+
+#: templates/pages/account.html
+msgid "Accounts are coming soon."
+msgstr "ანგარიშები მალე დაემატება."
+
+#: templates/pages/account.html
+msgid "You never need an account to order — checkout works as a guest."
+msgstr "შეკვეთისთვის ანგარიში არასოდეს გჭირდებათ — შეკვეთა სტუმრად შეგიძლიათ."
+
+#: templates/pages/contact.html
+msgid "Questions about a piece, a custom order or delivery — write or call."
+msgstr "კითხვები ნივთზე, ინდივიდუალურ შეკვეთაზე ან მიწოდებაზე — მოგვწერეთ ან დაგვირეკეთ."
+
+#: templates/pages/contact.html
+msgid "Address"
+msgstr "მისამართი"
 
 #: templates/pages/home.html
-msgid "Each piece is made by hand, most of them only once."
-msgstr "ყოველი ნივთი ხელით არის შექმნილი — უმეტესობა მხოლოდ ერთ ეგზემპლარად."
+msgid "Featured"
+msgstr "გამორჩეული"
+
+#: templates/pages/home.html
+#, python-format
+msgid "Slide %(n)s of %(total)s"
+msgstr "სლაიდი %(n)s / %(total)s"
+
+#: templates/pages/home.html
+msgid "Previous slide"
+msgstr "წინა სლაიდი"
+
+#: templates/pages/home.html
+msgid "Next slide"
+msgstr "შემდეგი სლაიდი"
+
+#: templates/pages/home.html
+msgid "New Arrivals"
+msgstr "ახალი ნივთები"
+
+#: templates/pages/home.html
+msgid "View All"
+msgstr "ყველას ნახვა"
+
+#: templates/pages/home.html
+msgid "Special Offers"
+msgstr "სპეციალური შეთავაზება"
+
+#: templates/pages/home.html
+msgid "Shop Sale"
+msgstr "ფასდაკლებული ნივთები"
 
 #: templates/unfold/forms/helpers/toolbar.html
 msgid "Paragraph"

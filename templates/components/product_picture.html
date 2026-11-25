@@ -1,0 +1,7 @@
+{% if picture %}<picture>
+  {% if picture.avif_srcset %}<source type="image/avif" srcset="{{ picture.avif_srcset }}" sizes="{{ sizes }}">{% endif %}
+  <source type="image/webp" srcset="{{ picture.webp_srcset }}" sizes="{{ sizes }}">
+  <img src="{{ picture.src }}" width="{{ picture.width }}" height="{{ picture.height }}" alt="{{ alt }}"
+       {% if eager %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async"
+       class="{{ css }}">
+</picture>{% else %}<div class="flex aspect-[4/5] items-center justify-center bg-cream {{ css }}" role="img" aria-label="{{ alt }}">{% include "components/ornament.html" %}</div>{% endif %}

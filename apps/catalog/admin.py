@@ -199,7 +199,7 @@ class ProductAdmin(BaseModelAdmin, TabbedTranslationAdmin):
     autocomplete_fields = ("category", "stones", "materials")
     list_select_related = ("category",)
     actions = ("make_visible", "make_hidden", "mark_as_sold", "duplicate")
-    readonly_fields = ("created_at", "updated_at", "published_at")
+    readonly_fields = ("created_at", "updated_at", "published_at", "sold_at")
     fieldsets = (
         (
             _("Basics"),
@@ -209,6 +209,7 @@ class ProductAdmin(BaseModelAdmin, TabbedTranslationAdmin):
                     "category",
                     ("status", "price"),
                     "is_unique",
+                    "is_preowned",
                     ("is_featured", "new_badge"),
                     "new_photos",
                 )
@@ -237,7 +238,7 @@ class ProductAdmin(BaseModelAdmin, TabbedTranslationAdmin):
             _("System"),
             {
                 "classes": ("collapse",),
-                "fields": ("sku", "created_at", "updated_at", "published_at"),
+                "fields": ("sku", "created_at", "updated_at", "published_at", "sold_at"),
             },
         ),
     )

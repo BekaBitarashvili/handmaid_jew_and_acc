@@ -4,8 +4,9 @@ easy-thumbnails picks its output format from a project-wide setting, so each
 format gets its own thumbnailer with `thumbnail_extension` set per call.
 """
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
+from django.core.cache import cache
 from easy_thumbnails.files import get_thumbnailer
 from PIL import Image
 
@@ -41,12 +42,54 @@ def rendition(image_field, width: int, fmt: str, *, generate: bool = True) -> Re
 
 def srcset(image_field, fmt: str) -> str:
     """srcset value (url 400w, url 800w, …) for a <source type="image/avif|webp">."""
-    parts = []
+    seen, parts = set(), []
     for width in WIDTHS:
         r = rendition(image_field, width, fmt)
-        if r:
+        if r and r.width not in seen:  # small sources aren't upscaled: skip repeats
+            seen.add(r.width)
             parts.append(f"{r.url} {r.width}w")
     return ", ".join(parts)
+
+
+@dataclass(frozen=True)
+class Picture:
+    """Everything a <picture> element needs for one product photo."""
+
+    avif_srcset: str
+    webp_srcset: str
+    src: str
+    width: int
+    height: int
+    large_url: str  # 1800px WebP, for the fullscreen viewer and JSON-LD
+
+
+PICTURE_CACHE_SECONDS = 60 * 60 * 24 * 30
+
+
+def picture(image_field) -> Picture | None:
+    """Cached <picture> data. easy-thumbnails checks its database once per size, so a
+    product grid would cost ~8 queries per card without this. Uploaded files never
+    change in place (a new upload gets a new name), so the file name is a safe key."""
+    if not image_field:
+        return None
+    key = f"picture:v1:{image_field.name}"
+    cached = cache.get(key)
+    if cached is not None:
+        return Picture(**cached)
+    fallback = rendition(image_field, 800, "webp")
+    large = rendition(image_field, 1800, "webp")
+    if fallback is None or large is None:
+        return None
+    result = Picture(
+        avif_srcset=srcset(image_field, "avif"),
+        webp_srcset=srcset(image_field, "webp"),
+        src=fallback.url,
+        width=fallback.width,
+        height=fallback.height,
+        large_url=large.url,
+    )
+    cache.set(key, asdict(result), PICTURE_CACHE_SECONDS)
+    return result
 
 
 def generate_all(image_field) -> int:

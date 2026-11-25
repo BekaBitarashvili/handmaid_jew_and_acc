@@ -32,6 +32,11 @@ def prepare_product_for_save(product: Product, *, is_new: bool) -> None:
     fill_translated_slugs(product)
     if product.status == Product.Status.ACTIVE and product.published_at is None:
         product.published_at = timezone.now()
+    if product.status == Product.Status.SOLD:
+        if product.sold_at is None:
+            product.sold_at = timezone.now()
+    else:
+        product.sold_at = None  # back on sale (or hidden): not in the archive
 
 
 def ensure_default_variant(product: Product) -> ProductVariant:

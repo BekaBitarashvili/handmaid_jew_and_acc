@@ -44,6 +44,14 @@ STORAGES = {
 }
 STORAGES["easy_thumbnails"] = STORAGES["default"]
 
+# --- Cache: Redis, separate database number from the huey queue ------------
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": env("REDIS_CACHE_URL", default="redis://redis:6379/1"),
+    }
+}
+
 # --- Background jobs --------------------------------------------------------
 HUEY = {
     "huey_class": "huey.RedisHuey",

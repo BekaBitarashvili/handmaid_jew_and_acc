@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import F, Q
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -60,6 +61,9 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.name
 
+    def get_absolute_url(self) -> str:
+        return reverse("catalog:category", kwargs={"slug": self.slug})
+
     def clean(self) -> None:
         if self.parent_id is None:
             return
@@ -103,6 +107,9 @@ class Stone(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self) -> str:
+        return reverse("catalog:stone", kwargs={"slug": self.slug})
 
 
 class Material(models.Model):
@@ -194,6 +201,14 @@ class Product(models.Model):
     new_badge = models.CharField(
         _('"New" label'), max_length=4, choices=NewBadge.choices, default=NewBadge.AUTO
     )
+    is_preowned = models.BooleanField(
+        _("pre-owned (vintage)"),
+        default=False,
+        help_text=_(
+            "Check for vintage pieces that had an owner before. Search engines will then "
+            "describe the item as used instead of new."
+        ),
+    )
     allow_commission_request = models.BooleanField(
         _("allow 'commission a similar piece'"), default=True
     )
@@ -204,6 +219,9 @@ class Product(models.Model):
     created_at = models.DateTimeField(_("created"), auto_now_add=True)
     updated_at = models.DateTimeField(_("updated"), auto_now=True)
     published_at = models.DateTimeField(_("first published"), null=True, blank=True)
+    sold_at = models.DateTimeField(
+        _("sold"), null=True, blank=True, help_text=_("Set automatically; orders the archive.")
+    )
 
     class Meta:
         verbose_name = _("product")
@@ -219,6 +237,13 @@ class Product(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_absolute_url(self) -> str:
+        return reverse("catalog:product", kwargs={"slug": self.slug})
+
+    @property
+    def is_public(self) -> bool:
+        return self.status in (self.Status.ACTIVE, self.Status.SOLD)
 
     @classmethod
     def from_db(cls, db, field_names, values):

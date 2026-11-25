@@ -17,6 +17,7 @@ x-app: &app
     DJANGO_SETTINGS_MODULE: config.settings.prod
     DATABASE_URL: postgres://${POSTGRES_USER:-shop}:${POSTGRES_PASSWORD:-shop}@db:5432/${POSTGRES_DB:-shop}
     REDIS_URL: redis://redis:6379/0
+    REDIS_CACHE_URL: redis://redis:6379/1
     EMAIL_URL: smtp://mailpit:1025
     DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
     SECURE_SSL_REDIRECT: "False"

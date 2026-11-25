@@ -157,6 +157,10 @@ vars().update(env.email_url("EMAIL_URL", default="consolemail://"))
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="shop@example.com")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+# --- Cache -------------------------------------------------------------------
+# Per-process memory cache by default; production uses Redis (prod.py).
+CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+
 # --- Background jobs (huey) -------------------------------------------------
 
 REDIS_URL = env("REDIS_URL", default="redis://127.0.0.1:6379/0")

@@ -5,6 +5,7 @@ add reserve / release / commit functions in this module.
 """
 
 from django.db import transaction
+from django.utils import timezone
 
 from apps.catalog.models import Product, ProductVariant
 
@@ -23,4 +24,5 @@ def mark_sold(product: Product) -> None:
         variant.stock = 0
         variant.save(update_fields=["stock"])
     product.status = Product.Status.SOLD
-    product.save(update_fields=["status", "updated_at"])
+    product.sold_at = timezone.now()
+    product.save(update_fields=["status", "sold_at", "updated_at"])

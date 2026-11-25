@@ -3,7 +3,7 @@ Swapped in place on every filter change (hx-target="#results").
 {% endcomment %}
 <div id="results" aria-live="polite" aria-busy="false">
   <div class="mb-6 flex items-center gap-4 border-b border-sand pb-4">
-    <button type="button" @click="open = true" class="btn btn-secondary min-h-10 px-4 md:hidden"
+    <button type="button" @click="open = true" class="btn btn-secondary min-h-10 whitespace-nowrap px-4 md:hidden"
             aria-controls="filter-panel" :aria-expanded="open.toString()">
       {% translate "Filters" %}{% if active_count %} ({{ active_count }}){% endif %}
     </button>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 03:48+0400\n"
+"POT-Creation-Date: 2026-11-25 22:49+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -73,7 +73,7 @@ msgstr "ძირითადი"
 msgid "Story & details"
 msgstr "ისტორია და დეტალები"
 
-#: apps/catalog/admin.py
+#: apps/catalog/admin.py templates/catalog/_product_accordions.html
 msgid "Stones & materials"
 msgstr "ქვები და მასალები"
 
@@ -357,6 +357,14 @@ msgid "\"New\" label"
 msgstr "„ახალი“ ნიშანი"
 
 #: apps/catalog/models.py
+msgid "pre-owned (vintage)"
+msgstr "ნახმარი (ვინტაჟი)"
+
+#: apps/catalog/models.py
+msgid "Check for vintage pieces that had an owner before. Search engines will then describe the item as used instead of new."
+msgstr "მონიშნეთ ვინტაჟური ნივთებისთვის, რომლებსაც ადრე სხვა მფლობელი ჰყავდა. საძიებო სისტემები მას ახლის ნაცვლად ნახმარად აჩვენებენ."
+
+#: apps/catalog/models.py
 msgid "allow 'commission a similar piece'"
 msgstr "„მსგავსი ნივთის შეკვეთის“ შესაძლებლობა"
 
@@ -379,6 +387,14 @@ msgstr "განახლებულია"
 #: apps/catalog/models.py
 msgid "first published"
 msgstr "პირველად გამოქვეყნდა"
+
+#: apps/catalog/models.py
+msgid "sold"
+msgstr "გაყიდვის დრო"
+
+#: apps/catalog/models.py
+msgid "Set automatically; orders the archive."
+msgstr "ივსება ავტომატურად; არქივი ამით ლაგდება."
 
 #: apps/catalog/models.py
 msgid "variant name"
@@ -448,6 +464,38 @@ msgstr "ფოტოები"
 msgid "This variant belongs to another product."
 msgstr "ეს ვარიანტი სხვა პროდუქტს ეკუთვნის."
 
+#: apps/catalog/seo.py apps/catalog/views.py
+#: apps/core/templatetags/navigation.py templates/catalog/product_detail.html
+#: templates/catalog/shop.html templates/components/footer.html
+#: templates/components/header.html
+msgid "Shop"
+msgstr "მაღაზია"
+
+#: apps/catalog/seo.py templates/base.html templates/components/footer.html
+#: templates/pages/home.html
+msgid "Handmade jewelry with natural stones"
+msgstr "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"
+
+#: apps/catalog/seo.py apps/core/templatetags/navigation.py
+#: templates/catalog/archive.html templates/components/footer.html
+msgid "Archive"
+msgstr "არქივი"
+
+#: apps/catalog/seo.py
+msgid "Pieces that have found their owners."
+msgstr "ნივთები, რომლებმაც თავიანთი მფლობელი იპოვეს."
+
+#: apps/catalog/seo.py apps/core/templatetags/navigation.py
+#: config/settings/base.py templates/catalog/stone_detail.html
+#: templates/catalog/stone_list.html templates/components/footer.html
+#: templates/components/header.html
+msgid "Stones"
+msgstr "ქვები"
+
+#: apps/catalog/seo.py
+msgid "The natural stones we work with."
+msgstr "ბუნებრივი ქვები, რომლებითაც ვმუშაობთ."
+
 #: apps/catalog/services/products.py
 msgid "Add the Georgian name."
 msgstr "დაამატეთ ქართული დასახელება."
@@ -468,11 +516,51 @@ msgstr "დაამატეთ მინიმუმ ერთი ფოტო
 msgid "Every photo needs a Georgian description for screen readers."
 msgstr "ყველა ფოტოს სჭირდება ქართული აღწერა ეკრანის წამკითხველისთვის."
 
+#: apps/catalog/templatetags/catalog_tags.py
+#, python-format
+msgid "from %(price)s"
+msgstr "%(price)s-დან"
+
+#: apps/catalog/templatetags/catalog_tags.py
+#: templates/catalog/product_detail.html templates/core/styleguide.html
+msgid "Sold"
+msgstr "გაყიდულია"
+
+#: apps/catalog/templatetags/catalog_tags.py
+#: templates/catalog/product_detail.html
+msgid "Out of stock"
+msgstr "მარაგში არ არის"
+
+#: apps/catalog/templatetags/catalog_tags.py templates/core/styleguide.html
+msgid "New"
+msgstr "ახალი"
+
+#: apps/catalog/templatetags/catalog_tags.py templates/core/styleguide.html
+msgid "One of a kind"
+msgstr "ერთადერთი ეგზემპლარი"
+
+#: apps/catalog/templatetags/catalog_tags.py
+#, python-format
+msgid "A piece like %(sku)s"
+msgstr "%(sku)s-ის მსგავსი ნივთი"
+
+#: apps/catalog/templatetags/catalog_tags.py
+msgid "A custom piece"
+msgstr "ინდივიდუალური შეკვეთა"
+
+#: apps/catalog/views.py
+#, python-format
+msgid "%(count)d piece"
+msgid_plural "%(count)d pieces"
+msgstr[0] "%(count)d ნივთი"
+msgstr[1] "%(count)d ნივთი"
+
 #: apps/core/admin.py
 msgid "Brand"
 msgstr "ბრენდი"
 
 #: apps/core/admin.py templates/components/footer.html
+#: templates/components/header.html
 msgid "Contact"
 msgstr "კონტაქტი"
 
@@ -584,19 +672,8 @@ msgstr "საიტის პარამეტრები"
 msgid "Site settings"
 msgstr "საიტის პარამეტრები"
 
-#: apps/core/templatetags/navigation.py
-msgid "Shop"
-msgstr "მაღაზია"
-
-#: apps/core/templatetags/navigation.py
-msgid "Archive"
-msgstr "არქივი"
-
-#: apps/core/templatetags/navigation.py config/settings/base.py
-msgid "Stones"
-msgstr "ქვები"
-
-#: apps/core/templatetags/navigation.py
+#: apps/core/templatetags/navigation.py templates/components/footer.html
+#: templates/components/header.html
 msgid "About"
 msgstr "ჩვენ შესახებ"
 
@@ -720,18 +797,269 @@ msgstr "შესაძლოა, ნივთმა, რომელსაც �
 msgid "Back to the home page"
 msgstr "მთავარ გვერდზე დაბრუნება"
 
-#: templates/base.html templates/components/footer.html
-#: templates/pages/home.html
-msgid "Handmade jewelry with natural stones"
-msgstr "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"
-
 #: templates/base.html
 msgid "Skip to content"
 msgstr "შინაარსზე გადასვლა"
 
-#: templates/catalog/widgets/multiple_photos.html
-msgid "Choose photos"
-msgstr "ფოტოების არჩევა"
+#: templates/catalog/_filter_fields.html
+msgid "Type"
+msgstr "ტიპი"
+
+#: templates/catalog/_filter_fields.html
+msgid "Category"
+msgstr "კატეგორია"
+
+#: templates/catalog/_filter_fields.html
+msgid "Stone"
+msgstr "ქვა"
+
+#: templates/catalog/_filter_fields.html
+msgid "Material"
+msgstr "მასალა"
+
+#: templates/catalog/_filter_fields.html
+msgid "Price, ₾"
+msgstr "ფასი, ₾"
+
+#: templates/catalog/_filter_fields.html
+msgid "Minimum price"
+msgstr "მინიმალური ფასი"
+
+#: templates/catalog/_filter_fields.html
+msgid "Maximum price"
+msgstr "მაქსიმალური ფასი"
+
+#: templates/catalog/_filter_fields.html
+msgid "Availability"
+msgstr "ხელმისაწვდომობა"
+
+#: templates/catalog/_filter_fields.html
+msgid "Available only"
+msgstr "მხოლოდ ხელმისაწვდომი"
+
+#: templates/catalog/_filter_fields.html
+msgid "Apply"
+msgstr "გამოყენება"
+
+#: templates/catalog/_filter_fields.html templates/catalog/shop.html
+msgid "Clear all"
+msgstr "ყველას გასუფთავება"
+
+#: templates/catalog/_gallery.html
+msgid "Photos"
+msgstr "ფოტოები"
+
+#: templates/catalog/_gallery.html
+#, python-format
+msgid "Photo %(n)s of %(total)s"
+msgstr "ფოტო %(n)s / %(total)s"
+
+#: templates/catalog/_gallery.html
+msgid "carousel"
+msgstr "კარუსელი"
+
+#: templates/catalog/_gallery.html
+msgid "Product photos"
+msgstr "პროდუქტის ფოტოები"
+
+#: templates/catalog/_gallery.html
+msgid "slide"
+msgstr "სლაიდი"
+
+#: templates/catalog/_gallery.html
+msgid "Open photo full screen"
+msgstr "ფოტოს სრულ ეკრანზე გახსნა"
+
+#: templates/catalog/_gallery.html
+msgid "Close"
+msgstr "დახურვა"
+
+#: templates/catalog/_gallery.html
+msgid "Previous photo"
+msgstr "წინა ფოტო"
+
+#: templates/catalog/_gallery.html
+msgid "Next photo"
+msgstr "შემდეგი ფოტო"
+
+#: templates/catalog/_load_more.html
+msgid "Load more"
+msgstr "მეტის ჩატვირთვა"
+
+#: templates/catalog/_product_accordions.html
+msgid "Description"
+msgstr "აღწერა"
+
+#: templates/catalog/_product_accordions.html
+msgid "Story"
+msgstr "ისტორია"
+
+#: templates/catalog/_product_accordions.html
+msgid "Dimensions & size"
+msgstr "ზომები"
+
+#: templates/catalog/_product_accordions.html
+msgid "Dimensions"
+msgstr "ზომები"
+
+#: templates/catalog/_product_accordions.html
+msgid "Weight"
+msgstr "წონა"
+
+#: templates/catalog/_product_accordions.html
+msgid "g"
+msgstr "გ"
+
+#: templates/catalog/_product_accordions.html
+msgid "Care"
+msgstr "მოვლა"
+
+#: templates/catalog/_product_accordions.html
+msgid "Delivery & returns"
+msgstr "მიწოდება და დაბრუნება"
+
+#: templates/catalog/_product_accordions.html
+msgid "Shipping & returns in detail"
+msgstr "მიწოდება და დაბრუნება დეტალურად"
+
+#: templates/catalog/_results_partial.html templates/catalog/shop.html
+msgid "Filters"
+msgstr "ფილტრები"
+
+#: templates/catalog/_results_partial.html
+msgid "Sort"
+msgstr "დალაგება"
+
+#: templates/catalog/_results_partial.html
+msgid "Newest"
+msgstr "ახალი პირველად"
+
+#: templates/catalog/_results_partial.html
+msgid "Price: low to high"
+msgstr "ფასი: ზრდადობით"
+
+#: templates/catalog/_results_partial.html
+msgid "Price: high to low"
+msgstr "ფასი: კლებადობით"
+
+#: templates/catalog/_results_partial.html
+msgid "No pieces match these filters."
+msgstr "ამ ფილტრებით ნივთი ვერ მოიძებნა."
+
+#: templates/catalog/_results_partial.html
+msgid "Clear all filters"
+msgstr "ფილტრების გასუფთავება"
+
+#: templates/catalog/archive.html
+msgid "Found their owners"
+msgstr "იპოვეს მფლობელი"
+
+#: templates/catalog/archive.html
+msgid "Every piece here was made once and has been sold. If one speaks to you, a similar piece can be made — with its own stones and its own character."
+msgstr "აქ წარმოდგენილი ყოველი ნივთი ერთხელ შეიქმნა და უკვე გაიყიდა. თუ რომელიმე მოგეწონათ, შეგვიძლია მსგავსი ნივთი შევქმნათ — საკუთარი ქვებითა და საკუთარი ხასიათით."
+
+#: templates/catalog/archive.html
+msgid "Commission a piece"
+msgstr "ნივთის შეკვეთა"
+
+#: templates/catalog/archive.html
+msgid "Show the whole archive"
+msgstr "მთელი არქივის ჩვენება"
+
+#: templates/catalog/archive.html
+msgid "The archive is empty for now."
+msgstr "არქივი ჯერ ცარიელია."
+
+#: templates/catalog/product_detail.html
+#, python-format
+msgid "Preview — this product is not visible in the shop (%(status)s)."
+msgstr "გადახედვა — ეს პროდუქტი მაღაზიაში არ ჩანს (%(status)s)."
+
+#: templates/catalog/product_detail.html templates/catalog/shop.html
+#: templates/catalog/stone_detail.html
+msgid "Breadcrumb"
+msgstr "ნავიგაციის ჯაჭვი"
+
+#: templates/catalog/product_detail.html templates/core/styleguide.html
+msgid "In stock"
+msgstr "მარაგშია"
+
+#: templates/catalog/product_detail.html
+msgid "One of a kind — only 1"
+msgstr "ერთადერთი ეგზემპლარი — მხოლოდ 1"
+
+#: templates/catalog/product_detail.html
+msgid "This piece has found its owner."
+msgstr "ამ ნივთმა თავისი მფლობელი იპოვა."
+
+#: templates/catalog/product_detail.html
+msgid "Choose"
+msgstr "არჩევა"
+
+#: templates/catalog/product_detail.html
+msgid "out of stock"
+msgstr "მარაგში არ არის"
+
+#: templates/catalog/product_detail.html templates/core/styleguide.html
+msgid "Add to cart"
+msgstr "კალათაში დამატება"
+
+#: templates/catalog/product_detail.html templates/components/product_card.html
+msgid "Add to wishlist"
+msgstr "სურვილების სიაში დამატება"
+
+#: templates/catalog/product_detail.html
+msgid "Online ordering opens soon."
+msgstr "ონლაინ შეკვეთა მალე გაიხსნება."
+
+#: templates/catalog/product_detail.html templates/components/product_card.html
+#: templates/core/styleguide.html
+msgid "Commission a similar piece"
+msgstr "მსგავსი ნივთის შეკვეთა"
+
+#: templates/catalog/product_detail.html
+msgid "Each piece is made once. Tell us what you liked about this one, and a similar piece can be made for you."
+msgstr "ყოველი ნივთი ერთხელ იქმნება. მოგვწერეთ, რა მოგეწონათ ამ ნივთში, და შეგვიძლია თქვენთვის მსგავსი შევქმნათ."
+
+#: templates/catalog/product_detail.html
+msgid "You may also like"
+msgstr "შეიძლება მოგეწონოთ"
+
+#: templates/catalog/shop.html
+msgid "Close filters"
+msgstr "ფილტრების დახურვა"
+
+#: templates/catalog/shop.html
+msgid "Show"
+msgstr "ჩვენება"
+
+#: templates/catalog/stone_detail.html
+#, python-format
+msgid "Pieces with %(name)s"
+msgstr "ნივთები ქვით: %(name)s"
+
+#: templates/catalog/stone_detail.html
+msgid "Nothing with this stone is available right now."
+msgstr "ამ ქვით ნივთი ახლა ხელმისაწვდომი არ არის."
+
+#: templates/catalog/stone_detail.html
+msgid "Earlier pieces with this stone in the archive"
+msgstr "ამ ქვით შექმნილი ადრინდელი ნივთები არქივში"
+
+#: templates/catalog/stone_list.html
+msgid "Stone glossary"
+msgstr "ქვების ლექსიკონი"
+
+#: templates/catalog/stone_list.html
+msgid "The natural stones we work with — where they come from and what makes each one different."
+msgstr "ბუნებრივი ქვები, რომლებითაც ვმუშაობთ — საიდან მოდის თითოეული და რით განსხვავდება ერთმანეთისგან."
+
+#: templates/catalog/stone_list.html
+#, python-format
+msgid "%(counter)s piece available"
+msgid_plural "%(counter)s pieces available"
+msgstr[0] "%(counter)s ხელმისაწვდომი ნივთი"
+msgstr[1] "%(counter)s ხელმისაწვდომი ნივთი"
 
 #: templates/catalog/widgets/multiple_photos.html
 msgid "No photos selected"
@@ -741,13 +1069,57 @@ msgstr "ფოტოები არ არის არჩეული"
 msgid "Photos selected:"
 msgstr "არჩეული ფოტოები:"
 
+#: templates/catalog/widgets/multiple_photos.html
+msgid "Choose photos"
+msgstr "ფოტოების არჩევა"
+
+#: templates/components/footer.html
+msgid "All pieces"
+msgstr "ყველა ნივთი"
+
+#: templates/components/footer.html
+msgid "Information"
+msgstr "ინფორმაცია"
+
+#: templates/components/footer.html
+msgid "Shipping & returns"
+msgstr "მიწოდება და დაბრუნება"
+
+#: templates/components/footer.html
+msgid "FAQ"
+msgstr "ხშირად დასმული კითხვები"
+
 #: templates/components/footer.html
 msgid "ID"
 msgstr "ს/კ"
 
+#: templates/components/footer.html
+msgid "Legal"
+msgstr "იურიდიული ინფორმაცია"
+
+#: templates/components/footer.html
+msgid "Terms"
+msgstr "წესები და პირობები"
+
+#: templates/components/footer.html
+msgid "Privacy"
+msgstr "კონფიდენციალურობა"
+
+#: templates/components/footer.html
+msgid "Cookies"
+msgstr "ქუქი-ფაილები"
+
+#: templates/components/footer.html
+msgid "Payment methods"
+msgstr "გადახდის მეთოდები"
+
 #: templates/components/header.html
 msgid "Open menu"
 msgstr "მენიუს გახსნა"
+
+#: templates/components/header.html
+msgid "Close menu"
+msgstr "მენიუს დახურვა"
 
 #: templates/components/header.html
 msgid "Main"
@@ -761,25 +1133,9 @@ msgstr "მთავარი"
 msgid "Search"
 msgstr "ძიება"
 
-#: templates/components/header.html
-msgid "Menu"
-msgstr "მენიუ"
-
-#: templates/components/header.html
-msgid "Close menu"
-msgstr "მენიუს დახურვა"
-
-#: templates/core/styleguide.html
-msgid "Add to cart"
-msgstr "კალათაში დამატება"
-
-#: templates/core/styleguide.html
-msgid "Commission a similar piece"
-msgstr "მსგავსი ნივთის შეკვეთა"
-
-#: templates/core/styleguide.html
-msgid "Sold"
-msgstr "გაყიდულია"
+#: templates/components/product_card.html
+msgid "Wishlist arrives soon"
+msgstr "სურვილების სია მალე დაემატება"
 
 #: templates/core/styleguide.html
 msgid "Read the story"
@@ -792,14 +1148,6 @@ msgstr "საწყისი ფასი"
 #: templates/core/styleguide.html
 msgid "Sale price"
 msgstr "ფასდაკლებული ფასი"
-
-#: templates/core/styleguide.html
-msgid "One of a kind"
-msgstr "ერთადერთი ეგზემპლარი"
-
-#: templates/core/styleguide.html
-msgid "In stock"
-msgstr "მარაგშია"
 
 #: templates/core/styleguide.html
 msgid "First name"
@@ -824,10 +1172,6 @@ msgstr "შეიყვანეთ სწორი ელფოსტის მ
 #: templates/core/styleguide.html
 msgid "I agree to the Terms and the Privacy Policy"
 msgstr "ვეთანხმები წესებსა და პირობებს და კონფიდენციალურობის პოლიტიკას"
-
-#: templates/core/styleguide.html
-msgid "New"
-msgstr "ახალი"
 
 #: templates/pages/home.html
 msgid "Handmade atelier"

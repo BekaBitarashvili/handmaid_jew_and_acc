@@ -51,9 +51,10 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
     </div>
   </div>
 
-  {# ------------------------------------------------------------------ Mobile menu
-     Full-screen ivory overlay under the bar (SPEC §9.5): fades in over 400ms; links
-     fade in one after another; scrolls inside itself when it doesn't fit (landscape). #}
+  {% comment %}
+  Mobile menu: full-screen ivory overlay under the bar (SPEC §9.5): fades in over 400ms; links
+  fade in one after another; scrolls inside itself when it doesn't fit (landscape).
+  {% endcomment %}
   <nav id="mobile-menu" x-ref="menu" aria-label="{% translate 'Main' %}" x-cloak
        x-show="open"
        x-transition:enter="transition-opacity duration-400 ease-atelier" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"

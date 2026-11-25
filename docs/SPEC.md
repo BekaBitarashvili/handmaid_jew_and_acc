@@ -61,7 +61,8 @@ Browser ── HTMX/Alpine ──► Django (Gunicorn) ──► PostgreSQL
 ├── config/                 # settings/{base,dev,test,prod}.py, urls.py, wsgi.py
 ├── apps/
 │   ├── core/               # SiteSettings, base templates context, utils (money, transliteration)
-│   ├── catalog/            # Category, Stone, Material, Product, ProductVariant, ProductImage, inventory services
+│   ├── catalog/            # models, services/ (writes: products, inventory, images), queries.py (storefront reads),
+│   │                       # filters.py (shop query strings), lookup.py (translated slugs), seo.py, images.py (renditions)
 │   ├── cart/               # session cart, HTMX endpoints
 │   ├── orders/             # Order, OrderItem, checkout flow, status workflow, notifications
 │   ├── payments/           # PaymentProvider base, bog.py, tbc.py, Payment model, callbacks
@@ -100,6 +101,8 @@ Money fields are integers in **tetri**. All content text fields marked 🌐 are 
   - status: `draft` | `active` | `hidden` | `sold` (archive) — sold is set automatically when total stock hits 0 and `is_unique=True`
   - is_unique (bool, default True — admin help text explains: unchecked = several identical pieces, stock may be > 1), is_featured, `new_badge` (auto / yes / no) → `is_new` property: auto = **published_at** < 30 days ago (a draft can wait weeks before going live)
   - allow_commission_request (bool, default True)
+  - is_preowned (bool, default False — vintage pieces with a previous owner; JSON-LD `UsedCondition`, else `NewCondition`)
+  - sold_at (set when status becomes `sold`, cleared when it leaves it; orders the archive)
   - seo_title 🌐, seo_description 🌐
   - created_at, updated_at, published_at
 - **ProductVariant**: product (FK), name 🌐 (e.g. "Beige / M"; empty for default), sku_suffix, price_override (nullable), stock (int ≥ 0), reserved (int ≥ 0), sort_order, is_default.
@@ -148,14 +151,16 @@ Session key `cart`: `{variant_id: qty}` + `gift_wrap`, `promo_code`. Cart servic
 
 ### 6.1 Browse
 - **Home**: hero (one large photo + one line + CTA) → short brand statement → categories (editorial tiles) → "New pieces" → featured story/collection block → Stone of the month (from Stone glossary) → sale banner (only if active sale) → handmade promise (3 short points) → footer.
-- **Shop / Category**: grid (2 cols mobile, 3 tablet, 4 desktop); filters: category, stone, material, price range, "available only" (default on); sort: newest, price ↑, price ↓. Filters update via HTMX with `hx-push-url` (shareable URLs). Pagination: "Load more" button (HTMX), no infinite scroll.
-- **Archive** (`/archive/`): sold pieces, grayscale-to-color hover, "Commission a similar piece" CTA.
+- **URLs**: English path words in both languages, only slugs translated: `/ka/shop/`, `/ka/shop/<category>/` (subcategories have flat URLs), `/ka/product/<slug>/` (not under the category, so a category change keeps the URL), `/ka/archive/`, `/ka/stones/<slug>/`. A slug from the other language 301-redirects to the canonical URL (also what makes the language switch work on product pages).
+- **Shop / Category**: grid (2 cols mobile, 3 tablet, 4 desktop); filters: category (subcategories on a category page), stone, material, price range in ₾, "available only" (default on; off adds sold / out-of-stock pieces after the buyable ones); sort: newest, price ↑, price ↓. One GET form (works without JS); HTMX swaps the results and the server sends a canonical `HX-Push-Url` (defaults dropped, current-language slugs; slugs from either language accepted). Phones: filters in a full-height sheet with a live "Show N pieces" button. Pagination: "Load more" (12 per page, HTMX, page not pushed to the URL; `?page=N` without JS renders N pages), no infinite scroll.
+- **Cards**: 4:5 photo (second photo cross-fades on hover, mouse only), text labels in priority order Sold / Out of stock / New / One of a kind, price or "from X ₾" for variant price ranges.
+- **Archive** (`/archive/`): sold pieces, newest sale first, grayscale-to-color hover (gentler desaturation on touch screens), **no prices** (reads like a gallery), "Commission a similar piece" CTA per piece; optional `?stone=` filter.
 - **Stone glossary** (`/stones/`, `/stones/<slug>/`): stone story + products with that stone.
 - **Search**: simple Postgres full-text (both languages) over name, description, stones, materials.
 
 ### 6.2 Product page
 Gallery (swipe on mobile, thumbnails desktop, tap to fullscreen zoom) · name · price (sale: old struck + new + end date) · availability label ("One of a kind — only 1", "In stock", "Sold") · variant selector (only if >1 variant) · Add to cart · Wishlist heart · accordion: Description / Story / Stones & materials (linked to glossary) / Dimensions & size guide / Care / Delivery & returns · "You may also like" (same stone or category, available only).
-Sold product: page stays live (SEO), shows "Sold" + Commission CTA, no add-to-cart.
+Sold product: page stays live (SEO), shows the price **muted next to "Sold"** + Commission CTA, no add-to-cart. The price stays in JSON-LD (`SoldOut`). "Commission a similar piece" links to the request form once it exists (Phase 2), until then `mailto:` the contact e-mail with the SKU in the subject. Gallery: one CSS scroll-snap track (native swipe on phones, thumbnails + arrow keys on desktop), tap/click opens a fullscreen `<dialog>` (pinch-zoom on touch, click-to-zoom with a mouse). Variant pills update price / availability / photo without a request. Accordions are native `<details>`; empty sections are left out; delivery prices of 0 (not yet set) are not shown.
 
 ### 6.3 Cart (drawer + page)
 - Add to cart opens a **side drawer** (HTMX swap) — no reload. `/cart/` full page also exists.
@@ -291,7 +296,8 @@ Georgian-capable fonts are mandatory — test each with: `ხელნაკე�
 - Hairline borders (1px `--sand`) instead of shadows.
 
 ### 9.5 Components
-- **Header**: transparent over hero, solid `--ivory` on scroll; centered logo wordmark, left nav, right icons (search, wishlist, language, cart with count). Mobile: full-screen menu with large serif links.
+- **Header**: transparent over hero, solid `--ivory` on scroll; centered logo wordmark, left nav, right icons (search, wishlist, language, cart with count). No backdrop blur: it would trap the fixed mobile menu inside the header.
+- **Mobile menu**: full-screen ivory overlay under the header bar, 400ms fade (no slide/bounce); the bar stays (burger → ✕ in place, brand centred, cart right); large serif links left-aligned — Shop, top-level categories from the DB (smaller), Stones, About — fading in 60ms apart; thin divider; small sans bottom area with Wishlist, Contact, KA/EN. Scroll lock, page behind `inert`, focus trap (✕ + menu), close on Esc / ✕ / link click, focus returns to the burger. Link sizes follow screen height and the overlay scrolls in phone landscape.
 - **Buttons**: Primary `--espresso` bg / `--ivory` text; Secondary outlined `--cocoa`; Text link with 1px gold underline that grows from left on hover.
 - **Product card**: image (second image crossfades on hover desktop), name (serif), price (sans), small badges in text form ("New", "One of a kind", "−20%") — no colored pill stickers. Wishlist heart top-right, outline icon.
 - **Ornament**: one small thin line-art motif (e.g. a stylized bead/stone outline SVG) used as section divider — sparingly.
@@ -335,14 +341,15 @@ Django Admin + `django-unfold`, tested on a phone.
 - Checkout consents stored on order with timestamp.
 - Cookie banner: essential cookies only by default; analytics only after opt-in (Accept / Reject equal prominence).
 - Data minimization: no customer accounts, no card data, order data retention per policy; admin action to anonymize an order's personal data on request.
-- Footer: legal entity name / ID, contact, payment logos (BOG, TBC, Visa, Mastercard), language switch.
+- Footer: three columns — Shop (categories, Archive, Stones) / Information (About, Shipping & returns, FAQ, Contact) / Contact (from SiteSettings); bottom bar with legal entity name / ID, Terms / Privacy / Cookies, payment methods (BOG, TBC, Visa, Mastercard — neutral text badges until the official marks arrive with the merchant agreements). Pages that don't exist yet show as plain text, not dead links. The language switch lives in the header only.
 
 ---
 
 ## 12. Non-functional
 
 - **Performance**: LCP < 2.5s on 4G mobile, CLS < 0.1. Responsive `srcset`, lazy-load below fold, preload hero image, cache-control on static, template fragment caching for menus.
-- **SEO**: translated slugs, `hreflang`, canonical, schema.org `Product` (with `availability` SoldOut for archive), `BreadcrumbList`, `Organization`; XML sitemaps; Open Graph images per product.
+- **SEO**: translated slugs, `hreflang` (ka, en, x-default = ka; each language's own slug), canonical (never with filter params; filtered / sorted / paged listings are `noindex,follow`), schema.org `Product` (`Offer`, or `AggregateOffer` for variant price ranges; InStock / OutOfStock / SoldOut; New / UsedCondition), `BreadcrumbList`, `Organization`; XML sitemaps (Phase 2); Open Graph images per product (the processed JPEG original). Titles: `seo_title` or "Name — Category | Brand".
+- **Images**: `<picture>` with AVIF + WebP srcsets (400–1800w), fixed width/height (no layout shift), first product photo `fetchpriority=high`, first 4 grid cards eager; picture data cached per file name (Redis in production).
 - **Security**: HTTPS, HSTS, CSRF everywhere (HTMX sends token via `hx-headers`), CSP, rate limiting on checkout/promo/contact forms, honeypot on public forms.
 - **Reliability**: daily Postgres backups (off-site), Sentry, health-check endpoint, structured logs.
 - **Accessibility**: WCAG 2.1 AA, focus states (gold ring), alt texts required in admin, semantic HTML.

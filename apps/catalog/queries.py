@@ -51,8 +51,15 @@ _INT = IntegerField()
 _VARIANT_PRICE = Coalesce("price_override", "product__price", output_field=_INT)
 
 
-def with_card_data(queryset: QuerySet[Product]) -> QuerySet[Product]:
-    """Annotations and prefetches every product card needs, in a fixed number of queries."""
+def with_card_data(queryset: QuerySet[Product], sales: list | None = None) -> QuerySet[Product]:
+    """Annotations and prefetches every product card needs, in a fixed number of queries.
+
+    Prices: `min_price` / `max_price` are the regular variant prices; `sale_min_price` /
+    `sale_max_price` apply the best running sale (equal to the regular ones when none).
+    """
+    from apps.promotions.services import running_sales, sale_price_expression
+
+    sales = running_sales() if sales is None else sales
     return (
         queryset.select_related("category")
         .annotate(
@@ -68,11 +75,13 @@ def with_card_data(queryset: QuerySet[Product]) -> QuerySet[Product]:
             ),
         )
         .annotate(
+            sale_min_price=sale_price_expression("min_price", sales),
+            sale_max_price=sale_price_expression("max_price", sales),
             is_available=Case(
                 When(Q(status=Product.Status.ACTIVE) & Q(available_qty__gt=0), then=Value(True)),
                 default=Value(False),
                 output_field=BooleanField(),
-            )
+            ),
         )
         .prefetch_related(
             Prefetch("images", queryset=ProductImage.objects.order_by("sort_order", "pk")),
@@ -133,16 +142,17 @@ def filter_products(base: QuerySet[Product], filters: ProductFilters) -> QuerySe
                 through.objects.filter(product_id=OuterRef("pk"), material__in=filters.materials)
             )
         )
+    # Price range and sorting use what the customer actually pays.
     if filters.min_price is not None:
-        qs = qs.filter(min_price__gte=filters.min_price)
+        qs = qs.filter(sale_min_price__gte=filters.min_price)
     if filters.max_price is not None:
-        qs = qs.filter(min_price__lte=filters.max_price)
+        qs = qs.filter(sale_min_price__lte=filters.max_price)
     qs = qs.filter(is_available=True)  # listings show only pieces that can be bought
 
     order = {
         SORT_NEWEST: ("-published_at", "-pk"),
-        SORT_PRICE_ASC: ("min_price", "-pk"),
-        SORT_PRICE_DESC: ("-min_price", "-pk"),
+        SORT_PRICE_ASC: ("sale_min_price", "-pk"),
+        SORT_PRICE_DESC: ("-sale_min_price", "-pk"),
     }[filters.sort]
     return qs.order_by(*order)
 
@@ -150,7 +160,7 @@ def filter_products(base: QuerySet[Product], filters: ProductFilters) -> QuerySe
 def facet_options(base: QuerySet[Product]) -> dict:
     """Stones, materials and subcategories that actually occur in `base`, plus its price range."""
     ids = base.values("pk")
-    prices = with_card_data(base).aggregate(low=Min("min_price"), high=Max("min_price"))
+    prices = with_card_data(base).aggregate(low=Min("sale_min_price"), high=Max("sale_min_price"))
     return {
         "stones": Stone.objects.filter(products__in=ids).distinct(),
         "materials": Material.objects.filter(products__in=ids).distinct(),

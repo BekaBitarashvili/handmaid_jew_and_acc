@@ -285,6 +285,11 @@ UNFOLD = {
                         "icon": "layers",
                         "link": _admin_url("admin:catalog_material_changelist"),
                     },
+                    {
+                        "title": _("Sales"),
+                        "icon": "sell",
+                        "link": _admin_url("admin:promotions_sale_changelist"),
+                    },
                 ],
             },
             {

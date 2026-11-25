@@ -38,8 +38,8 @@ def product_seo(request: HttpRequest, product: Product, images: list[ProductImag
     canonical = request.build_absolute_uri(product.get_absolute_url())
     large = [p.large_url for p in (picture(i.image) for i in images) if p]
     condition = SCHEMA + ("UsedCondition" if product.is_preowned else "NewCondition")
-    low = getattr(product, "min_price", product.price)
-    high = getattr(product, "max_price", product.price)
+    low = getattr(product, "sale_min_price", product.price)
+    high = getattr(product, "sale_max_price", product.price)
 
     offer: dict = {
         "url": canonical,
@@ -47,6 +47,9 @@ def product_seo(request: HttpRequest, product: Product, images: list[ProductImag
         "availability": availability(product),
         "itemCondition": condition,
     }
+    sale_ends = getattr(product, "sale_ends_at", None)
+    if sale_ends:
+        offer["priceValidUntil"] = sale_ends.date().isoformat()
     if low == high:
         offer.update({"@type": "Offer", "price": str(tetri_to_gel(low))})
     else:

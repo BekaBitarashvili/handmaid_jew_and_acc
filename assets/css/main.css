@@ -342,6 +342,40 @@
     }
   }
 
+  /* Owner-written HTML (sanitised to p, strong, em, a, ul, ol, li, h3). */
+  .rich-text {
+    color: var(--color-cocoa);
+    & > * + * {
+      margin-top: 1em;
+    }
+    & h3 {
+      margin-top: 1.6em;
+    }
+    & ul,
+    & ol {
+      padding-left: 1.25em;
+    }
+    & ul {
+      list-style: disc;
+    }
+    & ol {
+      list-style: decimal;
+    }
+    & li + li {
+      margin-top: 0.35em;
+    }
+    & strong {
+      font-weight: 500;
+      color: var(--color-espresso);
+    }
+    & a {
+      color: var(--color-espresso);
+      text-decoration: underline;
+      text-decoration-color: var(--color-gold);
+      text-underline-offset: 3px;
+    }
+  }
+
   .hairline {
     border-color: var(--color-sand);
   }

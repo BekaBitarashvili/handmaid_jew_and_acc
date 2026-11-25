@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% translate "Stones" %} — {{ site_settings.brand_name }}{% endblock %}
+
+{% block content %}
+<div class="container-site pb-24 pt-8 md:pt-14">
+  <header class="max-w-3xl">
+    <p class="label text-taupe-text">{% translate "Stone glossary" %}</p>
+    <h1 class="mt-4">{% translate "Stones" %}</h1>
+    <p class="prose-column mt-4 text-cocoa">{% translate "The natural stones we work with — where they come from and what makes each one different." %}</p>
+  </header>
+
+  <ul class="mt-14 grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+    {% for stone in stones %}
+      <li>
+        <a href="{{ stone.get_absolute_url }}" class="group block">
+          <div class="flex aspect-[4/3] items-center justify-center overflow-hidden bg-cream">
+            {% if stone.image %}
+              <img src="{{ stone.image.url }}" alt="" class="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" loading="lazy">
+            {% else %}
+              <span class="size-24 rounded-full border border-espresso/10 transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.06]" style="background: {{ stone.color_hex|default:'#E3D5C1' }}" aria-hidden="true"></span>
+            {% endif %}
+          </div>
+          <h2 class="mt-5 text-h3">{{ stone.name }}</h2>
+          {% if stone.short_description %}<p class="mt-1 text-small text-cocoa">{{ stone.short_description }}</p>{% endif %}
+          <p class="label mt-3 text-taupe-text">
+            {% blocktranslate count counter=stone.available_count %}{{ counter }} piece available{% plural %}{{ counter }} pieces available{% endblocktranslate %}
+          </p>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -28,6 +28,10 @@ The wishlist heart is a sibling of the link (no interactive element inside a lin
       {% endif %}
     </div>
   </a>
+  {% if archive and product.allow_commission_request %}
+    {% commission_url product as commission %}
+    {% if commission %}<a href="{{ commission }}" class="link mt-2 inline-block text-small text-cocoa">{% translate "Commission a similar piece" %}</a>{% endif %}
+  {% endif %}
   {% if not archive %}
     {# TODO(1c): wishlist toggle (signed cookie). #}
     <button type="button" class="absolute right-2 top-2 flex size-10 items-center justify-center text-cocoa/70" disabled

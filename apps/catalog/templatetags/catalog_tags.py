@@ -1,6 +1,9 @@
 """Storefront template helpers: responsive product pictures, prices, labels."""
 
+from urllib.parse import quote
+
 from django import template
+from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext as _
 
 from apps.catalog.images import picture
@@ -65,3 +68,20 @@ def availability(product: Product) -> str:
     if not getattr(product, "is_available", False):
         return "out"
     return "unique" if product.is_unique else "in_stock"
+
+
+@register.simple_tag(takes_context=True)
+def commission_url(context, product: Product | None = None) -> str:
+    """ "Commission a similar piece": the request form once it exists (Phase 2), until
+    then an e-mail to the shop with the SKU in the subject. "" when neither is available."""
+    try:
+        url = reverse("pages:commission")
+        return f"{url}?product={product.sku}" if product else url
+    except NoReverseMatch:
+        pass
+    settings_obj = context.get("site_settings")
+    email = getattr(settings_obj, "contact_email", "")
+    if not email:
+        return ""
+    subject = (_("A piece like %(sku)s") % {"sku": product.sku}) if product else _("A custom piece")
+    return f"mailto:{email}?subject={quote(subject)}"

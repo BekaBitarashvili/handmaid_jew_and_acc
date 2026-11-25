@@ -1,5 +1,8 @@
 """Storefront views. Thin: queries live in queries.py, URL parsing in filters.py."""
 
+from urllib.parse import urlencode
+
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render
 from django.utils.translation import gettext as _
@@ -7,8 +10,17 @@ from django.utils.translation import ngettext
 
 from . import filters as shop_filters
 from .lookup import by_translated_slug
-from .models import Category
-from .queries import category_scope, facet_options, filter_products, visible_for, with_card_data
+from .models import Category, Stone
+from .queries import (
+    archive_products,
+    category_scope,
+    facet_options,
+    filter_products,
+    public_products,
+    stones_with_counts,
+    visible_for,
+    with_card_data,
+)
 
 GRID_TARGET = "product-grid"  # hx-target of "Load more"
 RESULTS_TARGET = "results"  # hx-target of the filter form
@@ -90,3 +102,59 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
     if wrong_language:
         return _redirect_to(product, request)
     return render(request, "catalog/product_detail.html", {"product": product})
+
+
+def _paged(request: HttpRequest, queryset, template: str, context: dict) -> HttpResponse:
+    """Shared "Load more" paging for archive and stone pages (same partials as the shop)."""
+    page = shop_filters._page(request.GET.get("page"))
+    size = shop_filters.PAGE_SIZE
+    total = queryset.count()
+    extra_query = urlencode([(k, v) for k, v in request.GET.items() if k != "page"])
+    context.update(
+        {
+            "total": total,
+            "has_more": total > page * size,
+            "next_query": (f"{extra_query}&" if extra_query else "") + f"page={page + 1}",
+            "eager_count": 4 if page == 1 else 0,
+        }
+    )
+    if request.htmx and request.htmx.target == GRID_TARGET:
+        context["products"] = queryset[(page - 1) * size : page * size]
+        context["eager_count"] = 0
+        return render(request, "catalog/_cards_partial.html", context)
+    context["products"] = queryset[: page * size]
+    return render(request, template, context)
+
+
+def archive(request: HttpRequest) -> HttpResponse:
+    products = archive_products()
+    stone = None
+    if request.GET.get("stone"):
+        stone = Stone.objects.filter(
+            Q(slug_ka=request.GET["stone"]) | Q(slug_en=request.GET["stone"])
+        ).first()
+        if stone is not None:
+            products = products.filter(stones=stone)
+    return _paged(request, products, "catalog/archive.html", {"archive": True, "stone": stone})
+
+
+def stone_list(request: HttpRequest) -> HttpResponse:
+    return render(request, "catalog/stone_list.html", {"stones": stones_with_counts()})
+
+
+def stone_detail(request: HttpRequest, slug: str) -> HttpResponse:
+    stone, wrong_language = by_translated_slug(Stone.objects.all(), slug)
+    if wrong_language:
+        return _redirect_to(stone, request)
+    products = (
+        with_card_data(public_products().filter(stones=stone))
+        .filter(is_available=True)
+        .order_by("-published_at", "-pk")
+    )
+    has_archive = archive_products().filter(stones=stone).exists()
+    return _paged(
+        request,
+        products,
+        "catalog/stone_detail.html",
+        {"stone": stone, "has_archive": has_archive},
+    )

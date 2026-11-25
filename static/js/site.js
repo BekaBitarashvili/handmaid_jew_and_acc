@@ -5,7 +5,10 @@
 const PHONE = window.matchMedia("(max-width: 47.999rem)");
 const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOUSE = window.matchMedia("(hover: hover) and (pointer: fine)");
-const DESKTOP_NAV = window.matchMedia("(min-width: 64rem)"); // header shows the links from here
+// Header shows the links from here; Georgian labels are wider (the `desk:` variant in main.css).
+const DESKTOP_NAV = window.matchMedia(
+  document.documentElement.lang === "ka" ? "(min-width: 80rem)" : "(min-width: 64rem)",
+);
 
 function lockPageScroll(locked) {
   document.documentElement.classList.toggle("overflow-hidden", locked);

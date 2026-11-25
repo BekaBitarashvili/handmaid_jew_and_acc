@@ -12,18 +12,18 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
         class="sticky top-0 z-50 border-b border-sand bg-linen">
   <div class="container-site relative z-10 grid h-16 grid-cols-[1fr_auto_1fr] items-center bg-linen md:h-[4.5rem]">
 
-    {# Left: burger (phones) / main navigation (1024px+) #}
+    {# Left: burger / main navigation (desk: 1024px+, Georgian 1280px+) #}
     <div class="flex items-center">
       <button type="button" x-ref="toggle" @click="toggle()"
-              class="relative -ml-2 size-10 text-espresso lg:hidden"
+              class="relative -ml-2 size-10 text-espresso desk:hidden"
               aria-controls="mobile-menu" aria-expanded="false" :aria-expanded="open.toString()">
         <span class="absolute inset-0 flex items-center justify-center transition-opacity duration-300" :class="open ? 'opacity-0' : 'opacity-100'">{% include "components/icon.html" with name="menu" %}</span>
         <span class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300" :class="open ? 'opacity-100' : 'opacity-0'">{% include "components/icon.html" with name="x" %}</span>
         <span class="sr-only" data-open="{% translate 'Open menu' %}" data-close="{% translate 'Close menu' %}"
               x-text="open ? $el.dataset.close : $el.dataset.open">{% translate "Open menu" %}</span>
       </button>
-      <nav aria-label="{% translate 'Main' %}" class="hidden lg:block">
-        <ul class="flex items-center gap-7">
+      <nav aria-label="{% translate 'Main' %}" class="hidden desk:block">
+        <ul class="flex items-center gap-4 xl:gap-7">
           {% for item in nav %}
             <li><a href="{{ item.url }}" class="nav-link" {% if item.active %}aria-current="page"{% endif %}>{{ item.label }}</a></li>
           {% endfor %}
@@ -43,12 +43,12 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
 
     {# Right: language (desktop) · search · account (desktop) · cart #}
     <div class="flex items-center justify-end gap-1 md:gap-2">
-      {% include "components/language_switcher.html" with class="mr-2 hidden gap-2 lg:flex" %}
+      {% include "components/language_switcher.html" with class="mr-2 hidden gap-2 desk:flex" %}
       <button type="button" x-ref="searchButton" @click="openSearch()" class="p-2 text-espresso hover:text-cocoa"
               aria-controls="site-search" :aria-expanded="searchOpen.toString()" aria-expanded="false">
         {% include "components/icon.html" with name="search" size=20 %}<span class="sr-only">{% translate "Search" %}</span>
       </button>
-      <a href="{% url 'pages:account' %}" class="hidden p-2 text-espresso hover:text-cocoa lg:block">
+      <a href="{% url 'pages:account' %}" class="hidden p-2 text-espresso hover:text-cocoa desk:block">
         {% include "components/icon.html" with name="user" size=20 %}<span class="sr-only">{% translate "Account" %}</span>
       </a>
       {# TODO(1c): cart drawer trigger; the count comes from the session cart. #}
@@ -84,7 +84,7 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
        x-show="open"
        x-transition:enter="transition-opacity duration-400 ease-atelier" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
        x-transition:leave="transition-opacity duration-300 ease-atelier" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-       class="mobile-menu fixed inset-0 flex flex-col overflow-y-auto overscroll-contain bg-linen pt-16 lg:hidden"
+       class="mobile-menu fixed inset-0 flex flex-col overflow-y-auto overscroll-contain bg-linen pt-16 desk:hidden"
        :class="revealed && 'is-open'">
     <ul class="container-site flex-1 pb-8 pt-8">
       {% for item in nav %}

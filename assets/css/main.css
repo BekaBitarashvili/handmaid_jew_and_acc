@@ -10,6 +10,20 @@
 @source "../../apps";
 @source "../../static/js";
 
+/* Where the header switches from burger to desktop links. Georgian labels set much
+   wider, so the links appear later (80rem) and never crowd the centred brand. Mirrors
+   DESKTOP_NAV in static/js/site.js. */
+@custom-variant desk {
+  @media (width >= 80rem) {
+    @slot;
+  }
+  @media (width >= 64rem) {
+    &:not(:lang(ka)) {
+      @slot;
+    }
+  }
+}
+
 @theme {
   /* Only the brand palette exists: no stray Tailwind colors, no pure white/black.
      Warm linen palette from docs/design/home-reference.jpeg (redesign, SPEC §9.2). */
@@ -206,6 +220,11 @@
     font-weight: 300;
     color: var(--color-espresso);
     text-wrap: balance; /* even lines instead of one long + one short */
+    /* Georgian sets far wider than Cormorant: at full size a hero line breaks into 4. */
+    &:lang(ka) {
+      font-size: calc(var(--text-display) * 0.72);
+      line-height: 1.15;
+    }
   }
 
   /* Small uppercase label. Georgian has no case: no uppercase, tighter tracking.
@@ -624,6 +643,7 @@
   .nav-link {
     font-family: var(--font-serif);
     font-size: 1rem;
+    white-space: nowrap;
     color: var(--color-espresso);
     text-decoration: underline;
     text-decoration-color: transparent;
@@ -631,7 +651,7 @@
     text-underline-offset: 6px;
     transition: text-decoration-color 400ms var(--ease-atelier);
     &:lang(ka) {
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
     }
     &:is(a):hover,
     &[aria-current="page"] {

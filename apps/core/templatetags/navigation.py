@@ -9,12 +9,14 @@ from dataclasses import dataclass
 from django import template
 from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext_lazy as _
+from django.utils.translation import pgettext_lazy
 
 register = template.Library()
 
 MAIN_NAV = (
     ("catalog:shop", _("Shop")),
-    ("catalog:new", _("New Arrivals")),
+    # Own context: Georgian uses a shorter word in the header than in page titles.
+    ("catalog:new", pgettext_lazy("main nav", "New Arrivals")),
     ("catalog:sale", _("Sale")),
     ("pages:about", _("About")),
     ("pages:contact", _("Contact")),

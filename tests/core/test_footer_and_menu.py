@@ -26,13 +26,13 @@ def section(html: str, start: str, end: str) -> str:
 
 class TestHeader:
     def test_five_links_in_reference_order(self, page):
-        nav = section(page, 'class="hidden lg:block"', "</nav>")
+        nav = section(page, 'class="hidden desk:block"', "</nav>")
         hrefs = re.findall(r'class="nav-link"[^>]*>([^<]+)<', nav)
         assert hrefs == ["Shop", "New Arrivals", "Sale", "About", "Contact"]
 
     def test_only_the_current_section_is_active(self, client, en):
         html = client.get("/en/shop/new/").content.decode()
-        nav = section(html, 'class="hidden lg:block"', "</nav>")
+        nav = section(html, 'class="hidden desk:block"', "</nav>")
         active = re.findall(r'href="([^"]+)" class="nav-link" aria-current="page"', nav)
         assert active == ["/en/shop/new/"]  # not /en/shop/ too
 

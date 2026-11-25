@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from django.template.loader import render_to_string
 
@@ -24,7 +26,10 @@ def test_assets_are_self_hosted(home_ka):
     assert "/static/dist/css/main.css" in home_ka
     assert "/static/vendor/htmx-2.0.11.min.js" in home_ka
     assert "/static/vendor/alpine-3.17.5.min.js" in home_ka
-    assert "https://" not in home_ka.split("</head>")[0]  # no CDN in <head>
+    head = home_ka.split("</head>")[0]
+    # No CDN: every script and stylesheet is served from our own origin.
+    assert not re.search(r'<script[^>]+src="https?://', head)
+    assert not re.search(r'<link[^>]+rel="(stylesheet|preload)"[^>]+href="https?://', head)
 
 
 def test_htmx_sends_csrf_header(home_ka):

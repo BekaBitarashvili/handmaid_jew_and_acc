@@ -49,6 +49,12 @@ class Category(models.Model):
     )
     sort_order = models.PositiveIntegerField(_("order"), default=0, db_index=True)
     is_active = models.BooleanField(_("visible in the shop"), default=True)
+    show_on_home = models.BooleanField(
+        _("tile on the home page"),
+        default=False,
+        help_text=_("The home page shows up to 4 category tiles; a square photo is needed."),
+    )
+    home_order = models.PositiveIntegerField(_("order on the home page"), default=0)
 
     class Meta:
         verbose_name = _("category")

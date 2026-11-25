@@ -5,4 +5,4 @@ from .models import SiteSettings
 
 @register(SiteSettings)
 class SiteSettingsTranslationOptions(TranslationOptions):
-    fields = ("announcement_bar",)
+    fields = ("announcement_bar", "intro_text")

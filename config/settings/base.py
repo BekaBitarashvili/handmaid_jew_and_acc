@@ -293,6 +293,16 @@ UNFOLD = {
                 ],
             },
             {
+                "title": _("Home page"),
+                "items": [
+                    {
+                        "title": _("Hero slides"),
+                        "icon": "view_carousel",
+                        "link": _admin_url("admin:pages_heroslide_changelist"),
+                    },
+                ],
+            },
+            {
                 "title": _("Orders"),
                 "items": [
                     {

@@ -1,16 +1,120 @@
 {% extends "base.html" %}
-{% load i18n %}
-
+{% load i18n catalog_tags money %}
+{% comment %}
+Home page — follows docs/design/home-reference.jpeg (desktop); phones: hero text over the photo,
+category tiles 2×2, product cards in 2 columns, the offers banner stacked.
+{% endcomment %}
 {% block content %}
-  {# Placeholder until the editorial home page (Phase 2, SPEC §6.1). #}
-  <section class="section">
-    <div class="container-site text-center">
-      <p class="label text-taupe-text">{% translate "Handmade atelier" %}</p>
-      <h1 class="display mx-auto mt-6 max-w-4xl">{% translate "Handmade jewelry with natural stones" %}</h1>
-      {% include "components/ornament.html" with class="mt-12" %}
-      <p class="prose-column mx-auto mt-12 text-cocoa">
-        {% translate "Each piece is made by hand, most of them only once." %}
-      </p>
+<h1 class="sr-only">{{ site_settings.brand_name }} — {% translate "Handmade jewelry with natural stones" %}</h1>
+
+{# ------------------------------------------------------------------ Hero #}
+{% if slides %}
+<section x-data="heroSlider({{ slides|length }})" class="relative bg-umber"
+         aria-roledescription="{% translate 'carousel' %}" aria-label="{% translate 'Featured' %}">
+  <div x-ref="track" @scroll.debounce.80ms="sync()" tabindex="0"
+       @keydown.arrow-right.prevent="go(index + 1)" @keydown.arrow-left.prevent="go(index - 1)"
+       class="scrollbar-none flex snap-x snap-mandatory overflow-x-auto">
+    {% for slide in slides %}
+      <article class="relative h-[78svh] min-h-[30rem] w-full shrink-0 snap-center md:h-[min(42rem,78svh)]"
+               role="group" aria-roledescription="{% translate 'slide' %}"
+               aria-label="{% blocktranslate with n=forloop.counter total=slides|length %}Slide {{ n }} of {{ total }}{% endblocktranslate %}">
+        {% responsive_picture slide.image "16:7" mobile_image=slide.image_mobile mobile_ratio="4:5" eager=forloop.first css="absolute inset-0 h-full w-full object-cover" %}
+        {# Scrim: keeps light text >= 4.5:1 on any photo (bottom on phones, left on desktop). #}
+        <div class="absolute inset-0 bg-gradient-to-t from-umber/85 via-umber/35 to-transparent md:bg-gradient-to-r md:from-umber/75 md:via-umber/30" aria-hidden="true"></div>
+        <div class="container-site relative flex h-full flex-col justify-end pb-24 md:justify-center md:pb-0">
+          <div class="max-w-xl text-linen">
+            <p class="display text-linen">{{ slide.title }}</p>
+            {% if slide.subtitle %}<p class="mt-4 font-serif text-h3 text-linen/90">{{ slide.subtitle }}</p>{% endif %}
+            <div class="mt-8 flex flex-wrap gap-3">
+              {% if slide.primary_text %}<a href="{{ slide.primary_url }}" class="btn btn-light">{{ slide.primary_text }}</a>{% endif %}
+              {% if slide.secondary_text %}<a href="{{ slide.secondary_url }}" class="btn btn-outline-light">{{ slide.secondary_text }}</a>{% endif %}
+            </div>
+          </div>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+  {% if slides|length > 1 %}
+    <div class="container-site pointer-events-none absolute inset-x-0 bottom-8 flex items-center gap-4 text-linen md:bottom-10">
+      <p class="pointer-events-auto font-serif text-body tabular-nums" x-text="label" aria-live="polite">01 / {{ slides|length|stringformat:"02d" }}</p>
+      <button type="button" @click="go(index - 1)" class="pointer-events-auto p-1.5 hover:text-oat" aria-label="{% translate 'Previous slide' %}">
+        {% include "components/icon.html" with name="chevron-left" size=20 %}
+      </button>
+      <button type="button" @click="go(index + 1)" class="pointer-events-auto p-1.5 hover:text-oat" aria-label="{% translate 'Next slide' %}">
+        {% include "components/icon.html" with name="chevron-right" size=20 %}
+      </button>
     </div>
-  </section>
+  {% endif %}
+</section>
+{% endif %}
+
+{# ----------------------------------------------------------------- Intro #}
+{% if site_settings.intro_text %}
+<section class="container-site pt-14 md:pt-20">
+  <div class="flex items-center gap-6 text-clay" aria-hidden="true">
+    <span class="h-px flex-1 bg-sand"></span>{% include "components/star.html" with size=18 %}<span class="h-px flex-1 bg-sand"></span>
+  </div>
+  <p class="mx-auto mt-6 max-w-2xl text-center font-serif text-h3 text-cocoa">{{ site_settings.intro_text }}</p>
+</section>
+{% endif %}
+
+{# --------------------------------------------------------- Category tiles #}
+{% if tiles %}
+<section class="container-site pt-12 md:pt-16" aria-label="{% translate 'Categories' %}">
+  <ul class="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+    {% for category in tiles %}
+      <li>
+        <a href="{{ category.get_absolute_url }}" class="group relative block aspect-square overflow-hidden bg-shell">
+          {% if category.image %}
+            {% responsive_picture category.image "1:1" mobile_ratio="" sizes="(min-width: 64rem) 25vw, 50vw" css="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" %}
+          {% endif %}
+          <span class="absolute inset-0 bg-gradient-to-t from-umber/70 via-umber/10 to-transparent" aria-hidden="true"></span>
+          <span class="absolute inset-x-3 bottom-3 flex items-center gap-2 font-serif text-[1.125rem] text-linen md:inset-x-5 md:bottom-5 md:text-h3">
+            {{ category.name }} {% include "components/icon.html" with name="arrow-right" size=18 %}
+          </span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{# ---------------------------------------------------------- New Arrivals #}
+{% if new_items %}
+<section class="container-site pt-16 md:pt-20" aria-labelledby="new-title">
+  <div class="flex items-center gap-6">
+    <h2 id="new-title">{% translate "New Arrivals" %}</h2>
+    <span class="h-px flex-1 bg-sand" aria-hidden="true"></span>
+    <a href="{% url 'catalog:new' %}" class="nav-link inline-flex items-center gap-2 whitespace-nowrap">{% translate "View All" %} {% include "components/icon.html" with name="arrow-right" size=16 %}</a>
+  </div>
+  <ul class="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-6 lg:grid-cols-4">
+    {% for product in new_items %}<li>{% include "components/product_card.html" with eager=False %}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{# ------------------------------------------------------- Special Offers #}
+{% if banner_sale and example %}
+{% percent_off example as off %}
+<section class="relative mt-20 overflow-hidden bg-umber text-linen md:mt-24" aria-labelledby="offers-title">
+  {% if banner_sale.banner_image %}
+    {% responsive_picture banner_sale.banner_image "16:5" mobile_ratio="4:5" css="absolute inset-0 h-full w-full object-cover opacity-60" %}
+  {% endif %}
+  <div class="absolute inset-0 bg-umber/50" aria-hidden="true"></div>
+  <div class="container-site relative grid gap-10 py-16 text-center md:grid-cols-[1fr_auto_auto] md:items-center md:gap-14 md:py-20 md:text-left lg:pl-[28%]">
+    <div>
+      <h2 id="offers-title" class="text-linen">{{ banner_sale.banner_title|default:_("Special Offers") }}</h2>
+      {% if banner_sale.banner_subtitle %}<p class="mt-3 font-serif text-h3 text-linen/90">{{ banner_sale.banner_subtitle }}</p>{% endif %}
+      <a href="{% url 'catalog:sale' %}" class="btn btn-light mt-8">{% translate "Shop Sale" %}</a>
+    </div>
+    <span class="mx-auto h-px w-24 bg-linen/40 md:h-32 md:w-px" aria-hidden="true"></span>
+    <a href="{{ example.get_absolute_url }}" class="relative mx-auto block pr-10 text-left md:mx-0">
+      <span class="sr-only">{{ example.name }}: </span>
+      <span class="block font-serif text-h3 text-oat line-through decoration-1"><span class="sr-only">{% translate "Original price" %}: </span>{{ example.min_price|gel }}</span>
+      <span class="italic-serif block font-serif text-display text-linen"><span class="sr-only">{% translate "Sale price" %}: </span>{{ example.sale_min_price|gel }}</span>
+      {% if off %}<span class="sale-badge-round absolute -right-6 -top-8">−{{ off }}%</span>{% endif %}
+    </a>
+  </div>
+</section>
+{% endif %}
 {% endblock %}

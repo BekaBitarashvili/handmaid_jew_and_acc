@@ -31,7 +31,7 @@ class GroupAdmin(DjangoGroupAdmin, BaseModelAdmin):
 @admin.register(SiteSettings)
 class SiteSettingsAdmin(BaseModelAdmin, TabbedTranslationAdmin):
     fieldsets = (
-        (_("Brand"), {"fields": ("brand_name", "logo", "announcement_bar")}),
+        (_("Brand"), {"fields": ("brand_name", "logo", "intro_text", "announcement_bar")}),
         (
             _("Contact"),
             {"fields": ("contact_phone", "contact_email", "contact_address")},

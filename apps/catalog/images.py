@@ -134,3 +134,50 @@ def install_avif_compat() -> None:
 
     save._jewelry_compat = True
     Image.register_save("AVIF", save)
+
+
+@dataclass(frozen=True)
+class Responsive:
+    avif_srcset: str
+    webp_srcset: str
+    src: str
+    width: int
+    height: int
+
+
+BANNER_WIDTHS = (800, 1280, 1920, 2560)
+
+
+def responsive(image_field, ratio: tuple[int, int], widths=BANNER_WIDTHS) -> Responsive | None:
+    """Cached AVIF + WebP srcsets for a centre crop of `image_field` at `ratio` (w, h)."""
+    if not image_field:
+        return None
+    key = f"responsive:v1:{image_field.name}:{ratio[0]}x{ratio[1]}:{widths[-1]}"
+    cached = cache.get(key)
+    if cached is not None:
+        return Responsive(**cached)
+    sets: dict[str, list[str]] = {"avif": [], "webp": []}
+    fallback = None
+    for fmt in FORMATS:
+        seen = set()
+        for width in widths:
+            thumbnailer = get_thumbnailer(image_field)
+            thumbnailer.thumbnail_extension = fmt
+            thumbnailer.thumbnail_quality = QUALITY[fmt]
+            size = (width, round(width * ratio[1] / ratio[0]))
+            thumb = thumbnailer.get_thumbnail({"size": size, "crop": True, "upscale": False})
+            if thumb.width in seen:
+                continue
+            seen.add(thumb.width)
+            sets[fmt].append(f"{thumb.url} {thumb.width}w")
+            if fmt == "webp" and (fallback is None or thumb.width <= 1280):
+                fallback = thumb
+    result = Responsive(
+        avif_srcset=", ".join(sets["avif"]),
+        webp_srcset=", ".join(sets["webp"]),
+        src=fallback.url,
+        width=fallback.width,
+        height=fallback.height,
+    )
+    cache.set(key, asdict(result), PICTURE_CACHE_SECONDS)
+    return result

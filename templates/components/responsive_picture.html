@@ -1,0 +1,10 @@
+{% if desktop %}<picture>
+  {% if phone %}
+    {% if phone.avif_srcset %}<source media="(max-width: 47.999rem)" type="image/avif" srcset="{{ phone.avif_srcset }}" sizes="{{ sizes }}">{% endif %}
+    <source media="(max-width: 47.999rem)" type="image/webp" srcset="{{ phone.webp_srcset }}" sizes="{{ sizes }}">
+  {% endif %}
+  {% if desktop.avif_srcset %}<source type="image/avif" srcset="{{ desktop.avif_srcset }}" sizes="{{ sizes }}">{% endif %}
+  <source type="image/webp" srcset="{{ desktop.webp_srcset }}" sizes="{{ sizes }}">
+  <img src="{{ desktop.src }}" width="{{ desktop.width }}" height="{{ desktop.height }}" alt="{{ alt }}"
+       {% if eager %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async" class="{{ css }}">
+</picture>{% else %}<div class="h-full w-full bg-shell {{ css }}" aria-hidden="true"></div>{% endif %}

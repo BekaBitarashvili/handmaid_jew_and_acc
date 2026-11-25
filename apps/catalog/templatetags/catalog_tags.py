@@ -6,7 +6,7 @@ from django import template
 from django.urls import NoReverseMatch, reverse
 from django.utils.translation import gettext as _
 
-from apps.catalog.images import picture
+from apps.catalog.images import picture, responsive
 from apps.catalog.models import Product
 from apps.catalog.queries import top_categories
 from apps.core.money import format_gel
@@ -117,3 +117,34 @@ def picture_data(image):
 def nav_categories():
     """Top-level active categories for the mobile menu and footer."""
     return list(top_categories())
+
+
+def _ratio(text: str) -> tuple[int, int]:
+    width, height = text.split(":")
+    return int(width), int(height)
+
+
+@register.inclusion_tag("components/responsive_picture.html")
+def responsive_picture(
+    image_field,
+    ratio: str = "16:7",
+    *,
+    mobile_image=None,
+    mobile_ratio: str = "4:5",
+    sizes: str = "100vw",
+    eager: bool = False,
+    alt: str = "",
+    css: str = "",
+):
+    """<picture> for banners and tiles: one crop for phones (< 768px), one for larger screens."""
+    phone_source = mobile_image or image_field
+    return {
+        "desktop": responsive(image_field, _ratio(ratio)),
+        "phone": responsive(phone_source, _ratio(mobile_ratio), widths=(480, 768, 1080))
+        if mobile_ratio
+        else None,
+        "sizes": sizes,
+        "eager": eager,
+        "alt": alt,
+        "css": css,
+    }

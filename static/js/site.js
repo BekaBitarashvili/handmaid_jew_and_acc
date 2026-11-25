@@ -172,4 +172,26 @@ document.addEventListener("alpine:init", () => {
       focusable[next].focus();
     },
   }));
+
+  // Home hero: manual slider (SPEC §9.6: no autoplay). Swipe on touch (scroll-snap),
+  // ‹ › buttons and arrow keys; wraps around at the ends.
+  Alpine.data("heroSlider", (count) => ({
+    count,
+    index: 0,
+    get label() {
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${pad(this.index + 1)} / ${pad(this.count)}`;
+    },
+    sync() {
+      const track = this.$refs.track;
+      this.index = Math.max(0, Math.min(this.count - 1, Math.round(track.scrollLeft / track.clientWidth)));
+    },
+    go(i) {
+      this.index = (i + this.count) % this.count;
+      this.$refs.track.scrollTo({
+        left: this.index * this.$refs.track.clientWidth,
+        behavior: REDUCED_MOTION.matches ? "auto" : "smooth",
+      });
+    },
+  }));
 });

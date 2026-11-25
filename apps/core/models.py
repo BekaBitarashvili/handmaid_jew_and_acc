@@ -41,6 +41,12 @@ class SiteSettings(models.Model):
         _("owner notification phone"), max_length=32, blank=True
     )
 
+    intro_text = models.CharField(
+        _("home page intro line"),
+        max_length=200,
+        blank=True,
+        help_text=_("One or two sentences under the hero, between the star and the hairlines."),
+    )
     announcement_bar = models.CharField(
         _("announcement bar"),
         max_length=200,

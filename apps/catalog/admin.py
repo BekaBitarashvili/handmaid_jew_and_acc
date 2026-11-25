@@ -429,12 +429,21 @@ class SlugAutoFillMixin:
 
 @admin.register(Category)
 class CategoryAdmin(SlugAutoFillMixin, BaseModelAdmin, TabbedTranslationAdmin):
-    list_display = ("name", "code", "parent", "is_active", "product_count")
-    list_filter = ("is_active", "parent")
+    list_display = ("name", "code", "parent", "is_active", "show_on_home", "product_count")
+    list_filter = ("is_active", "show_on_home", "parent")
     search_fields = ("name_ka", "name_en", "code")
     ordering_field = "sort_order"
     hide_ordering_field = True
-    fields = ("name", "code", "parent", "description", "image", "is_active", "slug")
+    fields = (
+        "name",
+        "code",
+        "parent",
+        "description",
+        "image",
+        "is_active",
+        ("show_on_home", "home_order"),
+        "slug",
+    )
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(_products=Count("products"))

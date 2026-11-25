@@ -8,6 +8,7 @@ from django.utils.translation import ngettext, pgettext_lazy
 
 from apps.core.money import format_gel
 from apps.orders.models import DeliveryOption
+from apps.promotions.services import price_for, running_sales
 
 from . import filters as shop_filters
 from .lookup import by_translated_slug
@@ -144,6 +145,8 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
     images = list(product.images.all())
     variants = list(product.variants.order_by("sort_order", "pk"))
     sellable = product.status == Product.Status.ACTIVE
+    sales = running_sales()
+    prices = {v.pk: price_for(product, v.price, sales) for v in variants}
     first_photo_of = {}
     for index, image in enumerate(images):
         if image.variant_id is not None:
@@ -152,12 +155,22 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
         {
             "id": v.pk,
             "name": v.name or "",
-            "price": format_gel(v.price),
+            "price": format_gel(prices[v.pk].current),
+            "old": format_gel(prices[v.pk].original) if prices[v.pk].on_sale else "",
+            "off": prices[v.pk].percent_off,
             "available": sellable and v.available > 0,
             "image": first_photo_of.get(v.pk),
         }
         for v in variants
     ]
+    selected_price = next(
+        (prices[v.pk] for v in variants if sellable and v.available > 0),
+        prices[variants[0].pk] if variants else None,
+    )
+    # JSON-LD: priceValidUntil when the discount has an end date.
+    product.sale_ends_at = (
+        selected_price.sale.ends_at if selected_price and selected_price.sale else None
+    )
     selected = next(
         (d for d in variant_data if d["available"]), variant_data[0] if variant_data else None
     )
@@ -171,6 +184,7 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "variants": variants,
             "variant_data": variant_data,
             "selected": selected,
+            "selected_price": selected_price,
             "show_variant_picker": len(variants) > 1,
             "stones": list(product.stones.all()),
             "materials": list(product.materials.all()),

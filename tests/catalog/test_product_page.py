@@ -140,3 +140,46 @@ def test_staff_preview_banner(admin_client, en):
 def test_georgian_page(client):
     product = ProductFactory(status=ACTIVE, name_ka="ქარვის ყელსაბამი")
     assert "ქარვის ყელსაბამი" in page(client, product, lang="ka")
+
+
+class TestSalePrice:
+    @pytest.fixture
+    def on_sale(self):
+        from datetime import timedelta
+
+        from django.utils import timezone
+
+        from apps.promotions.models import Sale
+
+        product = ProductFactory(status=ACTIVE, price=12000, slug_en="sale-ring")
+        sale = Sale.objects.create(
+            name="s", percent=30, ends_at=timezone.now() + timedelta(days=10)
+        )
+        sale.products.set([product])
+        return product, sale
+
+    def test_old_struck_new_and_badge(self, client, en, on_sale):
+        html = page(client, on_sale[0])
+        assert re.search(r'class="price price-old[^"]*"', html) and "120" in html
+        assert "84" in html and "price-sale" in html
+        assert re.search(r"sale-badge-round[^>]*>\s*−<span[^>]*>30</span>%", html)
+
+    def test_variant_data_carries_sale_prices(self, client, en, on_sale):
+        (variant,) = variant_json(page(client, on_sale[0]))
+        assert (variant["old"], variant["price"], variant["off"]) == ("120 ₾", "84 ₾", 30)
+
+    def test_json_ld_uses_discounted_price_until_the_sale_ends(self, client, en, on_sale):
+        html = page(client, on_sale[0])
+        block = re.search(
+            r'<script type="application/ld\+json">(\{"@context":"https://schema.org","@type":"Product".*?)</script>',
+            html,
+        )
+        offer = json.loads(block.group(1))["offers"]
+        assert offer["price"] == "84.00"
+        assert offer["priceValidUntil"] == on_sale[1].ends_at.date().isoformat()
+
+    def test_no_badge_without_sale(self, client, en):
+        html = page(client, ProductFactory(status=ACTIVE))
+        # Present for the variant picker, but hidden and empty until a sale applies.
+        assert re.search(r'<span class="sale-badge-round[^>]*x-cloak>\s*−<span[^>]*></span>%', html)
+        assert re.search(r'<p class="price price-old[^>]*x-cloak>', html)

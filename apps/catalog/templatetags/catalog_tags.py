@@ -63,21 +63,6 @@ def percent_off(product: Product) -> int:
     return round((low - sale_low) * 100 / low) if low and sale_low < low else 0
 
 
-@register.simple_tag
-def card_labels(product: Product) -> list[str]:
-    """Text labels above a card's name, in priority order (SPEC §9.5: no stickers)."""
-    if product.status == Product.Status.SOLD:
-        return [_("Sold")]
-    labels = []
-    if not getattr(product, "is_available", True):
-        labels.append(_("Out of stock"))
-    if product.is_new:
-        labels.append(_("New"))
-    if product.is_unique and getattr(product, "is_available", True):
-        labels.append(_("One of a kind"))
-    return labels
-
-
 @register.filter
 def availability(product: Product) -> str:
     if product.status == Product.Status.SOLD:

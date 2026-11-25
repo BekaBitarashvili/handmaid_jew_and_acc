@@ -1,0 +1,13 @@
+{% load i18n %}{% comment %}
+"Load more" (no infinite scroll, SPEC §6.1). A real link, so it works without JavaScript
+(?page=N renders N pages). With HTMX it appends the next cards to #product-grid and this
+block replaces itself out-of-band; the page number is not pushed to the URL.
+{% endcomment %}
+<div id="load-more" class="mt-14 flex justify-center"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% if has_more %}
+    <a href="?{{ next_query }}" class="btn btn-secondary"
+       hx-get="?{{ next_query }}" hx-target="#product-grid" hx-swap="beforeend" hx-push-url="false">
+      {% translate "Load more" %}
+    </a>
+  {% endif %}
+</div>

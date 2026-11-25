@@ -1,0 +1,37 @@
+{% load i18n %}{% comment %}
+Swapped in place on every filter change (hx-target="#results").
+{% endcomment %}
+<div id="results" aria-live="polite" aria-busy="false">
+  <div class="mb-6 flex items-center gap-4 border-b border-sand pb-4">
+    <button type="button" @click="open = true" class="btn btn-secondary min-h-10 px-4 md:hidden"
+            aria-controls="filter-panel" :aria-expanded="open.toString()">
+      {% translate "Filters" %}{% if active_count %} ({{ active_count }}){% endif %}
+    </button>
+    <p class="text-small text-taupe-text max-md:hidden" id="result-count">{{ total_text }}</p>
+    <label class="ml-auto flex items-center gap-2 text-small">
+      <span class="text-taupe-text max-sm:sr-only">{% translate "Sort" %}</span>
+      <select name="sort" class="field-input min-h-10 w-auto py-1.5 pr-8 text-small">
+        <option value="newest" {% if filters.sort == "newest" %}selected{% endif %}>{% translate "Newest" %}</option>
+        <option value="price_asc" {% if filters.sort == "price_asc" %}selected{% endif %}>{% translate "Price: low to high" %}</option>
+        <option value="price_desc" {% if filters.sort == "price_desc" %}selected{% endif %}>{% translate "Price: high to low" %}</option>
+      </select>
+    </label>
+  </div>
+
+  {% if products %}
+    <ul id="product-grid" class="grid grid-cols-2 gap-x-4 gap-y-12 md:grid-cols-3 md:gap-x-6 xl:grid-cols-4">
+      {% include "catalog/_card_items.html" %}
+    </ul>
+  {% else %}
+    <div class="py-20 text-center">
+      <p class="font-serif text-h3 text-espresso">{% translate "No pieces match these filters." %}</p>
+      <a href="{{ request.path }}" class="link mt-4 inline-block">{% translate "Clear all filters" %}</a>
+    </div>
+  {% endif %}
+
+  {% include "catalog/_load_more.html" %}
+  {% if request.htmx %}
+    {# Keep the phone sheet's "Show N pieces" button in sync. #}
+    <span id="sheet-count" hx-swap-oob="true">{{ total_text }}</span>
+  {% endif %}
+</div>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load catalog_tags %}
+{# Placeholder; the full product page arrives in the next commit. #}
+{% block title %}{{ product.name }} — {{ site_settings.brand_name }}{% endblock %}
+{% block content %}
+<div class="container-site py-16">
+  <h1>{{ product.name }}</h1>
+  <p class="price mt-4">{% price_text product %}</p>
+</div>
+{% endblock %}

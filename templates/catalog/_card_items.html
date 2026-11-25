@@ -1,0 +1,3 @@
+{% for product in products %}
+  <li>{% if forloop.counter <= eager_count %}{% include "components/product_card.html" with eager=True %}{% else %}{% include "components/product_card.html" with eager=False %}{% endif %}</li>
+{% endfor %}

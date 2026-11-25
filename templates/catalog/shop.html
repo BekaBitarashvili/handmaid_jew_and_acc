@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} — {{ site_settings.brand_name }}{% endblock %}
+
+{% block content %}
+<div class="container-site pb-24 pt-8 md:pt-14">
+  {% if category %}
+    <nav aria-label="{% translate 'Breadcrumb' %}" class="mb-6 text-small text-taupe-text">
+      <ol class="flex flex-wrap gap-2">
+        <li><a class="link text-taupe-text" href="{% url 'catalog:shop' %}">{% translate "Shop" %}</a></li>
+        {% if category.parent %}<li aria-hidden="true">/</li><li><a class="link text-taupe-text" href="{{ category.parent.get_absolute_url }}">{{ category.parent.name }}</a></li>{% endif %}
+        <li aria-hidden="true">/</li><li aria-current="page">{{ category.name }}</li>
+      </ol>
+    </nav>
+  {% endif %}
+  <header class="max-w-3xl">
+    <h1>{{ title }}</h1>
+    {% if category.description %}<p class="prose-column mt-4 text-cocoa">{{ category.description }}</p>{% endif %}
+  </header>
+
+  {# One form for the whole layout: filter panel + sort live together. Works without JavaScript too. #}
+  <form id="filters" method="get" action="{{ request.path }}"
+        hx-get="{{ request.path }}" hx-target="#results" hx-swap="outerHTML" hx-sync="this:replace"
+        hx-trigger="change, submit"
+        x-data="filterSheet" x-effect="lockScroll(open)" @keydown.escape="open = false"
+        class="mt-8 md:mt-12 md:grid md:grid-cols-[13rem_1fr] md:gap-12 lg:grid-cols-[15rem_1fr]">
+
+    {# Filter panel: a left column from 768px; a full-height sheet on phones. #}
+    <aside id="filter-panel" aria-label="{% translate 'Filters' %}"
+           class="max-md:fixed max-md:inset-0 max-md:z-50 max-md:flex-col max-md:bg-ivory md:block"
+           :class="open ? 'max-md:flex' : 'max-md:hidden'" x-cloak>
+      <div class="flex items-center justify-between border-b border-sand px-4 py-4 md:hidden">
+        <p class="font-serif text-h3 text-espresso">{% translate "Filters" %}</p>
+        <button type="button" @click="open = false" class="-mr-2 p-2 text-cocoa">
+          {% include "components/icon.html" with name="x" %}<span class="sr-only">{% translate "Close filters" %}</span>
+        </button>
+      </div>
+
+      <div class="max-md:flex-1 max-md:overflow-y-auto max-md:px-4 max-md:py-6 md:sticky md:top-28">
+        {% include "catalog/_filter_fields.html" %}
+      </div>
+
+      <div class="flex items-center gap-4 border-t border-sand px-4 py-4 md:hidden">
+        <a href="{{ request.path }}" class="link text-small">{% translate "Clear all" %}</a>
+        <button type="submit" @click="open = false" class="btn btn-primary ml-auto">
+          {% translate "Show" %} <span id="sheet-count">{{ total_text }}</span>
+        </button>
+      </div>
+    </aside>
+
+    <div>
+      {% include "catalog/_results_partial.html" %}
+    </div>
+  </form>
+</div>
+{% endblock %}

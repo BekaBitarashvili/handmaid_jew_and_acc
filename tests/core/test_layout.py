@@ -60,8 +60,12 @@ def test_language_switcher_posts_current_path(home_ka):
     assert 'value="en"' in home_ka
 
 
-def test_nav_skips_views_that_do_not_exist_yet(rf):
-    assert main_nav({"request": rf.get("/ka/")}) == []
+def test_nav_skips_views_that_do_not_exist_yet(rf, en):
+    items = main_nav({"request": rf.get("/en/shop/")})
+    labels = [item.label for item in items]
+    assert "Shop" in labels
+    assert "About" not in labels  # the About page arrives in Phase 2
+    assert next(i for i in items if i.label == "Shop").active
 
 
 def test_footer_shows_contacts_only_when_set(client):

@@ -15,7 +15,7 @@ register = template.Library()
 MAIN_NAV = (
     ("catalog:shop", _("Shop")),
     ("catalog:archive", _("Archive")),
-    ("pages:stones", _("Stones")),
+    ("catalog:stones", _("Stones")),
     ("pages:about", _("About")),
 )
 

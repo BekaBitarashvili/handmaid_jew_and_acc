@@ -1,0 +1,74 @@
+{% load i18n money %}
+<div class="space-y-8">
+  {% if category_choices %}
+    <fieldset>
+      <legend class="label text-taupe-text">{% if category %}{% translate "Type" %}{% else %}{% translate "Category" %}{% endif %}</legend>
+      <ul class="mt-3 space-y-2">
+        {% for c in category_choices %}
+          <li><label class="flex cursor-pointer items-center gap-3 py-1">
+            <input type="checkbox" name="category" value="{{ c.slug }}" class="size-4 accent-espresso" {% if c.pk in selected.category %}checked{% endif %}>
+            <span>{{ c.name }}</span>
+          </label></li>
+        {% endfor %}
+      </ul>
+    </fieldset>
+  {% endif %}
+
+  {% if facets.stones %}
+    <fieldset>
+      <legend class="label text-taupe-text">{% translate "Stone" %}</legend>
+      <ul class="mt-3 space-y-2">
+        {% for s in facets.stones %}
+          <li><label class="flex cursor-pointer items-center gap-3 py-1">
+            <input type="checkbox" name="stone" value="{{ s.slug }}" class="size-4 accent-espresso" {% if s.pk in selected.stone %}checked{% endif %}>
+            <span class="size-3 rounded-full border border-espresso/15" style="background: {{ s.color_hex|default:'transparent' }}" aria-hidden="true"></span>
+            <span>{{ s.name }}</span>
+          </label></li>
+        {% endfor %}
+      </ul>
+    </fieldset>
+  {% endif %}
+
+  {% if facets.materials %}
+    <fieldset>
+      <legend class="label text-taupe-text">{% translate "Material" %}</legend>
+      <ul class="mt-3 space-y-2">
+        {% for m in facets.materials %}
+          <li><label class="flex cursor-pointer items-center gap-3 py-1">
+            <input type="checkbox" name="material" value="{{ m.pk }}" class="size-4 accent-espresso" {% if m.pk in selected.material %}checked{% endif %}>
+            <span>{{ m.name }}</span>
+          </label></li>
+        {% endfor %}
+      </ul>
+    </fieldset>
+  {% endif %}
+
+  <fieldset>
+    <legend class="label text-taupe-text">{% translate "Price, ₾" %}</legend>
+    <div class="mt-3 grid grid-cols-2 gap-3">
+      <label class="block">
+        <span class="sr-only">{% translate "Minimum price" %}</span>
+        <input type="number" name="min" min="0" step="1" inputmode="numeric" value="{{ min_value }}"
+               placeholder="{{ facets.price_low|gel }}" class="field-input text-small">
+      </label>
+      <label class="block">
+        <span class="sr-only">{% translate "Maximum price" %}</span>
+        <input type="number" name="max" min="0" step="1" inputmode="numeric" value="{{ max_value }}"
+               placeholder="{{ facets.price_high|gel }}" class="field-input text-small">
+      </label>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="sr-only">{% translate "Availability" %}</legend>
+    {# Hidden "0" + checkbox "1": unchecked sends only "0" (the default, checked, is left out of URLs). #}
+    <input type="hidden" name="available" value="0">
+    <label class="flex cursor-pointer items-center gap-3">
+      <input type="checkbox" name="available" value="1" class="size-4 accent-espresso" {% if filters.available_only %}checked{% endif %}>
+      <span>{% translate "Available only" %}</span>
+    </label>
+  </fieldset>
+
+  <noscript><button type="submit" class="btn btn-secondary w-full">{% translate "Apply" %}</button></noscript>
+  <a href="{{ request.path }}" class="link hidden text-small md:inline">{% translate "Clear all" %}</a>
+</div>

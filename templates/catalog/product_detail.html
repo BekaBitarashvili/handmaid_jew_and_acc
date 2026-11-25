@@ -1,10 +1,105 @@
 {% extends "base.html" %}
-{% load catalog_tags %}
-{# Placeholder; the full product page arrives in the next commit. #}
+{% load i18n catalog_tags money %}
+
 {% block title %}{{ product.name }} — {{ site_settings.brand_name }}{% endblock %}
+
 {% block content %}
-<div class="container-site py-16">
-  <h1>{{ product.name }}</h1>
-  <p class="price mt-4">{% price_text product %}</p>
+{% card_labels product as labels %}{% commission_url product as commission %}
+{% if is_preview %}
+  <div class="bg-cream py-3 text-center text-small text-cocoa" role="status">
+    {% blocktranslate with status=product.get_status_display %}Preview — this product is not visible in the shop ({{ status }}).{% endblocktranslate %}
+  </div>
+{% endif %}
+
+<div class="container-site pb-24 pt-6 md:pt-10">
+  <nav aria-label="{% translate 'Breadcrumb' %}" class="mb-6 text-small text-taupe-text">
+    <ol class="flex flex-wrap gap-2">
+      <li><a class="link text-taupe-text" href="{% url 'catalog:shop' %}">{% translate "Shop" %}</a></li>
+      <li aria-hidden="true">/</li><li><a class="link text-taupe-text" href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+      <li aria-hidden="true">/</li><li aria-current="page" class="text-cocoa">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:gap-16">
+    {# ---------------------------------------------------------- Gallery #}
+    {% include "catalog/_gallery.html" %}
+
+    {# ---------------------------------------------------------- Buy box #}
+    <div class="lg:sticky lg:top-28 lg:self-start" x-data="variantPicker('variant-data')">
+      {{ variant_data|json_script:"variant-data" }}
+      {% if labels and product.status != "sold" %}<p class="label text-taupe-text">{{ labels|join:" · " }}</p>{% endif %}
+      <h1 class="mt-3">{{ product.name }}</h1>
+      {% if product.short_description %}<p class="mt-3 text-cocoa">{{ product.short_description }}</p>{% endif %}
+
+      <div class="mt-6 flex items-baseline gap-4">
+        {% if product.status == "sold" %}
+          <p class="price text-h3 text-sold-text">{{ product.price|gel }}</p>
+          <p class="label text-sold-text">{% translate "Sold" %}</p>
+        {% else %}
+          <p class="price text-h3" x-text="current ? current.price : $el.textContent">{{ selected.price|default:"" }}</p>
+        {% endif %}
+      </div>
+
+      {# Availability: plain statements, no stock-pressure wording (SPEC §9.8). #}
+      {% with state=product|availability %}
+        <p class="mt-2 text-small {% if state == 'sold' or state == 'out' %}text-sold-text{% else %}text-cocoa{% endif %}"
+           {% if show_variant_picker %}data-in="{% translate 'In stock' %}" data-out="{% translate 'Out of stock' %}"
+           x-text="current ? (current.available ? $el.dataset.in : $el.dataset.out) : $el.textContent"{% endif %}>
+          {% if state == "unique" %}{% translate "One of a kind — only 1" %}
+          {% elif state == "in_stock" %}{% translate "In stock" %}
+          {% elif state == "out" %}{% translate "Out of stock" %}
+          {% else %}{% translate "This piece has found its owner." %}{% endif %}
+        </p>
+      {% endwith %}
+
+      {% if show_variant_picker %}
+        <fieldset class="mt-8">
+          <legend class="label text-taupe-text">{% translate "Choose" %}</legend>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {% for v in variant_data %}
+              <label class="variant-pill {% if not v.available %}is-unavailable{% endif %}">
+                <input type="radio" name="variant" value="{{ v.id }}" class="sr-only"
+                       x-model.number="selected" @change="choose({{ v.id }})"
+                       {% if v.id == selected.id %}checked{% endif %}>
+                <span>{{ v.name }}</span>
+                {% if not v.available %}<span class="sr-only">— {% translate "out of stock" %}</span>{% endif %}
+              </label>
+            {% endfor %}
+          </div>
+        </fieldset>
+      {% endif %}
+
+      <div class="mt-8 space-y-4">
+        {% if product.status == "active" and product.is_available %}
+          <div class="flex gap-3">
+            {# TODO(1c): becomes the real add-to-cart (HTMX → cart drawer). #}
+            <button type="button" class="btn btn-primary flex-1" disabled aria-describedby="cart-soon">{% translate "Add to cart" %}</button>
+            <button type="button" class="btn btn-secondary px-4" disabled aria-label="{% translate 'Add to wishlist' %}">
+              {% include "components/icon.html" with name="heart" size=20 %}
+            </button>
+          </div>
+          <p id="cart-soon" class="text-small text-taupe-text">{% translate "Online ordering opens soon." %}</p>
+        {% endif %}
+        {% if product.allow_commission_request and commission %}
+          {% if product.status == "sold" or not product.is_available %}
+            <a href="{{ commission }}" class="btn btn-primary w-full">{% translate "Commission a similar piece" %}</a>
+            <p class="text-small text-taupe-text">{% translate "Each piece is made once. Tell us what you liked about this one, and a similar piece can be made for you." %}</p>
+          {% endif %}
+        {% endif %}
+      </div>
+
+      {% include "catalog/_product_accordions.html" %}
+    </div>
+  </div>
+
+  {% if related %}
+    <section aria-labelledby="related-title" class="mt-24">
+      {% include "components/ornament.html" with class="mb-14" %}
+      <h2 id="related-title">{% translate "You may also like" %}</h2>
+      <ul class="mt-10 grid grid-cols-2 gap-x-4 gap-y-12 md:grid-cols-4 md:gap-x-6">
+        {% for product in related %}<li>{% include "components/product_card.html" with eager=False %}</li>{% endfor %}
+      </ul>
+    </section>
+  {% endif %}
 </div>
 {% endblock %}

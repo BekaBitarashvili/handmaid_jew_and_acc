@@ -1,0 +1,75 @@
+{% load i18n navigation money %}{% comment %}
+Native <details>: keyboard- and screen-reader-friendly without JavaScript. Empty sections are
+left out. No policy text is invented here (CLAUDE.md): returns live on the Shipping & Returns page.
+{% endcomment %}{% url_if_exists "pages:shipping" as shipping_url %}
+<div class="mt-12 border-b border-sand">
+  {% if product.description %}
+    <details class="accordion" open>
+      <summary>{% translate "Description" %}</summary>
+      <div class="rich-text pb-6">{{ product.description|safe }}</div>
+    </details>
+  {% endif %}
+
+  {% if product.story %}
+    <details class="accordion">
+      <summary>{% translate "Story" %}</summary>
+      <div class="rich-text pb-6">{{ product.story|safe }}</div>
+    </details>
+  {% endif %}
+
+  {% if stones or materials %}
+    <details class="accordion">
+      <summary>{% translate "Stones & materials" %}</summary>
+      <div class="space-y-4 pb-6 text-cocoa">
+        {% if stones %}
+          <ul class="space-y-2">
+            {% for stone in stones %}
+              <li class="flex items-center gap-3">
+                <span class="size-3 rounded-full border border-espresso/15" style="background: {{ stone.color_hex|default:'transparent' }}" aria-hidden="true"></span>
+                <a class="link" href="{{ stone.get_absolute_url }}">{{ stone.name }}</a>
+                {% if stone.short_description %}<span class="text-small text-taupe-text">— {{ stone.short_description }}</span>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if materials %}<p>{% for m in materials %}{{ m.name }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>{% endif %}
+      </div>
+    </details>
+  {% endif %}
+
+  {% if product.dimensions or product.weight_g %}
+    <details class="accordion">
+      <summary>{% translate "Dimensions & size" %}</summary>
+      <dl class="space-y-2 pb-6 text-cocoa">
+        {% if product.dimensions %}<div><dt class="sr-only">{% translate "Dimensions" %}</dt><dd>{{ product.dimensions }}</dd></div>{% endif %}
+        {% if product.weight_g %}<div class="flex gap-2"><dt>{% translate "Weight" %}:</dt><dd>{{ product.weight_g }} {% translate "g" %}</dd></div>{% endif %}
+      </dl>
+    </details>
+  {% endif %}
+
+  {% if product.care_instructions %}
+    <details class="accordion">
+      <summary>{% translate "Care" %}</summary>
+      <div class="pb-6 text-cocoa">{{ product.care_instructions|linebreaks }}</div>
+    </details>
+  {% endif %}
+
+  {% if delivery_options or shipping_url %}
+    <details class="accordion">
+      <summary>{% translate "Delivery & returns" %}</summary>
+      <div class="space-y-4 pb-6 text-cocoa">
+        {% if delivery_options %}
+          <ul class="space-y-2">
+            {% for option in delivery_options %}
+              <li class="flex flex-wrap justify-between gap-x-4">
+                <span>{{ option.name }}</span>
+                <span class="text-small text-taupe-text">{{ option.estimated_days }}{% if option.price %} · <span class="price text-taupe-text">{{ option.price|gel }}</span>{% endif %}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+        {% if shipping_url %}<a class="link text-small" href="{{ shipping_url }}">{% translate "Shipping & returns in detail" %}</a>{% endif %}
+      </div>
+    </details>
+  {% endif %}
+</div>

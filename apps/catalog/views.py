@@ -8,15 +8,19 @@ from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext
 
+from apps.core.money import format_gel
+from apps.orders.models import DeliveryOption
+
 from . import filters as shop_filters
 from .lookup import by_translated_slug
-from .models import Category, Stone
+from .models import Category, Product, Stone
 from .queries import (
     archive_products,
     category_scope,
     facet_options,
     filter_products,
     public_products,
+    related_products,
     stones_with_counts,
     visible_for,
     with_card_data,
@@ -101,7 +105,45 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
     product, wrong_language = by_translated_slug(with_card_data(visible_for(request.user)), slug)
     if wrong_language:
         return _redirect_to(product, request)
-    return render(request, "catalog/product_detail.html", {"product": product})
+
+    images = list(product.images.all())
+    variants = list(product.variants.order_by("sort_order", "pk"))
+    sellable = product.status == Product.Status.ACTIVE
+    first_photo_of = {}
+    for index, image in enumerate(images):
+        if image.variant_id is not None:
+            first_photo_of.setdefault(image.variant_id, index)
+    variant_data = [
+        {
+            "id": v.pk,
+            "name": v.name or "",
+            "price": format_gel(v.price),
+            "available": sellable and v.available > 0,
+            "image": first_photo_of.get(v.pk),
+        }
+        for v in variants
+    ]
+    selected = next(
+        (d for d in variant_data if d["available"]), variant_data[0] if variant_data else None
+    )
+
+    return render(
+        request,
+        "catalog/product_detail.html",
+        {
+            "product": product,
+            "images": images,
+            "variants": variants,
+            "variant_data": variant_data,
+            "selected": selected,
+            "show_variant_picker": len(variants) > 1,
+            "stones": list(product.stones.all()),
+            "materials": list(product.materials.all()),
+            "related": related_products(product),
+            "delivery_options": DeliveryOption.objects.filter(is_active=True),
+            "is_preview": not product.is_public,
+        },
+    )
 
 
 def _paged(request: HttpRequest, queryset, template: str, context: dict) -> HttpResponse:

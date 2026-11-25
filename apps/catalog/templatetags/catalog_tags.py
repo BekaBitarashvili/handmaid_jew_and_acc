@@ -72,8 +72,11 @@ def availability(product: Product) -> str:
 
 @register.simple_tag(takes_context=True)
 def commission_url(context, product: Product | None = None) -> str:
-    """ "Commission a similar piece": the request form once it exists (Phase 2), until
-    then an e-mail to the shop with the SKU in the subject. "" when neither is available."""
+    """Link for "Commission a similar piece".
+
+    The request form once it exists (Phase 2); until then an e-mail to the shop with
+    the SKU in the subject; an empty string when neither is available.
+    """
     try:
         url = reverse("pages:commission")
         return f"{url}?product={product.sku}" if product else url
@@ -85,3 +88,9 @@ def commission_url(context, product: Product | None = None) -> str:
         return ""
     subject = (_("A piece like %(sku)s") % {"sku": product.sku}) if product else _("A custom piece")
     return f"mailto:{email}?subject={quote(subject)}"
+
+
+@register.simple_tag
+def picture_data(image):
+    """Picture data (srcsets, 1800px URL) for templates that need more than <picture>."""
+    return picture(image.image) if image else None

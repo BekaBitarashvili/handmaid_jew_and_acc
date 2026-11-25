@@ -489,6 +489,44 @@
     }
   }
 
+  /* Mobile menu: large serif links, staggered fade-in (60ms apart). Sizes follow the
+     screen height so landscape phones still fit; the overlay scrolls if they don't. */
+  .menu-link {
+    display: block;
+    padding-block: 0.35rem;
+    font-family: var(--font-serif);
+    font-weight: 300;
+    font-size: clamp(1.75rem, 3.2vh + 1rem, 2.75rem);
+    line-height: 1.15;
+    color: var(--color-espresso);
+  }
+  .menu-link--sub {
+    padding-left: 1rem;
+    font-size: clamp(1.25rem, 2.2vh + 0.75rem, 1.875rem);
+    color: var(--color-cocoa);
+  }
+  .mobile-menu .menu-item {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 400ms var(--ease-atelier),
+      transform 400ms var(--ease-atelier);
+    transition-delay: calc(var(--i, 0) * 60ms + 80ms);
+  }
+  .mobile-menu.is-open .menu-item {
+    opacity: 1;
+    transform: none;
+  }
+
+  .payment-badge {
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--color-cocoa);
+    border-radius: var(--radius-xs);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    color: var(--color-sand);
+  }
+
   .hairline {
     border-color: var(--color-sand);
   }

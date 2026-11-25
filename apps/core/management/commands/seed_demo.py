@@ -56,7 +56,20 @@ class Command(BaseCommand):
     def seed_site_settings(self) -> str:
         existed = SiteSettings.objects.filter(pk=SiteSettings.SINGLETON_PK).exists()
         site = SiteSettings.load()
-        return f"kept ({site.brand_name})" if existed else f"created ({site.brand_name})"
+        # Obviously fake demo contacts (dev only), filled only where the owner left blanks.
+        demo = {
+            "contact_phone": "+995 555 00 00 00",
+            "contact_email": "hello@example.com",
+            "contact_address": "Tbilisi (demo address)",
+            "instagram_url": "https://instagram.com/example",
+        }
+        filled = [field for field, value in demo.items() if not getattr(site, field)]
+        for field in filled:
+            setattr(site, field, demo[field])
+        if filled:
+            site.save(update_fields=filled)
+        state = "kept" if existed else "created"
+        return f"{state} ({site.brand_name}); demo contacts: {len(filled)} filled"
 
     def seed_superuser(self) -> str:
         user_model = get_user_model()

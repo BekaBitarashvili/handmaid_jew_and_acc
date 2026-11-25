@@ -8,6 +8,7 @@ from django.utils.translation import gettext as _
 
 from apps.catalog.images import picture
 from apps.catalog.models import Product
+from apps.catalog.queries import top_categories
 from apps.core.money import format_gel
 
 register = template.Library()
@@ -94,3 +95,9 @@ def commission_url(context, product: Product | None = None) -> str:
 def picture_data(image):
     """Picture data (srcsets, 1800px URL) for templates that need more than <picture>."""
     return picture(image.image) if image else None
+
+
+@register.simple_tag
+def nav_categories():
+    """Top-level active categories for the mobile menu and footer."""
+    return list(top_categories())

@@ -110,4 +110,54 @@ document.addEventListener("alpine:init", () => {
       }
     },
   }));
+
+  // Mobile menu (SPEC §9.5): full-screen overlay under the header bar. Scroll lock,
+  // focus trap (✕ + menu links), page behind made inert, Esc / ✕ / link click close it,
+  // focus returns to the burger.
+  Alpine.data("mobileMenu", () => ({
+    open: false,
+    revealed: false, // set one frame after showing, so the staggered fade-in runs
+
+    init() {
+      PHONE.addEventListener("change", (event) => {
+        if (!event.matches) this.close(false); // rotated / resized to tablet width
+      });
+    },
+    toggle() {
+      this.open ? this.close() : this.show();
+    },
+    show() {
+      this.open = true;
+      this.$refs.menu.scrollTop = 0; // always open at the top (landscape menus scroll)
+      lockPageScroll(true);
+      this.setInert(true);
+      requestAnimationFrame(() => requestAnimationFrame(() => (this.revealed = true)));
+      this.$nextTick(() => this.$refs.menu.querySelector("a[href], button")?.focus());
+    },
+    close(returnFocus = true) {
+      if (!this.open) return;
+      this.open = false;
+      this.revealed = false;
+      lockPageScroll(false);
+      this.setInert(false);
+      if (returnFocus) this.$refs.toggle.focus();
+    },
+    setInert(value) {
+      document.querySelectorAll("[data-inert-with-menu]").forEach((el) => (el.inert = value));
+    },
+    trap(event) {
+      // Tab cycles through the ✕ and the menu only; every press is handled explicitly,
+      // otherwise focus would continue to the next header element (the wordmark).
+      if (!this.open) return;
+      const focusable = [
+        this.$refs.toggle,
+        ...this.$refs.menu.querySelectorAll("a[href], button:not([disabled])"),
+      ].filter((el) => el === this.$refs.toggle || el.offsetParent !== null);
+      event.preventDefault();
+      const current = focusable.indexOf(document.activeElement);
+      const step = event.shiftKey ? -1 : 1;
+      const next = current === -1 ? 0 : (current + step + focusable.length) % focusable.length;
+      focusable[next].focus();
+    },
+  }));
 });

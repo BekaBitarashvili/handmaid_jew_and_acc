@@ -28,14 +28,14 @@
   <a href="#main" class="skip-link">{% translate "Skip to content" %}</a>
 
   {% if site_settings.announcement_bar %}
-    <div class="bg-cream py-2 text-center text-small text-cocoa">
+    <div class="bg-cream py-2 text-center text-small text-cocoa" data-inert-with-menu>
       <p class="container-site">{{ site_settings.announcement_bar }}</p>
     </div>
   {% endif %}
 
   {% include "components/header.html" %}
 
-  <main id="main" class="flex-1" tabindex="-1">
+  <main id="main" class="flex-1" tabindex="-1" data-inert-with-menu>
     {% block content %}{% endblock %}
   </main>
 

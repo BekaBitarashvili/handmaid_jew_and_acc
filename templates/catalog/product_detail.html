@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load i18n catalog_tags money %}
 
-{% block title %}{{ product.name }} — {{ site_settings.brand_name }}{% endblock %}
 
 {% block content %}
 {% card_labels product as labels %}{% commission_url product as commission %}

@@ -1,10 +1,11 @@
-{% load static i18n %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
+{% load static i18n seo %}{% get_current_language as LANGUAGE_CODE %}<!doctype html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ site_settings.brand_name }}{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}{% translate 'Handmade jewelry with natural stones' %}{% endblock %}">
+  <title>{% block title %}{% if seo %}{{ seo.title }}{% else %}{{ site_settings.brand_name }}{% endif %}{% endblock %}</title>
+  {% if not seo %}<meta name="description" content="{% block meta_description %}{% translate 'Handmade jewelry with natural stones' %}{% endblock %}">{% endif %}
+  {% seo_head %}
   <meta name="theme-color" content="#FAF6EF">
   {% include "components/favicons.html" %}
 

@@ -25,6 +25,7 @@ from .queries import (
     visible_for,
     with_card_data,
 )
+from .seo import archive_seo, listing_seo, product_seo, stones_seo
 
 GRID_TARGET = "product-grid"  # hx-target of "Load more"
 RESULTS_TARGET = "results"  # hx-target of the filter form
@@ -89,6 +90,9 @@ def shop(request: HttpRequest, slug: str | None = None) -> HttpResponse:
             "min_value": shop_filters._lari(filters.min_price) if filters.min_price else "",
             "max_value": shop_filters._lari(filters.max_price) if filters.max_price else "",
             "active_count": shop_filters.active_count(filters),
+            "seo": listing_seo(
+                request, category, filtered=shop_filters.is_filtered(filters), page=page
+            ),
             "title": category.name if category else _("Shop"),
         }
     )
@@ -142,6 +146,7 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "related": related_products(product),
             "delivery_options": DeliveryOption.objects.filter(is_active=True),
             "is_preview": not product.is_public,
+            "seo": product_seo(request, product, images),
         },
     )
 
@@ -177,11 +182,21 @@ def archive(request: HttpRequest) -> HttpResponse:
         ).first()
         if stone is not None:
             products = products.filter(stones=stone)
-    return _paged(request, products, "catalog/archive.html", {"archive": True, "stone": stone})
+    filtered = stone is not None or "page" in request.GET
+    return _paged(
+        request,
+        products,
+        "catalog/archive.html",
+        {"archive": True, "stone": stone, "seo": archive_seo(request, filtered=filtered)},
+    )
 
 
 def stone_list(request: HttpRequest) -> HttpResponse:
-    return render(request, "catalog/stone_list.html", {"stones": stones_with_counts()})
+    return render(
+        request,
+        "catalog/stone_list.html",
+        {"stones": stones_with_counts(), "seo": stones_seo(request)},
+    )
 
 
 def stone_detail(request: HttpRequest, slug: str) -> HttpResponse:
@@ -198,5 +213,5 @@ def stone_detail(request: HttpRequest, slug: str) -> HttpResponse:
         request,
         products,
         "catalog/stone_detail.html",
-        {"stone": stone, "has_archive": has_archive},
+        {"stone": stone, "has_archive": has_archive, "seo": stones_seo(request, stone)},
     )

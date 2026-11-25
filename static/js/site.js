@@ -5,6 +5,7 @@
 const PHONE = window.matchMedia("(max-width: 47.999rem)");
 const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)");
 const MOUSE = window.matchMedia("(hover: hover) and (pointer: fine)");
+const DESKTOP_NAV = window.matchMedia("(min-width: 64rem)"); // header shows the links from here
 
 function lockPageScroll(locked) {
   document.documentElement.classList.toggle("overflow-hidden", locked);
@@ -117,16 +118,27 @@ document.addEventListener("alpine:init", () => {
   Alpine.data("mobileMenu", () => ({
     open: false,
     revealed: false, // set one frame after showing, so the staggered fade-in runs
+    searchOpen: false,
 
     init() {
-      PHONE.addEventListener("change", (event) => {
-        if (!event.matches) this.close(false); // rotated / resized to tablet width
+      DESKTOP_NAV.addEventListener("change", (event) => {
+        if (event.matches) this.close(false); // rotated / resized to desktop width
       });
+    },
+    openSearch() {
+      if (this.open) this.close(false);
+      this.searchOpen = true;
+      this.$nextTick(() => this.$refs.searchInput.focus());
+    },
+    closeSearch() {
+      this.searchOpen = false;
+      this.$refs.searchButton.focus();
     },
     toggle() {
       this.open ? this.close() : this.show();
     },
     show() {
+      this.searchOpen = false;
       this.open = true;
       this.$refs.menu.scrollTop = 0; // always open at the top (landscape menus scroll)
       lockPageScroll(true);

@@ -1,0 +1,6 @@
+{% load i18n %}{% comment %}Social icons from Site settings; empty links are hidden.{% endcomment %}
+<ul class="flex items-center gap-5 {{ class|default:'' }}">
+  {% if site_settings.instagram_url %}<li><a href="{{ site_settings.instagram_url }}" class="text-cocoa hover:text-espresso" rel="noopener" target="_blank">{% include "components/icon.html" with name="instagram" size=20 %}<span class="sr-only">Instagram</span></a></li>{% endif %}
+  {% if site_settings.pinterest_url %}<li><a href="{{ site_settings.pinterest_url }}" class="text-cocoa hover:text-espresso" rel="noopener" target="_blank">{% include "components/icon.html" with name="pinterest" size=20 %}<span class="sr-only">Pinterest</span></a></li>{% endif %}
+  {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}" class="text-cocoa hover:text-espresso" rel="noopener" target="_blank">{% include "components/icon.html" with name="facebook" size=20 %}<span class="sr-only">Facebook</span></a></li>{% endif %}
+</ul>

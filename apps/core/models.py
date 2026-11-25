@@ -23,6 +23,7 @@ class SiteSettings(models.Model):
 
     instagram_url = models.URLField(_("Instagram"), blank=True)
     facebook_url = models.URLField(_("Facebook"), blank=True)
+    pinterest_url = models.URLField(_("Pinterest"), blank=True)
     tiktok_url = models.URLField(_("TikTok"), blank=True)
 
     legal_entity_name = models.CharField(_("legal entity name"), max_length=255, blank=True)

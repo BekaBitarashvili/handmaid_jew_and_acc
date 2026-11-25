@@ -1,65 +1,36 @@
-{% load i18n navigation catalog_tags %}{% now "Y" as year %}{% nav_categories as categories %}
-{% url_if_exists "pages:about" as about_url %}{% url_if_exists "pages:shipping" as shipping_url %}{% url_if_exists "pages:faq" as faq_url %}{% url_if_exists "pages:contact" as contact_url %}
+{% load i18n navigation %}{% now "Y" as year %}
+{% url_if_exists "pages:shipping" as shipping_url %}{% url_if_exists "pages:faq" as faq_url %}
 {% url_if_exists "pages:terms" as terms_url %}{% url_if_exists "pages:privacy" as privacy_url %}{% url_if_exists "pages:cookies" as cookies_url %}
 {% comment %}
-Three columns (SPEC §11): Shop / Information / Contact. Pages that don't exist yet (About, FAQ,
-legal pages — 1f / Phase 2) show as muted text and become links automatically once their URL
-exists. Payment methods are neutral text badges: the official BOG / TBC / card marks come with
-the merchant agreements and must not be redrawn.
+Footer (reference): light linen. Left: Contact · Shipping & Returns · FAQ; centre: the star;
+right: social icons (hidden when empty). Bottom bar: © · legal links · payment text badges.
+Pages that don't exist yet show as muted text, never dead links. The official BOG / TBC / card
+marks come with the merchant agreements and must not be redrawn.
 {% endcomment %}
-<footer class="bg-espresso text-sand" data-inert-with-menu>
-  <div class="container-site py-14 md:py-16">
-    <div class="max-w-sm">
-      <p class="font-serif text-h2 text-linen">{{ site_settings.brand_name }}</p>
-      <p class="mt-2 text-small">{% translate "Handmade jewelry with natural stones" %}</p>
-    </div>
-
-    <div class="mt-12 grid gap-10 sm:grid-cols-3 md:gap-12">
-      <nav aria-labelledby="footer-shop">
-        <h2 id="footer-shop" class="label text-clay">{% translate "Shop" %}</h2>
-        <ul class="mt-4 space-y-2 text-small">
-          <li><a class="hover:text-linen" href="{% url 'catalog:shop' %}">{% translate "All pieces" %}</a></li>
-          {% for category in categories %}<li><a class="hover:text-linen" href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>{% endfor %}
-        </ul>
-      </nav>
-
-      <nav aria-labelledby="footer-info">
-        <h2 id="footer-info" class="label text-clay">{% translate "Information" %}</h2>
-        <ul class="mt-4 space-y-2 text-small">
-          {% translate "About" as label %}{% include "components/_footer_link.html" with url=about_url %}
-          {% translate "Shipping & returns" as label %}{% include "components/_footer_link.html" with url=shipping_url %}
-          {% translate "FAQ" as label %}{% include "components/_footer_link.html" with url=faq_url %}
-          {% translate "Contact" as label %}{% include "components/_footer_link.html" with url=contact_url %}
-        </ul>
-      </nav>
-
-      <div>
-        <h2 class="label text-clay">{% translate "Contact" %}</h2>
-        <ul class="mt-4 space-y-2 text-small">
-          {% if site_settings.contact_phone %}<li><a class="hover:text-linen" href="tel:{{ site_settings.contact_phone|cut:' ' }}">{{ site_settings.contact_phone }}</a></li>{% endif %}
-          {% if site_settings.contact_email %}<li><a class="hover:text-linen" href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></li>{% endif %}
-          {% if site_settings.contact_address %}<li>{{ site_settings.contact_address }}</li>{% endif %}
-        </ul>
-        {% if site_settings.instagram_url or site_settings.facebook_url or site_settings.tiktok_url %}
-          <ul class="mt-4 flex gap-5 text-small">
-            {% if site_settings.instagram_url %}<li><a href="{{ site_settings.instagram_url }}" class="hover:text-linen" rel="noopener" target="_blank">Instagram</a></li>{% endif %}
-            {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}" class="hover:text-linen" rel="noopener" target="_blank">Facebook</a></li>{% endif %}
-            {% if site_settings.tiktok_url %}<li><a href="{{ site_settings.tiktok_url }}" class="hover:text-linen" rel="noopener" target="_blank">TikTok</a></li>{% endif %}
-          </ul>
-        {% endif %}
-      </div>
-    </div>
+<footer class="border-t border-sand bg-linen" data-inert-with-menu>
+  <div class="container-site grid items-center gap-8 py-12 text-center md:grid-cols-[1fr_auto_1fr] md:text-left">
+    <nav aria-label="{% translate 'Information' %}">
+      <ul class="flex flex-wrap justify-center gap-x-8 gap-y-2 md:justify-start">
+        <li><a class="nav-link" href="{% url 'pages:contact' %}">{% translate "Contact" %}</a></li>
+        {% translate "Shipping & returns" as label %}{% include "components/_footer_link.html" with url=shipping_url %}
+        {% translate "FAQ" as label %}{% include "components/_footer_link.html" with url=faq_url %}
+      </ul>
+    </nav>
+    <a href="{% url 'pages:home' %}" class="justify-self-center text-espresso" aria-label="{{ site_settings.brand_name }} — {% translate 'Home' %}">
+      {% include "components/star.html" with size=24 %}
+    </a>
+    {% include "components/social_links.html" with class="justify-center md:justify-end" %}
   </div>
 
-  <div class="border-t border-cocoa">
-    <div class="container-site flex flex-col gap-5 py-6 text-small md:flex-row md:items-center md:justify-between">
+  <div class="border-t border-sand">
+    <div class="container-site flex flex-col items-center gap-4 py-5 text-small text-taupe-text md:flex-row md:justify-between">
       <p>&copy; {{ year }} {{ site_settings.brand_name }}{% if site_settings.legal_entity_name %} · {{ site_settings.legal_entity_name }}{% if site_settings.legal_entity_id %} · {% translate "ID" %} {{ site_settings.legal_entity_id }}{% endif %}{% endif %}</p>
-      <ul class="flex flex-wrap gap-x-5 gap-y-2" aria-label="{% translate 'Legal' %}">
+      <ul class="flex flex-wrap justify-center gap-x-5 gap-y-2" aria-label="{% translate 'Legal' %}">
         {% translate "Terms" as label %}{% include "components/_footer_link.html" with url=terms_url %}
         {% translate "Privacy" as label %}{% include "components/_footer_link.html" with url=privacy_url %}
         {% translate "Cookies" as label %}{% include "components/_footer_link.html" with url=cookies_url %}
       </ul>
-      <ul class="flex flex-wrap gap-2" aria-label="{% translate 'Payment methods' %}">
+      <ul class="flex flex-wrap justify-center gap-2" aria-label="{% translate 'Payment methods' %}">
         <li class="payment-badge">BOG</li>
         <li class="payment-badge">TBC</li>
         <li class="payment-badge">VISA</li>

@@ -1,21 +1,21 @@
+"""Header, mobile menu, footer and the small pages of the redesign."""
+
 import re
 
 import pytest
 
 from apps.core.models import SiteSettings
-from tests.catalog.factories import CategoryFactory
 
 pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
 def page(client, en):
-    CategoryFactory(name_en="Necklaces", slug_en="necklaces", sort_order=1)
-    CategoryFactory(name_en="Earrings", slug_en="earrings", sort_order=2)
-    CategoryFactory(name_en="Hidden one", slug_en="hidden-one", is_active=False)
     settings_obj = SiteSettings.load()
-    settings_obj.contact_phone = "+995 555 00 00 00"
+    settings_obj.instagram_url = "https://instagram.com/example"
+    settings_obj.pinterest_url = "https://pinterest.com/example"
     settings_obj.contact_email = "hello@example.com"
+    settings_obj.contact_phone = "+995 555 00 00 00"
     settings_obj.save()
     return client.get("/en/shop/").content.decode()
 
@@ -24,28 +24,62 @@ def section(html: str, start: str, end: str) -> str:
     return html[html.index(start) : html.index(end, html.index(start))]
 
 
-class TestFooter:
-    def test_three_columns(self, page):
-        footer = section(page, "<footer", "</footer>")
-        for heading in ('id="footer-shop"', 'id="footer-info"', ">Contact</h2>"):
-            assert heading in footer
+class TestHeader:
+    def test_five_links_in_reference_order(self, page):
+        nav = section(page, 'class="hidden lg:block"', "</nav>")
+        hrefs = re.findall(r'class="nav-link"[^>]*>([^<]+)<', nav)
+        assert hrefs == ["Shop", "New Arrivals", "Sale", "About", "Contact"]
 
-    def test_shop_column_lists_active_categories(self, page):
-        shop = section(page, 'id="footer-shop"', "</nav>")
-        assert 'href="/en/shop/necklaces/"' in shop and 'href="/en/shop/earrings/"' in shop
-        assert "Hidden one" not in shop
-        assert "/archive/" not in shop and "/stones/" not in shop
+    def test_only_the_current_section_is_active(self, client, en):
+        html = client.get("/en/shop/new/").content.decode()
+        nav = section(html, 'class="hidden lg:block"', "</nav>")
+        active = re.findall(r'href="([^"]+)" class="nav-link" aria-current="page"', nav)
+        assert active == ["/en/shop/new/"]  # not /en/shop/ too
+
+    def test_icons_search_account_cart(self, page):
+        header = section(page, "<header", "</header>")
+        assert 'aria-controls="site-search"' in header
+        assert 'href="/en/account/"' in header
+        assert "data-cart-placeholder" in header and "(0)" in header
+
+    def test_search_panel_submits_to_the_shop(self, page):
+        search = section(page, 'id="site-search"', "</form>")
+        assert 'action="/en/shop/"' in search and 'name="q"' in search
+
+
+class TestMobileMenu:
+    def test_toggle_is_wired_for_assistive_tech(self, page):
+        assert 'aria-controls="mobile-menu" aria-expanded="false"' in page
+
+    def test_five_links_then_account_wishlist_language(self, page):
+        menu = section(page, 'id="mobile-menu"', "</nav>")
+        links = re.findall(r'class="menu-link"[^>]*>([^<]+)<', menu)
+        assert links == ["Shop", "New Arrivals", "Sale", "About", "Contact"]
+        assert 'href="/en/account/"' in menu
+        assert "Wishlist (0)" in menu
+        assert "/i18n/setlang/" in menu
+
+    def test_page_regions_can_be_made_inert(self, page):
+        assert re.search(r'<main id="main"[^>]*data-inert-with-menu', page)
+        assert re.search(r"<footer[^>]*data-inert-with-menu", page)
+
+
+class TestFooter:
+    def test_links_star_and_social_icons(self, page):
+        footer = section(page, "<footer", "</footer>")
+        assert 'href="/en/contact/"' in footer
+        assert 'href="https://instagram.com/example"' in footer
+        assert 'href="https://pinterest.com/example"' in footer
+        assert "Facebook" not in footer  # empty link: icon hidden
 
     def test_pages_that_do_not_exist_yet_are_plain_text(self, page):
         footer = section(page, "<footer", "</footer>")
-        for label in ("About", "FAQ", "Terms", "Privacy", "Cookies"):
-            assert f'<span class="text-taupe-text">{label}</span>' in footer
+        for label in ("FAQ", "Terms", "Privacy", "Cookies"):
+            assert f'<span class="nav-link text-taupe-text">{label}</span>' in footer
         assert 'href="#"' not in footer
 
-    def test_contact_and_payment_placeholders(self, page):
+    def test_payment_badges(self, page):
         footer = section(page, "<footer", "</footer>")
-        assert 'href="tel:+995555000000"' in footer
-        assert 'href="mailto:hello@example.com"' in footer
         assert re.findall(r'class="payment-badge">([^<]+)<', footer) == [
             "BOG",
             "TBC",
@@ -53,26 +87,31 @@ class TestFooter:
             "Mastercard",
         ]
 
-    def test_no_language_switcher_in_footer(self, page):
-        assert "/i18n/setlang/" not in section(page, "<footer", "</footer>")
+    def test_no_archive_or_stone_links(self, page):
+        footer = section(page, "<footer", "</footer>")
+        assert "/archive/" not in footer and "/stones/" not in footer
 
 
-class TestMobileMenu:
-    def test_toggle_is_wired_for_assistive_tech(self, page):
-        assert 'aria-controls="mobile-menu" aria-expanded="false"' in page
-        assert 'id="mobile-menu"' in page
+class TestSmallPages:
+    def test_contact_page_shows_site_settings(self, client, en):
+        settings_obj = SiteSettings.load()
+        settings_obj.contact_email = "hello@example.com"
+        settings_obj.contact_phone = "+995 555 00 00 00"
+        settings_obj.save()
+        html = client.get("/en/contact/").content.decode()
+        assert 'href="mailto:hello@example.com"' in html
+        assert 'href="tel:+995555000000"' in html
 
-    def test_links_in_order(self, page):
-        menu = section(page, 'id="mobile-menu"', "</nav>")
-        hrefs = re.findall(r'class="menu-item"[^>]*><a href="([^"]+)"', menu)
-        assert hrefs == ["/en/shop/", "/en/shop/necklaces/", "/en/shop/earrings/"]
+    def test_account_placeholder_explains_guest_checkout(self, client, en):
+        html = client.get("/en/account/").content.decode()
+        assert "Accounts are coming soon." in html
+        assert "checkout works as a guest" in html
+        assert "Wishlist (0)" in html
 
-    def test_bottom_area_has_wishlist_contact_and_language(self, page):
-        menu = section(page, 'id="mobile-menu"', "</nav>")
-        assert "Wishlist" in menu
-        assert 'href="mailto:hello@example.com"' in menu  # Contact page not built yet
-        assert "/i18n/setlang/" in menu
+    def test_about_placeholder_is_not_indexed(self, client, en):
+        html = client.get("/en/about/").content.decode()
+        assert 'content="noindex, follow"' in html
 
-    def test_page_regions_can_be_made_inert(self, page):
-        assert '<main id="main" class="flex-1" tabindex="-1" data-inert-with-menu>' in page
-        assert '<footer class="bg-espresso text-sand" data-inert-with-menu>' in page
+    @pytest.mark.parametrize("url", ["/ka/about/", "/ka/contact/", "/ka/account/"])
+    def test_georgian_pages_render(self, client, url):
+        assert client.get(url).status_code == 200

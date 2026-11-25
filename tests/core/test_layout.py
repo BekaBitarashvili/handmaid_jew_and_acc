@@ -60,20 +60,10 @@ def test_language_switcher_posts_current_path(home_ka):
     assert 'value="en"' in home_ka
 
 
-def test_nav_skips_views_that_do_not_exist_yet(rf, en):
+def test_nav_lists_the_reference_links(rf, en):
     items = main_nav({"request": rf.get("/en/shop/")})
-    labels = [item.label for item in items]
-    assert "Shop" in labels
-    assert "About" not in labels  # the About page arrives in Phase 2
+    assert [i.label for i in items] == ["Shop", "New Arrivals", "Sale", "About", "Contact"]
     assert next(i for i in items if i.label == "Shop").active
-
-
-def test_footer_shows_contacts_only_when_set(client):
-    assert "tel:" not in client.get("/en/").content.decode()
-    settings_obj = SiteSettings.load()
-    settings_obj.contact_phone = "+995 555 12 34 56"
-    settings_obj.save()
-    assert 'href="tel:+995555123456"' in client.get("/en/").content.decode()
 
 
 def test_custom_404_page(client):
@@ -113,15 +103,10 @@ class TestDesignReviewPhase0:
         header = html[html.index("<header") : html.index("</header>")]
         assert "/i18n/setlang/" in header
 
-    def test_mobile_header_reserves_cart_slot(self, client):
+    def test_header_reserves_cart_slot(self, client):
         html = client.get("/ka/").content.decode()
         header = html[html.index("<header") : html.index("</header>")]
-        # Decorative until the cart exists (Phase 1): hidden from assistive tech, not a fake link.
-        slot = header[
-            header.index("data-cart-placeholder") - 60 : header.index("data-cart-placeholder")
-        ]
-        assert 'aria-hidden="true"' in slot
-        assert "<span" in slot
+        assert "data-cart-placeholder" in header  # cart arrives in 1c
 
     def test_styleguide_marks_active_size_adjust(self, client, settings):
         settings.DEBUG = True

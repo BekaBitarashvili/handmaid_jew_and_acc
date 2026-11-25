@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="container-site py-16 md:py-24">
+  <div class="mx-auto max-w-2xl text-center">
+    {% include "components/star.html" with size=18 class="mx-auto text-clay" %}
+    <h1 class="display mt-6">{% translate "About" %}</h1>
+    {# PLACEHOLDER: the owner writes this page (CLAUDE.md: no invented text). #}
+    <p class="mt-8 text-cocoa">{% translate "The story of the atelier will appear here soon." %}</p>
+    <a href="{% url 'catalog:shop' %}" class="btn btn-outline mt-10">{% translate "Visit the shop" %}</a>
+  </div>
+</div>
+{% endblock %}

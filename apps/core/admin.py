@@ -36,7 +36,10 @@ class SiteSettingsAdmin(BaseModelAdmin, TabbedTranslationAdmin):
             _("Contact"),
             {"fields": ("contact_phone", "contact_email", "contact_address")},
         ),
-        (_("Social"), {"fields": ("instagram_url", "facebook_url", "tiktok_url")}),
+        (
+            _("Social"),
+            {"fields": ("instagram_url", "pinterest_url", "facebook_url", "tiktok_url")},
+        ),
         (_("Legal entity"), {"fields": ("legal_entity_name", "legal_entity_id")}),
         (_("Shipping"), {"fields": ("free_shipping_threshold",)}),
         (

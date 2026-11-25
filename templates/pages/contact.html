@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block content %}
+<div class="container-site py-16 md:py-24">
+  <div class="mx-auto max-w-2xl text-center">
+    {% include "components/star.html" with size=18 class="mx-auto text-clay" %}
+    <h1 class="display mt-6">{% translate "Contact" %}</h1>
+    <p class="mt-6 text-cocoa">{% translate "Questions about a piece, a custom order or delivery — write or call." %}</p>
+    <dl class="mt-12 space-y-6 text-left sm:text-center">
+      {% if site_settings.contact_email %}
+        <div><dt class="label text-taupe-text">{% translate "Email" %}</dt>
+          <dd class="mt-1 font-serif text-h3"><a class="link" href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></dd></div>
+      {% endif %}
+      {% if site_settings.contact_phone %}
+        <div><dt class="label text-taupe-text">{% translate "Phone" %}</dt>
+          <dd class="mt-1 font-serif text-h3"><a class="link" href="tel:{{ site_settings.contact_phone|cut:' ' }}">{{ site_settings.contact_phone }}</a></dd></div>
+      {% endif %}
+      {% if site_settings.contact_address %}
+        <div><dt class="label text-taupe-text">{% translate "Address" %}</dt>
+          <dd class="mt-1 font-serif text-h3">{{ site_settings.contact_address }}</dd></div>
+      {% endif %}
+    </dl>
+    {% include "components/social_links.html" with class="mt-12 justify-center" %}
+  </div>
+</div>
+{% endblock %}

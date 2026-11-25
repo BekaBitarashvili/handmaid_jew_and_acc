@@ -14,7 +14,10 @@ register = template.Library()
 
 MAIN_NAV = (
     ("catalog:shop", _("Shop")),
+    ("catalog:new", _("New Arrivals")),
+    ("catalog:sale", _("Sale")),
     ("pages:about", _("About")),
+    ("pages:contact", _("Contact")),
 )
 
 
@@ -36,11 +39,11 @@ def _reverse_or_none(name: str) -> str | None:
 def main_nav(context) -> list[NavItem]:
     request = context.get("request")
     path = request.path if request else ""
-    items = []
-    for name, label in MAIN_NAV:
-        if url := _reverse_or_none(name):
-            items.append(NavItem(label=str(label), url=url, active=path.startswith(url)))
-    return items
+    found = [(label, url) for name, label in MAIN_NAV if (url := _reverse_or_none(name))]
+    # /shop/new/ also starts with /shop/: the longest matching URL wins.
+    matches = [url for _label, url in found if path.startswith(url)]
+    active = max(matches, key=len) if matches else None
+    return [NavItem(label=str(label), url=url, active=url == active) for label, url in found]
 
 
 @register.simple_tag

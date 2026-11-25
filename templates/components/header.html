@@ -1,54 +1,79 @@
-{% load i18n navigation catalog_tags %}{% main_nav as nav %}{% nav_categories as categories %}{% url_if_exists "catalog:search" as search_url %}{% url_if_exists "wishlist:list" as wishlist_url %}{% url_if_exists "cart:detail" as cart_url %}{% url_if_exists "pages:about" as about_url %}{% url_if_exists "pages:contact" as contact_url %}
+{% load i18n navigation %}{% main_nav as nav %}{% url_if_exists "wishlist:list" as wishlist_url %}{% url_if_exists "cart:detail" as cart_url %}
 {% comment %}
+Header (redesign, docs/design/home-reference.jpeg).
+Desktop: Shop · New Arrivals · Sale · About · Contact | ✦ brand | KA/EN · search · account · cart (0).
+Phone: ☰ | brand | search · cart. The full-screen menu holds the five links, Account,
+Wishlist (n) and KA/EN.
 Solid linen (no backdrop blur): a backdrop-filter would make the header the containing block
-for the fixed mobile menu inside it. z-50 on the sticky header puts the whole menu above the page;
+for the fixed mobile menu inside it. z-50 on the sticky header puts the menu above the page;
 inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in place.
 {% endcomment %}
-<header x-data="mobileMenu" @keydown.escape.window="close()" @keydown.tab="trap($event)"
+<header x-data="mobileMenu" @keydown.escape.window="close(); searchOpen && closeSearch()" @keydown.tab="trap($event)"
         class="sticky top-0 z-50 border-b border-sand bg-linen">
-  <div class="container-site relative z-10 grid h-16 grid-cols-[1fr_auto_1fr] items-center bg-linen md:h-20">
+  <div class="container-site relative z-10 grid h-16 grid-cols-[1fr_auto_1fr] items-center bg-linen md:h-[4.5rem]">
 
-    {# Left: burger (phones) / main navigation (768px+) #}
+    {# Left: burger (phones) / main navigation (1024px+) #}
     <div class="flex items-center">
       <button type="button" x-ref="toggle" @click="toggle()"
-              class="relative -ml-2 size-10 text-cocoa md:hidden"
+              class="relative -ml-2 size-10 text-espresso lg:hidden"
               aria-controls="mobile-menu" aria-expanded="false" :aria-expanded="open.toString()">
         <span class="absolute inset-0 flex items-center justify-center transition-opacity duration-300" :class="open ? 'opacity-0' : 'opacity-100'">{% include "components/icon.html" with name="menu" %}</span>
         <span class="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300" :class="open ? 'opacity-100' : 'opacity-0'">{% include "components/icon.html" with name="x" %}</span>
         <span class="sr-only" data-open="{% translate 'Open menu' %}" data-close="{% translate 'Close menu' %}"
               x-text="open ? $el.dataset.close : $el.dataset.open">{% translate "Open menu" %}</span>
       </button>
-      <nav aria-label="{% translate 'Main' %}" class="hidden md:block">
-        <ul class="flex items-center gap-8">
+      <nav aria-label="{% translate 'Main' %}" class="hidden lg:block">
+        <ul class="flex items-center gap-7">
           {% for item in nav %}
-            <li><a href="{{ item.url }}" class="link text-small" {% if item.active %}aria-current="page"{% endif %}>{{ item.label }}</a></li>
+            <li><a href="{{ item.url }}" class="nav-link" {% if item.active %}aria-current="page"{% endif %}>{{ item.label }}</a></li>
           {% endfor %}
         </ul>
       </nav>
     </div>
 
-    {# Center: wordmark #}
-    <a href="{% url 'pages:home' %}" class="justify-self-center font-serif text-h3 font-normal tracking-wide text-espresso" aria-label="{{ site_settings.brand_name }} — {% translate 'Home' %}">
-      {% if site_settings.logo %}<img src="{{ site_settings.logo.url }}" alt="{{ site_settings.brand_name }}" class="h-8 w-auto md:h-10">{% else %}{{ site_settings.brand_name }}{% endif %}
+    {# Centre: brand mark — the star is the logo placeholder until a logo exists #}
+    <a href="{% url 'pages:home' %}" class="flex items-center gap-2 justify-self-center text-espresso" aria-label="{{ site_settings.brand_name }} — {% translate 'Home' %}">
+      {% if site_settings.logo %}
+        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.brand_name }}" class="h-8 w-auto md:h-9">
+      {% else %}
+        {% include "components/star.html" with size=22 %}
+        <span class="font-serif text-[1.375rem] tracking-wide max-sm:sr-only">{{ site_settings.brand_name }}</span>
+      {% endif %}
     </a>
 
-    {# Right: icons + language #}
-    <div class="flex items-center justify-end gap-1 md:gap-3">
-      {% if search_url %}
-        <a href="{{ search_url }}" class="p-2 text-cocoa hover:text-espresso">{% include "components/icon.html" with name="search" %}<span class="sr-only">{% translate "Search" %}</span></a>
-      {% endif %}
-      {% if wishlist_url %}
-        <a href="{{ wishlist_url }}" class="hidden p-2 text-cocoa hover:text-espresso md:block">{% include "components/icon.html" with name="heart" %}<span class="sr-only">{% translate "Wishlist" %}</span></a>
-      {% endif %}
-      {% include "components/language_switcher.html" with class="hidden gap-2 md:flex" %}
-      {# The cart always holds the right edge, mirroring the menu button on phones. #}
-      {% if cart_url %}
-        <a href="{{ cart_url }}" class="relative -mr-2 p-2 text-cocoa hover:text-espresso">{% include "components/icon.html" with name="bag" %}<span class="sr-only">{% translate "Cart" %}</span></a>
-      {% else %}
-        {# TODO(1c): cart drawer trigger + count (SPEC §6.3). #}
-        <span class="-mr-2 p-2 text-cocoa" aria-hidden="true" data-cart-placeholder>{% include "components/icon.html" with name="bag" %}</span>
-      {% endif %}
+    {# Right: language (desktop) · search · account (desktop) · cart #}
+    <div class="flex items-center justify-end gap-1 md:gap-2">
+      {% include "components/language_switcher.html" with class="mr-2 hidden gap-2 lg:flex" %}
+      <button type="button" x-ref="searchButton" @click="openSearch()" class="p-2 text-espresso hover:text-cocoa"
+              aria-controls="site-search" :aria-expanded="searchOpen.toString()" aria-expanded="false">
+        {% include "components/icon.html" with name="search" size=20 %}<span class="sr-only">{% translate "Search" %}</span>
+      </button>
+      <a href="{% url 'pages:account' %}" class="hidden p-2 text-espresso hover:text-cocoa lg:block">
+        {% include "components/icon.html" with name="user" size=20 %}<span class="sr-only">{% translate "Account" %}</span>
+      </a>
+      {# TODO(1c): cart drawer trigger; the count comes from the session cart. #}
+      {% if cart_url %}<a href="{{ cart_url }}" class="-mr-2 flex items-center gap-1 p-2 text-espresso hover:text-cocoa">{% else %}<span class="-mr-2 flex items-center gap-1 p-2 text-espresso" data-cart-placeholder>{% endif %}
+        {% include "components/icon.html" with name="bag" size=20 %}
+        <span class="text-small" aria-hidden="true">({{ cart_count|default:0 }})</span>
+        <span class="sr-only">{% blocktranslate count n=cart_count|default:0 %}Cart, {{ n }} item{% plural %}Cart, {{ n }} items{% endblocktranslate %}</span>
+      {% if cart_url %}</a>{% else %}</span>{% endif %}
     </div>
+  </div>
+
+  {# Search panel: drops under the bar; simple search over the shop (full-text in Phase 3). #}
+  <div id="site-search" x-cloak x-show="searchOpen" x-transition.opacity.duration.300ms
+       class="absolute inset-x-0 top-full z-10 border-b border-sand bg-linen">
+    <form action="{% url 'catalog:shop' %}" method="get" role="search" class="container-site flex items-center gap-3 py-4">
+      <label for="site-search-input" class="sr-only">{% translate "Search the shop" %}</label>
+      {% include "components/icon.html" with name="search" size=18 class="text-taupe-text" %}
+      <input id="site-search-input" x-ref="searchInput" type="search" name="q" autocomplete="off"
+             placeholder="{% translate 'Search: necklace, amber, silver…' %}"
+             class="min-h-11 flex-1 border-0 border-b border-sand bg-transparent font-serif text-h3 text-espresso placeholder:text-taupe-text focus:border-espresso focus:outline-none">
+      <button type="submit" class="btn btn-dark">{% translate "Search" %}</button>
+      <button type="button" @click="closeSearch()" class="p-2 text-cocoa">
+        {% include "components/icon.html" with name="x" size=20 %}<span class="sr-only">{% translate "Close search" %}</span>
+      </button>
+    </form>
   </div>
 
   {% comment %}
@@ -59,21 +84,18 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
        x-show="open"
        x-transition:enter="transition-opacity duration-400 ease-atelier" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
        x-transition:leave="transition-opacity duration-300 ease-atelier" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-       class="mobile-menu fixed inset-0 flex flex-col overflow-y-auto overscroll-contain bg-linen pt-16 md:hidden"
+       class="mobile-menu fixed inset-0 flex flex-col overflow-y-auto overscroll-contain bg-linen pt-16 lg:hidden"
        :class="revealed && 'is-open'">
     <ul class="container-site flex-1 pb-8 pt-8">
-      <li class="menu-item" style="--i: 0"><a href="{% url 'catalog:shop' %}" @click="close(false)" class="menu-link">{% translate "Shop" %}</a></li>
-      {% for category in categories %}
-        <li class="menu-item" style="--i: {{ forloop.counter }}"><a href="{{ category.get_absolute_url }}" @click="close(false)" class="menu-link menu-link--sub">{{ category.name }}</a></li>
+      {% for item in nav %}
+        <li class="menu-item" style="--i: {{ forloop.counter0 }}"><a href="{{ item.url }}" @click="close(false)" class="menu-link" {% if item.active %}aria-current="page"{% endif %}>{{ item.label }}</a></li>
       {% endfor %}
-      {% if about_url %}<li class="menu-item" style="--i: {{ categories|length|add:2 }}"><a href="{{ about_url }}" @click="close(false)" class="menu-link">{% translate "About" %}</a></li>{% endif %}
     </ul>
-
-    <div class="menu-item container-site" style="--i: {{ categories|length|add:3 }}">
+    <div class="menu-item container-site" style="--i: {{ nav|length }}">
       <div class="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-sand py-6 text-small">
-        {% if wishlist_url %}<a href="{{ wishlist_url }}" @click="close(false)" class="link">{% translate "Wishlist" %}</a>{% else %}<span class="text-taupe-text">{% translate "Wishlist" %}</span>{% endif %}
-        {% if contact_url %}<a href="{{ contact_url }}" @click="close(false)" class="link">{% translate "Contact" %}</a>
-        {% elif site_settings.contact_email %}<a href="mailto:{{ site_settings.contact_email }}" class="link">{% translate "Contact" %}</a>{% endif %}
+        <a href="{% url 'pages:account' %}" @click="close(false)" class="link">{% translate "Account" %}</a>
+        {% if wishlist_url %}<a href="{{ wishlist_url }}" @click="close(false)" class="link">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</a>
+        {% else %}<span class="text-taupe-text">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</span>{% endif %}
         {% include "components/language_switcher.html" with class="ml-auto gap-2" %}
       </div>
     </div>

@@ -15,7 +15,7 @@
     <link rel="preload" href="{% static 'fonts/noto-serif-georgian.woff2' %}" as="font" type="font/woff2" crossorigin>
   {% else %}
     <link rel="preload" href="{% static 'fonts/firago-400-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
-    <link rel="preload" href="{% static 'fonts/cormorant-garamond-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{% static 'fonts/cormorant-garamond-italic-latin.woff2' %}" as="font" type="font/woff2" crossorigin>
   {% endif %}
 
   <link rel="stylesheet" href="{% static 'dist/css/main.css' %}">
@@ -28,7 +28,7 @@
   <a href="#main" class="skip-link">{% translate "Skip to content" %}</a>
 
   {% if site_settings.announcement_bar %}
-    <div class="bg-cream py-2 text-center text-small text-cocoa" data-inert-with-menu>
+    <div class="bg-shell py-2 text-center text-small text-cocoa" data-inert-with-menu>
       <p class="container-site">{{ site_settings.announcement_bar }}</p>
     </div>
   {% endif %}

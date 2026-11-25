@@ -11,26 +11,28 @@
 @source "../../static/js";
 
 @theme {
-  /* Only the brand palette exists: no stray Tailwind colors, no pure white/black. */
+  /* Only the brand palette exists: no stray Tailwind colors, no pure white/black.
+     Warm linen palette from docs/design/home-reference.jpeg (redesign, SPEC §9.2). */
   --color-*: initial;
 
   /* Surfaces */
-  --color-ivory: #faf6ef; /* page background */
-  --color-cream: #f2ebdf; /* alternating sections, cards */
-  --color-sand: #e3d5c1; /* hairline borders, dividers, input outlines */
+  --color-linen: #efe5db; /* page, header, footer */
+  --color-shell: #e6d9cc; /* photo placeholders, inputs, subtle panels */
+  --color-oat: #d2c0b2; /* light filled buttons, small sale badge */
+  --color-sand: #dccfc2; /* hairlines, borders */
+  --color-umber: #24140b; /* dark sections (Special Offers, hero scrim) */
 
-  /* Text — every *-text / cocoa / espresso token is >= 4.5:1 on ivory AND cream */
-  --color-espresso: #2e211a; /* headings, primary buttons, footer bg   14.5 / 13.1 */
-  --color-cocoa: #5a4232; /* body text, secondary buttons             8.6 / 7.8 */
-  --color-taupe-text: #7a6650; /* secondary text, meta               5.1 / 4.6 */
-  --color-gold-text: #80653c; /* sale price, focus ring, gold links  5.1 / 4.6 */
-  --color-sold-text: #72675e; /* "Sold" label, disabled text         5.1 / 4.6 */
-  --color-error: #9e3b2e; /* form errors (muted brick)               6.3 / 5.7 */
+  /* Text — each is >= 4.5:1 on linen AND shell (ratios: linen / shell) */
+  --color-espresso: #2a1a0f; /* headings, primary text on light       13.5 / 12.1 */
+  --color-cocoa: #4a3a2f; /* body text                                 8.7 / 7.8 */
+  --color-taupe-text: #6e5c48; /* secondary text, meta               5.1 / 4.6 */
+  --color-clay-text: #6f5b4c; /* focus ring, round "-30%" badge bg     5.2 / 4.6 */
+  --color-sold-text: #675d55; /* "Sold", disabled text                5.2 / 4.6 */
+  --color-error: #9e3b2e; /* form errors (muted brick) */
 
-  /* Decorative only — never for text (fail 4.5:1) */
-  --color-taupe: #a8927a; /* icons beside a text label, ornaments */
-  --color-gold: #b08d57; /* hover lines, ornaments; < 5% of a screen. OK as text on espresso (5.0) */
-  --color-sold: #8c7f74; /* sold overlays, strike-through lines */
+  /* Decorative only — never for text on light backgrounds */
+  --color-clay: #a48c7a; /* the accent: star ornament, hover lines (2.6 on linen) */
+  --color-sold: #8c7f74; /* strike-through lines */
 
   /* Fonts */
   --font-*: initial;
@@ -79,7 +81,9 @@
 @layer base {
   html {
     interpolate-size: allow-keywords;
-    background-color: var(--color-ivory);
+    /* Never fake an italic or bold that a font doesn't have — Georgian has no italic. */
+    font-synthesis: none;
+    background-color: var(--color-linen);
     color: var(--color-cocoa);
     font-family: var(--font-sans);
     font-size: 100%;
@@ -88,7 +92,7 @@
   }
 
   body {
-    background-color: var(--color-ivory);
+    background-color: var(--color-linen);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
   }
@@ -101,6 +105,18 @@
     font-weight: 300; /* light headings, never bold */
     color: var(--color-espresso);
     text-wrap: balance;
+  }
+  /* Elegant italic for Latin headings (Cormorant Garamond Italic). Georgian has no
+     italic: on Georgian pages headings stay upright in Noto Serif Georgian, and
+     font-synthesis: none keeps Georgian words inside English headings upright too. */
+  h1,
+  h2,
+  .display,
+  .italic-serif {
+    font-style: italic;
+    &:lang(ka) {
+      font-style: normal;
+    }
   }
   h1 {
     font-size: var(--text-h1);
@@ -125,9 +141,9 @@
     color: var(--color-espresso);
   }
 
-  /* Focus ring: gold, visible on every interactive element (SPEC §12). */
+  /* Focus ring: clay, visible on every interactive element (SPEC §12). */
   :focus-visible {
-    outline: 2px solid var(--color-gold-text);
+    outline: 2px solid var(--color-clay-text);
     outline-offset: 3px;
   }
 
@@ -226,7 +242,7 @@
     text-decoration-thickness: 1px;
   }
   .price-sale {
-    color: var(--color-gold-text);
+    color: var(--color-clay-text);
     font-weight: 500;
   }
 
@@ -254,14 +270,14 @@
     &:disabled,
     &[aria-disabled="true"] {
       cursor: not-allowed;
-      background-color: var(--color-cream);
+      background-color: var(--color-shell);
       border-color: var(--color-sand);
       color: var(--color-sold-text);
     }
   }
   .btn-primary {
     background-color: var(--color-espresso);
-    color: var(--color-ivory);
+    color: var(--color-linen);
     &:hover:not(:disabled) {
       background-color: var(--color-cocoa);
     }
@@ -272,14 +288,14 @@
     color: var(--color-cocoa);
     &:hover:not(:disabled) {
       background-color: var(--color-cocoa);
-      color: var(--color-ivory);
+      color: var(--color-linen);
     }
   }
 
-  /* Text link: 1px gold underline that grows from the left on hover. */
+  /* Text link: 1px clay underline that grows from the left on hover. */
   .link {
     color: var(--color-espresso);
-    background-image: linear-gradient(var(--color-gold), var(--color-gold));
+    background-image: linear-gradient(var(--color-clay), var(--color-clay));
     background-size: 0% 1px;
     background-position: 0 100%;
     background-repeat: no-repeat;
@@ -307,7 +323,7 @@
     width: 100%;
     min-height: 3rem;
     padding: 0.625rem 0.875rem;
-    background-color: var(--color-ivory);
+    background-color: var(--color-linen);
     border: 1px solid var(--color-sand);
     border-radius: var(--radius-xs);
     color: var(--color-espresso);
@@ -316,11 +332,11 @@
       color: var(--color-taupe-text);
     }
     &:hover {
-      border-color: var(--color-taupe);
+      border-color: var(--color-clay);
     }
     &:focus-visible {
       outline-offset: 0;
-      border-color: var(--color-gold-text);
+      border-color: var(--color-clay-text);
     }
     &[aria-invalid="true"] {
       border-color: var(--color-error);
@@ -379,7 +395,7 @@
     & a {
       color: var(--color-espresso);
       text-decoration: underline;
-      text-decoration-color: var(--color-gold);
+      text-decoration-color: var(--color-clay);
       text-underline-offset: 3px;
     }
   }
@@ -442,15 +458,15 @@
     color: var(--color-cocoa);
     transition-property: border-color, color, background-color;
     &:hover {
-      border-color: var(--color-taupe);
+      border-color: var(--color-clay);
     }
     &:has(input:checked) {
       border-color: var(--color-espresso);
       color: var(--color-espresso);
-      background-color: var(--color-cream);
+      background-color: var(--color-shell);
     }
     &:has(input:focus-visible) {
-      outline: 2px solid var(--color-gold-text);
+      outline: 2px solid var(--color-clay-text);
       outline-offset: 3px;
     }
     &.is-unavailable {
@@ -469,9 +485,9 @@
     margin: 0;
     padding: 0;
     border: 0;
-    background-color: var(--color-ivory);
+    background-color: var(--color-linen);
     &::backdrop {
-      background-color: var(--color-ivory);
+      background-color: var(--color-linen);
     }
     &[open] {
       animation: reveal 400ms var(--ease-atelier);
@@ -539,7 +555,7 @@
     z-index: 100;
     padding: 0.75rem 1.25rem;
     background-color: var(--color-espresso);
-    color: var(--color-ivory);
+    color: var(--color-linen);
     &:focus {
       top: 1rem;
     }

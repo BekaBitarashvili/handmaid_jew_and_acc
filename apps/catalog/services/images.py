@@ -1,7 +1,7 @@
 """Normalise uploaded product photos before they are stored.
 
 - applies the phone's EXIF rotation, then drops ALL metadata (incl. GPS location)
-- converts to RGB JPEG on ivory (no transparency), long side capped at 2400px
+- converts to RGB JPEG on linen (no transparency), long side capped at 2400px
 - reports photos below the 2000px guideline (SPEC §9.7) as a warning, never an error
 """
 
@@ -17,7 +17,7 @@ from PIL import Image, ImageOps
 MAX_LONG_SIDE = 2400
 RECOMMENDED_LONG_SIDE = 2000
 JPEG_QUALITY = 90
-IVORY = (250, 246, 239)
+LINEN = (239, 229, 219)
 
 
 class InvalidImageError(ValueError):
@@ -43,7 +43,7 @@ def process_upload(upload: UploadedFile) -> ProcessedImage:
 
     if image.mode in ("RGBA", "LA", "P"):
         image = image.convert("RGBA")
-        background = Image.new("RGB", image.size, IVORY)
+        background = Image.new("RGB", image.size, LINEN)
         background.paste(image, mask=image.getchannel("A"))
         image = background
     elif image.mode != "RGB":

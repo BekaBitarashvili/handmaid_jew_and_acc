@@ -36,8 +36,9 @@ from .services.slugs import fill_translated_slugs
 from .tasks import generate_product_image_renditions
 
 PHOTO_GUIDELINES = _(
-    "Photo tips: the same calm backdrop (linen, cream paper, old wood or stone), daylight, "
-    "at least 3 shots per piece — detail, full piece, worn. At least 2000px on the long side."
+    "Photo tips: square photos with the piece in the centre, the same calm backdrop (linen, "
+    "paper, old wood or stone), daylight, at least 3 shots per piece — detail, full piece, "
+    "worn. At least 2000px on each side."
 )
 
 

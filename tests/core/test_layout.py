@@ -36,7 +36,7 @@ def test_preloads_fonts_for_active_language(client, home_ka):
     assert "fonts/noto-serif-georgian.woff2" in home_ka
     en = client.get("/en/").content.decode()
     assert "fonts/firago-400-latin.woff2" in en
-    assert "fonts/cormorant-garamond-latin.woff2" in en
+    assert "fonts/cormorant-garamond-italic-latin.woff2" in en  # English headings are italic
 
 
 def test_brand_name_comes_from_site_settings(client):
@@ -98,7 +98,7 @@ class TestStyleguide:
         assert response.status_code == 200
         html = response.content.decode()
         assert "ხელნაკეთი სამკაულები ბუნებრივი ქვებით" in html
-        assert "--color-gold-text" in html
+        assert "--color-clay-text" in html
         assert "fails AA" not in html
 
 

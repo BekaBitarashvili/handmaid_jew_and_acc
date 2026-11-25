@@ -14,7 +14,7 @@
     {% for stone in stones %}
       <li>
         <a href="{{ stone.get_absolute_url }}" class="group block">
-          <div class="flex aspect-[4/3] items-center justify-center overflow-hidden bg-cream">
+          <div class="flex aspect-[4/3] items-center justify-center overflow-hidden bg-shell">
             {% if stone.image %}
               <img src="{{ stone.image.url }}" alt="" class="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" loading="lazy">
             {% else %}

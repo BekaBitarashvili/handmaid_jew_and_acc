@@ -47,6 +47,12 @@ FONTS = [
         LATIN,
     ),
     (
+        "cormorant-garamond-italic-latin",
+        f"{GOOGLE}/{CORMORANT_SHA}/ofl/cormorantgaramond/CormorantGaramond-Italic%5Bwght%5D.ttf",
+        {"wght": (300, 500)},
+        LATIN,
+    ),
+    (
         "noto-serif-georgian",
         f"{GOOGLE}/{NOTO_GEORGIAN_SHA}/ofl/notoserifgeorgian/NotoSerifGeorgian%5Bwdth,wght%5D.ttf",
         {"wdth": 100, "wght": (300, 500)},

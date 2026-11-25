@@ -5,7 +5,7 @@ The wishlist heart is a sibling of the link (no interactive element inside a lin
 {% endcomment %}{% with images=product.images.all %}{% card_labels product as labels %}
 <article class="group relative">
   <a href="{{ product.get_absolute_url }}" class="block focus-visible:outline-offset-4">
-    <div class="relative aspect-[4/5] overflow-hidden bg-cream">
+    <div class="relative aspect-square overflow-hidden bg-shell">
       {% if archive %}
         {% product_picture images.0 eager=eager css="archive-photo h-full w-full object-cover" %}
       {% else %}

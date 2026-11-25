@@ -53,12 +53,12 @@ apple_touch_icon = _static_redirect("brand/apple-touch-icon.png")
 
 def _swatches(names: tuple[str, ...]) -> list[dict]:
     tokens = color_tokens()
-    ivory, cream = tokens["ivory"].hex, tokens["cream"].hex
+    linen, shell = tokens["linen"].hex, tokens["shell"].hex
     return [
         {
             "token": tokens[name],
-            "on_ivory": contrast(tokens[name].hex, ivory),
-            "on_cream": contrast(tokens[name].hex, cream),
+            "on_linen": contrast(tokens[name].hex, linen),
+            "on_shell": contrast(tokens[name].hex, shell),
         }
         for name in names
     ]

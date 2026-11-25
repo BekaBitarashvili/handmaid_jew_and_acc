@@ -5,7 +5,7 @@
 {% block content %}
 {% card_labels product as labels %}{% commission_url product as commission %}
 {% if is_preview %}
-  <div class="bg-cream py-3 text-center text-small text-cocoa" role="status">
+  <div class="bg-shell py-3 text-center text-small text-cocoa" role="status">
     {% blocktranslate with status=product.get_status_display %}Preview — this product is not visible in the shop ({{ status }}).{% endblocktranslate %}
   </div>
 {% endif %}

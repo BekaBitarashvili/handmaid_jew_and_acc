@@ -170,6 +170,6 @@ def test_picture_is_cached_and_deduplicates_small_sources(django_assert_max_num_
     # 1200/1800 would repeat the 800px source (no upscaling) and are dropped.
     widths = [entry.rsplit(" ", 1)[1] for entry in first.webp_srcset.split(", ")]
     assert widths == ["400w", "800w"]
-    assert (first.width, first.height) == (800, 1000)
+    assert (first.width, first.height) == (800, 800)  # square crop
     with django_assert_max_num_queries(0):
         assert picture(image.image) == first

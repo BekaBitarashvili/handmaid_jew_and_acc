@@ -15,6 +15,19 @@
     U+2000-206F, U+20AC, U+20BE, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* --- Serif, Latin italic: Cormorant Garamond Italic (variable 300-500) ---
+ * Headings are italic in Latin. Georgian has no italic face; with
+ * font-synthesis: none the browser never fakes one (Georgian stays upright). */
+@font-face {
+  font-family: "Cormorant Garamond";
+  src: url("../../fonts/cormorant-garamond-italic-latin.woff2") format("woff2");
+  font-weight: 300 500;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+2000-206F, U+20AC, U+20BE, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* --- Serif, Georgian: Noto Serif Georgian (variable 300-500) ---
  * size-adjust balances the two scripts inside one font stack. At 94% the
  * Georgian ascenders (ხ ლ ბ: 0.772em x 0.94 = 0.726em) line up with Cormorant's

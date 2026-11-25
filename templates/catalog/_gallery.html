@@ -15,7 +15,7 @@ a mouse), ←/→ between photos, Esc closes and focus returns. No auto-rotation
                   :class="index === {{ forloop.counter0 }} ? 'border-espresso' : 'border-transparent hover:border-sand'"
                   :aria-current="index === {{ forloop.counter0 }}"
                   aria-label="{% blocktranslate with n=forloop.counter total=images|length %}Photo {{ n }} of {{ total }}{% endblocktranslate %}">
-            {% product_picture image "thumb" alt="" css="aspect-[4/5] w-full object-cover" %}
+            {% product_picture image "thumb" alt="" css="aspect-square w-full object-cover" %}
           </button>
         </li>
       {% endfor %}
@@ -25,14 +25,14 @@ a mouse), ←/→ between photos, Esc closes and focus returns. No auto-rotation
   <div class="relative {% if images|length <= 1 %}lg:col-span-2{% endif %}">
     <div x-ref="track" @scroll.debounce.60ms="sync()" tabindex="0"
          @keydown.arrow-right.prevent="go(index + 1)" @keydown.arrow-left.prevent="go(index - 1)"
-         class="scrollbar-none flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain bg-cream"
+         class="scrollbar-none flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain bg-shell"
          role="region" aria-roledescription="{% translate 'carousel' %}" aria-label="{% translate 'Product photos' %}">
       {% for image in images %}
         <div class="w-full shrink-0 snap-center" role="group" aria-roledescription="{% translate 'slide' %}"
              aria-label="{% blocktranslate with n=forloop.counter total=images|length %}Photo {{ n }} of {{ total }}{% endblocktranslate %}">
           <button type="button" @click="openZoom({{ forloop.counter0 }})" class="block w-full cursor-zoom-in"
                   aria-label="{% translate 'Open photo full screen' %}">
-            {% product_picture image "product" eager=forloop.first css="aspect-[4/5] w-full object-cover" %}
+            {% product_picture image "product" eager=forloop.first css="aspect-square w-full object-cover" %}
           </button>
         </div>
       {% empty %}

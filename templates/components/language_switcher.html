@@ -6,7 +6,7 @@ to the same page in the other language (set_language translates `next`).
   {% csrf_token %}
   <input type="hidden" name="next" value="{{ request.get_full_path }}">
   {% for lang in language_infos %}
-    {% if not forloop.first %}<span class="text-taupe" aria-hidden="true">/</span>{% endif %}
+    {% if not forloop.first %}<span class="text-taupe-text" aria-hidden="true">/</span>{% endif %}
     <button type="submit" name="language" value="{{ lang.code }}" lang="{{ lang.code }}"
             class="label cursor-pointer py-2 transition-colors {% if lang.code == current %}text-espresso{% else %}text-taupe-text hover:text-espresso{% endif %}"
             {% if lang.code == current %}aria-current="true"{% endif %}

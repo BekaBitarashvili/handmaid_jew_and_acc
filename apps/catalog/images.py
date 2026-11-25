@@ -1,4 +1,4 @@
-"""Responsive product image renditions (SPEC §5): 4:5 crops, AVIF + WebP.
+"""Responsive product image renditions (SPEC §5): square 1:1 crops, AVIF + WebP.
 
 easy-thumbnails picks its output format from a project-wide setting, so each
 format gets its own thumbnailer with `thumbnail_extension` set per call.
@@ -24,8 +24,8 @@ class Rendition:
 
 
 def _options(width: int) -> dict:
-    # 4:5 portrait, centre crop; never upscale small sources.
-    return {"size": (width, width * 5 // 4), "crop": True, "upscale": False}
+    # Square, centre crop (redesign: 1:1 everywhere); never upscale small sources.
+    return {"size": (width, width), "crop": True, "upscale": False}
 
 
 def rendition(image_field, width: int, fmt: str, *, generate: bool = True) -> Rendition | None:
@@ -72,7 +72,7 @@ def picture(image_field) -> Picture | None:
     change in place (a new upload gets a new name), so the file name is a safe key."""
     if not image_field:
         return None
-    key = f"picture:v1:{image_field.name}"
+    key = f"picture:v2:{image_field.name}"  # v2: square renditions
     cached = cache.get(key)
     if cached is not None:
         return Picture(**cached)

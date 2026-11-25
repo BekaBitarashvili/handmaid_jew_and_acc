@@ -59,13 +59,13 @@ class TestProcessUpload:
 
 @pytest.mark.django_db
 class TestRenditions:
-    def test_generates_avif_and_webp_in_4_5(self):
+    def test_generates_square_avif_and_webp(self):
         image = ProductImageFactory(image=make_jpeg(size=(1600, 2000)))
         assert generate_all(image.image) == len(FORMATS) * len(WIDTHS) + 1
         for fmt in FORMATS:
             r = rendition(image.image, 400, fmt)
             assert r.url.endswith(f".{fmt}")
-            assert (r.width, r.height) == (400, 500)
+            assert (r.width, r.height) == (400, 400)
 
     def test_never_upscales(self):
         image = ProductImageFactory(image=make_jpeg(size=(800, 1000)))

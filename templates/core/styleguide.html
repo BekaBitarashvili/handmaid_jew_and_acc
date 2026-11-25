@@ -20,7 +20,7 @@
 
 {% block content %}
 {# Current breakpoint, for checking 375 / 768 / 1280 (SPEC §12). #}
-<div class="fixed bottom-3 left-3 z-50 bg-espresso px-3 py-1 font-sans text-small text-ivory" aria-hidden="true">
+<div class="fixed bottom-3 left-3 z-50 bg-espresso px-3 py-1 font-sans text-small text-linen" aria-hidden="true">
   <span class="md:hidden">&lt; 768 · mobile</span><span class="hidden md:inline xl:hidden">768–1279 · tablet</span><span class="hidden xl:inline">≥ 1280 · desktop</span>
 </div>
 
@@ -113,9 +113,9 @@
   {# --------------------------------------------------------------- Colors #}
   <section aria-labelledby="sg-colors">
     <h2 id="sg-colors">Colors</h2>
-    <p class="mt-2 text-small text-taupe-text">Contrast is computed live from <code>assets/css/main.css</code>. Text needs ≥ 4.5 on both ivory and cream.</p>
+    <p class="mt-2 text-small text-taupe-text">Contrast is computed live from <code>assets/css/main.css</code>. Text needs ≥ 4.5 on both linen and shell.</p>
     {% include "core/_swatch_group.html" with title="Surfaces" swatches=surfaces text_check=False %}
-    {% include "core/_swatch_group.html" with title="Text — AA on ivory and cream" swatches=text_colors text_check=True %}
+    {% include "core/_swatch_group.html" with title="Text — AA on linen and shell" swatches=text_colors text_check=True %}
     {% include "core/_swatch_group.html" with title="Decorative only — never for text" swatches=decorative_colors text_check=False %}
   </section>
 
@@ -129,8 +129,8 @@
       <a href="#sg-buttons" class="link">{% translate "Read the story" %}</a>
     </div>
     <div class="mt-8 bg-espresso p-8">
-      <button type="button" class="btn border-ivory text-ivory hover:bg-ivory hover:text-espresso">On espresso</button>
-      <a href="#sg-buttons" class="link ml-6 text-ivory">Footer link</a>
+      <button type="button" class="btn border-linen text-linen hover:bg-linen hover:text-espresso">On espresso</button>
+      <a href="#sg-buttons" class="link ml-6 text-linen">Footer link</a>
     </div>
   </section>
 
@@ -148,7 +148,7 @@
         <dd class="mt-2 flex items-baseline gap-3 text-h3">
           <span class="price price-old text-body"><span class="sr-only">{% translate "Original price" %}: </span>{{ 18000|gel }}</span>
           <span class="price price-sale"><span class="sr-only">{% translate "Sale price" %}: </span>{{ 14400|gel }}</span>
-          <span class="label text-gold-text">−20%</span>
+          <span class="label text-clay-text">−20%</span>
         </dd>
       </div>
       <div>
@@ -198,7 +198,7 @@
       {% for i in "1234" %}
         <li>
           <a href="#sg-card" class="group block">
-            <div class="relative aspect-[4/5] overflow-hidden bg-cream">
+            <div class="relative aspect-square overflow-hidden bg-shell">
               <div class="flex h-full items-center justify-center transition-transform duration-800 group-hover:scale-[1.03]">
                 {% include "components/ornament.html" %}
               </div>
@@ -241,9 +241,9 @@
     <button type="button" class="btn btn-secondary mt-6" @click="key++">Replay</button>
     <template x-for="run in [key]" :key="run">
       <div class="mt-8 grid grid-cols-3 gap-4">
-        <div class="aspect-[4/5] animate-reveal bg-cream"></div>
-        <div class="aspect-[4/5] animate-reveal bg-cream [animation-delay:80ms]"></div>
-        <div class="aspect-[4/5] animate-reveal bg-cream [animation-delay:160ms]"></div>
+        <div class="aspect-square animate-reveal bg-shell"></div>
+        <div class="aspect-square animate-reveal bg-shell [animation-delay:80ms]"></div>
+        <div class="aspect-square animate-reveal bg-shell [animation-delay:160ms]"></div>
       </div>
     </template>
   </section>

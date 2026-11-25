@@ -4,4 +4,4 @@
   <img src="{{ picture.src }}" width="{{ picture.width }}" height="{{ picture.height }}" alt="{{ alt }}"
        {% if eager %}loading="eager" fetchpriority="high"{% else %}loading="lazy"{% endif %} decoding="async"
        class="{{ css }}">
-</picture>{% else %}<div class="flex aspect-[4/5] items-center justify-center bg-cream {{ css }}" role="img" aria-label="{{ alt }}">{% include "components/ornament.html" %}</div>{% endif %}
+</picture>{% else %}<div class="flex aspect-square items-center justify-center bg-shell {{ css }}" role="img" aria-label="{{ alt }}">{% include "components/ornament.html" %}</div>{% endif %}

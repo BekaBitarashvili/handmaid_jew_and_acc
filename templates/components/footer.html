@@ -10,23 +10,23 @@ the merchant agreements and must not be redrawn.
 <footer class="bg-espresso text-sand" data-inert-with-menu>
   <div class="container-site py-14 md:py-16">
     <div class="max-w-sm">
-      <p class="font-serif text-h2 text-ivory">{{ site_settings.brand_name }}</p>
+      <p class="font-serif text-h2 text-linen">{{ site_settings.brand_name }}</p>
       <p class="mt-2 text-small">{% translate "Handmade jewelry with natural stones" %}</p>
     </div>
 
     <div class="mt-12 grid gap-10 sm:grid-cols-3 md:gap-12">
       <nav aria-labelledby="footer-shop">
-        <h2 id="footer-shop" class="label text-gold">{% translate "Shop" %}</h2>
+        <h2 id="footer-shop" class="label text-clay">{% translate "Shop" %}</h2>
         <ul class="mt-4 space-y-2 text-small">
-          <li><a class="hover:text-ivory" href="{% url 'catalog:shop' %}">{% translate "All pieces" %}</a></li>
-          {% for category in categories %}<li><a class="hover:text-ivory" href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>{% endfor %}
-          <li><a class="hover:text-ivory" href="{% url 'catalog:archive' %}">{% translate "Archive" %}</a></li>
-          <li><a class="hover:text-ivory" href="{% url 'catalog:stones' %}">{% translate "Stones" %}</a></li>
+          <li><a class="hover:text-linen" href="{% url 'catalog:shop' %}">{% translate "All pieces" %}</a></li>
+          {% for category in categories %}<li><a class="hover:text-linen" href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>{% endfor %}
+          <li><a class="hover:text-linen" href="{% url 'catalog:archive' %}">{% translate "Archive" %}</a></li>
+          <li><a class="hover:text-linen" href="{% url 'catalog:stones' %}">{% translate "Stones" %}</a></li>
         </ul>
       </nav>
 
       <nav aria-labelledby="footer-info">
-        <h2 id="footer-info" class="label text-gold">{% translate "Information" %}</h2>
+        <h2 id="footer-info" class="label text-clay">{% translate "Information" %}</h2>
         <ul class="mt-4 space-y-2 text-small">
           {% translate "About" as label %}{% include "components/_footer_link.html" with url=about_url %}
           {% translate "Shipping & returns" as label %}{% include "components/_footer_link.html" with url=shipping_url %}
@@ -36,17 +36,17 @@ the merchant agreements and must not be redrawn.
       </nav>
 
       <div>
-        <h2 class="label text-gold">{% translate "Contact" %}</h2>
+        <h2 class="label text-clay">{% translate "Contact" %}</h2>
         <ul class="mt-4 space-y-2 text-small">
-          {% if site_settings.contact_phone %}<li><a class="hover:text-ivory" href="tel:{{ site_settings.contact_phone|cut:' ' }}">{{ site_settings.contact_phone }}</a></li>{% endif %}
-          {% if site_settings.contact_email %}<li><a class="hover:text-ivory" href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></li>{% endif %}
+          {% if site_settings.contact_phone %}<li><a class="hover:text-linen" href="tel:{{ site_settings.contact_phone|cut:' ' }}">{{ site_settings.contact_phone }}</a></li>{% endif %}
+          {% if site_settings.contact_email %}<li><a class="hover:text-linen" href="mailto:{{ site_settings.contact_email }}">{{ site_settings.contact_email }}</a></li>{% endif %}
           {% if site_settings.contact_address %}<li>{{ site_settings.contact_address }}</li>{% endif %}
         </ul>
         {% if site_settings.instagram_url or site_settings.facebook_url or site_settings.tiktok_url %}
           <ul class="mt-4 flex gap-5 text-small">
-            {% if site_settings.instagram_url %}<li><a href="{{ site_settings.instagram_url }}" class="hover:text-ivory" rel="noopener" target="_blank">Instagram</a></li>{% endif %}
-            {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}" class="hover:text-ivory" rel="noopener" target="_blank">Facebook</a></li>{% endif %}
-            {% if site_settings.tiktok_url %}<li><a href="{{ site_settings.tiktok_url }}" class="hover:text-ivory" rel="noopener" target="_blank">TikTok</a></li>{% endif %}
+            {% if site_settings.instagram_url %}<li><a href="{{ site_settings.instagram_url }}" class="hover:text-linen" rel="noopener" target="_blank">Instagram</a></li>{% endif %}
+            {% if site_settings.facebook_url %}<li><a href="{{ site_settings.facebook_url }}" class="hover:text-linen" rel="noopener" target="_blank">Facebook</a></li>{% endif %}
+            {% if site_settings.tiktok_url %}<li><a href="{{ site_settings.tiktok_url }}" class="hover:text-linen" rel="noopener" target="_blank">TikTok</a></li>{% endif %}
           </ul>
         {% endif %}
       </div>

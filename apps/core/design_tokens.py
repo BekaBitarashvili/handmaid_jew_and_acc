@@ -13,9 +13,9 @@ from django.conf import settings
 
 MAIN_CSS = Path(settings.BASE_DIR) / "assets" / "css" / "main.css"
 
-SURFACES = ("ivory", "cream", "sand")
-TEXT = ("espresso", "cocoa", "taupe-text", "gold-text", "sold-text", "error")
-DECORATIVE = ("taupe", "gold", "sold")
+SURFACES = ("linen", "shell", "oat", "sand", "umber")
+TEXT = ("espresso", "cocoa", "taupe-text", "clay-text", "sold-text", "error")
+DECORATIVE = ("clay", "sold")
 
 _TOKEN_RE = re.compile(r"--color-([a-z-]+):\s*(#[0-9a-fA-F]{6});\s*(?:/\*\s*(.*?)\s*\*/)?")
 

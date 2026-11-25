@@ -1,12 +1,12 @@
 {% load i18n navigation catalog_tags %}{% main_nav as nav %}{% nav_categories as categories %}{% url_if_exists "catalog:search" as search_url %}{% url_if_exists "wishlist:list" as wishlist_url %}{% url_if_exists "cart:detail" as cart_url %}{% url_if_exists "pages:about" as about_url %}{% url_if_exists "pages:contact" as contact_url %}
 {% comment %}
-Solid ivory (no backdrop blur): a backdrop-filter would make the header the containing block
+Solid linen (no backdrop blur): a backdrop-filter would make the header the containing block
 for the fixed mobile menu inside it. z-50 on the sticky header puts the whole menu above the page;
 inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in place.
 {% endcomment %}
 <header x-data="mobileMenu" @keydown.escape.window="close()" @keydown.tab="trap($event)"
-        class="sticky top-0 z-50 border-b border-sand bg-ivory">
-  <div class="container-site relative z-10 grid h-16 grid-cols-[1fr_auto_1fr] items-center bg-ivory md:h-20">
+        class="sticky top-0 z-50 border-b border-sand bg-linen">
+  <div class="container-site relative z-10 grid h-16 grid-cols-[1fr_auto_1fr] items-center bg-linen md:h-20">
 
     {# Left: burger (phones) / main navigation (768px+) #}
     <div class="flex items-center">
@@ -52,14 +52,14 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
   </div>
 
   {% comment %}
-  Mobile menu: full-screen ivory overlay under the bar (SPEC §9.5): fades in over 400ms; links
+  Mobile menu: full-screen linen overlay under the bar (SPEC §9.5): fades in over 400ms; links
   fade in one after another; scrolls inside itself when it doesn't fit (landscape).
   {% endcomment %}
   <nav id="mobile-menu" x-ref="menu" aria-label="{% translate 'Main' %}" x-cloak
        x-show="open"
        x-transition:enter="transition-opacity duration-400 ease-atelier" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
        x-transition:leave="transition-opacity duration-300 ease-atelier" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-       class="mobile-menu fixed inset-0 flex flex-col overflow-y-auto overscroll-contain bg-ivory pt-16 md:hidden"
+       class="mobile-menu fixed inset-0 flex flex-col overflow-y-auto overscroll-contain bg-linen pt-16 md:hidden"
        :class="revealed && 'is-open'">
     <ul class="container-site flex-1 pb-8 pt-8">
       <li class="menu-item" style="--i: 0"><a href="{% url 'catalog:shop' %}" @click="close(false)" class="menu-link">{% translate "Shop" %}</a></li>

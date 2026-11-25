@@ -66,7 +66,6 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
       {% for category in categories %}
         <li class="menu-item" style="--i: {{ forloop.counter }}"><a href="{{ category.get_absolute_url }}" @click="close(false)" class="menu-link menu-link--sub">{{ category.name }}</a></li>
       {% endfor %}
-      <li class="menu-item" style="--i: {{ categories|length|add:1 }}"><a href="{% url 'catalog:stones' %}" @click="close(false)" class="menu-link">{% translate "Stones" %}</a></li>
       {% if about_url %}<li class="menu-item" style="--i: {{ categories|length|add:2 }}"><a href="{{ about_url }}" @click="close(false)" class="menu-link">{% translate "About" %}</a></li>{% endif %}
     </ul>
 

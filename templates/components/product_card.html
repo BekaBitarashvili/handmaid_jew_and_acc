@@ -1,43 +1,22 @@
 {% load i18n catalog_tags %}{% comment %}
-Product card (SPEC §9.5). Context: product (with_card_data), eager (bool), archive (bool).
-Archive cards read like a gallery: greyscale → colour on hover/focus, no price.
-The wishlist heart is a sibling of the link (no interactive element inside a link).
-{% endcomment %}{% with images=product.images.all %}{% card_labels product as labels %}
+Product card: square photo, name, price (+ sale badge, added with Sale pricing).
+Context: product (with_card_data), eager (bool). Sold pieces are never listed.
+{% endcomment %}{% with images=product.images.all %}
 <article class="group relative">
   <a href="{{ product.get_absolute_url }}" class="block focus-visible:outline-offset-4">
     <div class="relative aspect-square overflow-hidden bg-shell">
-      {% if archive %}
-        {% product_picture images.0 eager=eager css="archive-photo h-full w-full object-cover" %}
-      {% else %}
-        {% product_picture images.0 eager=eager css="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" %}
-      {% endif %}
-      {% if images.1 and not archive %}
+      {% product_picture images.0 eager=eager css="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" %}
+      {% if images.1 %}
         {# Second photo cross-fades on hover — mouse/trackpad only; display:none keeps phones from loading it. #}
         <div class="absolute inset-0 hidden opacity-0 transition-opacity duration-500 ease-atelier pointer-fine:block group-hover:opacity-100">
           {% product_picture images.1 alt="" css="h-full w-full object-cover" %}
         </div>
       {% endif %}
     </div>
-    <div class="mt-4 space-y-1">
-      {% if labels %}
-        <p class="label {% if product.status == 'sold' %}text-sold-text{% else %}text-taupe-text{% endif %}">{{ labels|join:" · " }}</p>
-      {% endif %}
+    <div class="mt-3 space-y-1">
       <h3 class="text-h3 leading-snug">{{ product.name }}</h3>
-      {% if not archive %}
-        <p class="price {% if not product.is_available %}text-sold-text{% endif %}">{% price_text product %}</p>
-      {% endif %}
+      <p class="price">{% price_text product %}</p>
     </div>
   </a>
-  {% if archive and product.allow_commission_request %}
-    {% commission_url product as commission %}
-    {% if commission %}<a href="{{ commission }}" class="link mt-2 inline-block text-small text-cocoa">{% translate "Commission a similar piece" %}</a>{% endif %}
-  {% endif %}
-  {% if not archive %}
-    {# TODO(1c): wishlist toggle (signed cookie). #}
-    <button type="button" class="absolute right-2 top-2 flex size-10 items-center justify-center text-cocoa/70" disabled
-            aria-label="{% translate 'Add to wishlist' %}" title="{% translate 'Wishlist arrives soon' %}">
-      {% include "components/icon.html" with name="heart" size=20 %}
-    </button>
-  {% endif %}
 </article>
 {% endwith %}

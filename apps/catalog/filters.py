@@ -49,7 +49,6 @@ def parse(
     params: QueryDict, *, category_choices: QuerySet[Category] | None
 ) -> tuple[ProductFilters, int]:
     """QueryDict -> (filters, page). `category_choices` is None where categories can't be chosen."""
-    available_values = params.getlist("available")
     material_ids = [m for m in params.getlist("material") if m.isdigit()][:20]
     filters = ProductFilters(
         categories=_by_slugs(category_choices, params.getlist("category"))
@@ -59,8 +58,6 @@ def parse(
         materials=list(Material.objects.filter(pk__in=material_ids)) if material_ids else [],
         min_price=_price(params.get("min")),
         max_price=_price(params.get("max")),
-        # The form sends a hidden "0" before the checkbox's "1": the last value wins.
-        available_only=(available_values[-1] != "0") if available_values else True,
         sort=params.get("sort") if params.get("sort") in SORTS else SORT_NEWEST,
     )
     if (
@@ -87,8 +84,6 @@ def querystring(filters: ProductFilters, page: int | None = None) -> str:
         pairs.append(("min", _lari(filters.min_price)))
     if filters.max_price is not None:
         pairs.append(("max", _lari(filters.max_price)))
-    if not filters.available_only:
-        pairs.append(("available", "0"))
     if filters.sort != SORT_NEWEST:
         pairs.append(("sort", filters.sort))
     if page and page > 1:
@@ -104,7 +99,6 @@ def active_count(filters: ProductFilters) -> int:
         + len(filters.materials)
         + (filters.min_price is not None)
         + (filters.max_price is not None)
-        + (not filters.available_only)
     )
 
 

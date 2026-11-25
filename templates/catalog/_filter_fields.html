@@ -59,15 +59,6 @@
     </div>
   </fieldset>
 
-  <fieldset>
-    <legend class="sr-only">{% translate "Availability" %}</legend>
-    {# Hidden "0" + checkbox "1": unchecked sends only "0" (the default, checked, is left out of URLs). #}
-    <input type="hidden" name="available" value="0">
-    <label class="flex cursor-pointer items-center gap-3">
-      <input type="checkbox" name="available" value="1" class="size-4 accent-espresso" {% if filters.available_only %}checked{% endif %}>
-      <span>{% translate "Available only" %}</span>
-    </label>
-  </fieldset>
 
   <noscript><button type="submit" class="btn btn-secondary w-full">{% translate "Apply" %}</button></noscript>
   <a href="{{ request.path }}" class="link hidden text-small md:inline">{% translate "Clear all" %}</a>

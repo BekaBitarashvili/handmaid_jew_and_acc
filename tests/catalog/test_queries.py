@@ -8,12 +8,10 @@ from apps.catalog.queries import (
     SORT_PRICE_ASC,
     SORT_PRICE_DESC,
     ProductFilters,
-    archive_products,
     category_scope,
     facet_options,
     filter_products,
     related_products,
-    stones_with_counts,
     with_card_data,
 )
 from apps.catalog.services import inventory
@@ -44,14 +42,11 @@ class TestVisibility:
         ProductFactory(status=Product.Status.HIDDEN)
         assert skus(filter_products(category_scope(None), ProductFilters())) == [shown.sku]
 
-    def test_available_only_by_default(self):
+    def test_only_available_active_pieces_are_listed(self):
         available = ProductFactory(status=ACTIVE)
-        sold = ProductFactory(status=SOLD)
-        out = ProductFactory(status=ACTIVE, is_unique=False)  # default variant: 0 in stock
+        ProductFactory(status=SOLD)  # sold pieces are never listed
+        ProductFactory(status=ACTIVE, is_unique=False)  # default variant: 0 in stock
         assert skus(filter_products(category_scope(None), ProductFilters())) == [available.sku]
-        everything = filter_products(category_scope(None), ProductFilters(available_only=False))
-        assert set(skus(everything)) == {available.sku, sold.sku, out.sku}
-        assert skus(everything)[0] == available.sku  # buyable pieces first
 
     def test_category_includes_subcategories(self):
         parent = CategoryFactory()
@@ -138,12 +133,11 @@ def test_related_prefers_shared_stones():
 
 
 class TestSoldAt:
-    def test_mark_sold_sets_it_and_archive_orders_by_it(self):
-        first, second = ProductFactory(status=ACTIVE), ProductFactory(status=ACTIVE)
-        inventory.mark_sold(first)
-        inventory.mark_sold(second)
-        assert Product.objects.get(pk=first.pk).sold_at is not None
-        assert skus(archive_products()) == [second.sku, first.sku]
+    def test_mark_sold_sets_it_and_unlists_the_piece(self):
+        product = ProductFactory(status=ACTIVE)
+        inventory.mark_sold(product)
+        assert Product.objects.get(pk=product.pk).sold_at is not None
+        assert skus(filter_products(category_scope(None), ProductFilters())) == []
 
     def test_status_change_in_admin_sets_and_clears_it(self):
         product = ProductFactory(status=ACTIVE)
@@ -153,13 +147,6 @@ class TestSoldAt:
         product.status = ACTIVE
         prepare_product_for_save(product, is_new=False)
         assert product.sold_at is None
-
-
-def test_stone_counts_only_available_pieces():
-    stone = StoneFactory()
-    for status in (ACTIVE, SOLD, Product.Status.DRAFT):
-        ProductFactory(status=status).stones.set([stone])
-    assert stones_with_counts().get(pk=stone.pk).available_count == 1
 
 
 @override_settings(CACHES={"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}})

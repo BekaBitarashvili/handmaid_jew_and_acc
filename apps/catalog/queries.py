@@ -81,8 +81,13 @@ def with_card_data(queryset: QuerySet[Product]) -> QuerySet[Product]:
 
 
 def public_products() -> QuerySet[Product]:
-    """Everything a visitor may open: active and sold (archive) pieces."""
+    """Everything a visitor may open by URL: active pieces and sold ones (kept for SEO)."""
     return Product.objects.filter(status__in=PUBLIC)
+
+
+def listed_products() -> QuerySet[Product]:
+    """What listings show: active pieces only. Sold pieces are never listed anywhere."""
+    return Product.objects.filter(status=Product.Status.ACTIVE)
 
 
 def visible_for(user) -> QuerySet[Product]:
@@ -99,13 +104,12 @@ class ProductFilters:
     materials: list[Material] = field(default_factory=list)
     min_price: int | None = None  # tetri
     max_price: int | None = None  # tetri
-    available_only: bool = True
     sort: str = SORT_NEWEST
 
 
 def category_scope(category: Category | None) -> QuerySet[Product]:
-    """Products in a category and its subcategories (or the whole shop)."""
-    qs = public_products()
+    """Listed products in a category and its subcategories (or the whole shop)."""
+    qs = listed_products()
     if category is None:
         return qs.filter(category__is_active=True)
     return qs.filter(Q(category=category) | Q(category__parent=category))
@@ -133,16 +137,14 @@ def filter_products(base: QuerySet[Product], filters: ProductFilters) -> QuerySe
         qs = qs.filter(min_price__gte=filters.min_price)
     if filters.max_price is not None:
         qs = qs.filter(min_price__lte=filters.max_price)
-    if filters.available_only:
-        qs = qs.filter(is_available=True)
+    qs = qs.filter(is_available=True)  # listings show only pieces that can be bought
 
     order = {
         SORT_NEWEST: ("-published_at", "-pk"),
         SORT_PRICE_ASC: ("min_price", "-pk"),
         SORT_PRICE_DESC: ("-min_price", "-pk"),
     }[filters.sort]
-    # Pieces you can buy first, then sold / out-of-stock ones (when "available only" is off).
-    return qs.order_by("-is_available", *order)
+    return qs.order_by(*order)
 
 
 def facet_options(base: QuerySet[Product]) -> dict:
@@ -164,7 +166,7 @@ def related_products(product: Product, limit: int = 4) -> list[Product]:
     """Available pieces sharing the most stones first, then the same category."""
     stone_ids = list(product.stones.values_list("pk", flat=True))
     qs = (
-        with_card_data(public_products().exclude(pk=product.pk))
+        with_card_data(listed_products().exclude(pk=product.pk))
         .filter(is_available=True)
         .annotate(
             shared_stones=Count("stones", filter=Q(stones__in=stone_ids), distinct=True),
@@ -178,19 +180,6 @@ def related_products(product: Product, limit: int = 4) -> list[Product]:
         .order_by("-shared_stones", "-same_category", "-published_at")
     )
     return list(qs[:limit])
-
-
-def archive_products() -> QuerySet[Product]:
-    return with_card_data(Product.objects.filter(status=Product.Status.SOLD)).order_by(
-        "-sold_at", "-pk"
-    )
-
-
-def stones_with_counts() -> QuerySet[Stone]:
-    available = with_card_data(public_products()).filter(is_available=True).values("pk")
-    return Stone.objects.annotate(
-        available_count=Count("products", filter=Q(products__in=available), distinct=True)
-    ).order_by("sort_order", "pk")
 
 
 def top_categories() -> QuerySet[Category]:

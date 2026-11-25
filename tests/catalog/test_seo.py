@@ -146,14 +146,6 @@ class TestListings:
         html = get(client, "/en/shop/necklaces/")
         assert 'hreflang="ka" href="http://testserver/ka/shop/yelsabamebi/"' in html
 
-    def test_archive_and_stones(self, client, en):
-        StoneFactory(slug_ka="karva", slug_en="amber", name_en="Amber")
-        assert "<title>Archive | {{BRAND}}</title>" in get(client, "/en/archive/")
-        assert 'content="noindex, follow"' in get(client, "/en/archive/?stone=amber")
-        html = get(client, "/en/stones/amber/")
-        assert "<title>Amber — Stones | {{BRAND}}</title>" in html
-        assert 'hreflang="ka" href="http://testserver/ka/stones/karva/"' in html
-
 
 def test_pages_without_seo_still_get_hreflang(client):
     html = get(client, "/ka/")

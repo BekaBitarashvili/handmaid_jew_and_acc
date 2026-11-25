@@ -27,11 +27,9 @@ class TestShopPage:
         assert "მონახაზი" not in ka and "გაყიდული" not in ka
         assert "Amber necklace" in html(client.get("/en/shop/"))
 
-    def test_including_sold_pieces_labels_them(self, client, en):
+    def test_sold_pieces_are_never_listed(self, client, en):
         ProductFactory(status=SOLD, name_en="Sold piece")
-        page = html(client.get("/en/shop/?available=0"))
-        assert "Sold piece" in page
-        assert ">Sold<" in page
+        assert "Sold piece" not in html(client.get("/en/shop/?available=0"))
 
     def test_category_page_includes_subcategories(self, client):
         parent = CategoryFactory(name_en="Vintage", slug_en="vintage")
@@ -79,7 +77,7 @@ class TestFiltering:
         stone = StoneFactory(slug_en="amber")
         ProductFactory(status=ACTIVE).stones.set([stone])
         response = client.get(
-            "/en/shop/?category=&stone=amber&available=0&available=1&sort=newest&max=150.00",
+            "/en/shop/?category=&stone=amber&sort=newest&max=150.00",
             headers=HTMX_RESULTS,
         )
         body = html(response)
@@ -117,7 +115,7 @@ class TestParser:
 
     def test_defaults(self):
         filters, page = self.parse("")
-        assert filters.available_only and filters.sort == "newest" and page == 1
+        assert filters.sort == "newest" and page == 1
         assert shop_filters.querystring(filters) == ""
 
     def test_reversed_price_range_is_swapped(self):
@@ -127,10 +125,6 @@ class TestParser:
     def test_page_is_bounded(self):
         assert self.parse("page=0")[1] == 1
         assert self.parse("page=999")[1] == 50
-
-    def test_last_available_value_wins(self):
-        assert self.parse("available=0&available=1")[0].available_only
-        assert not self.parse("available=0")[0].available_only
 
 
 class TestProductPageAccess:

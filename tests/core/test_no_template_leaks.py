@@ -24,9 +24,6 @@ def catalog():
         "/{lang}/shop/",
         "/{lang}/shop/?stone=amber",
         "/{lang}/product/amber-ring/",
-        "/{lang}/archive/",
-        "/{lang}/stones/",
-        "/{lang}/stones/amber/",
         "/{lang}/no-such-page/",
     ],
 )

@@ -108,9 +108,6 @@ class Stone(models.Model):
     def __str__(self) -> str:
         return self.name
 
-    def get_absolute_url(self) -> str:
-        return reverse("catalog:stone", kwargs={"slug": self.slug})
-
 
 class Material(models.Model):
     name = models.CharField(_("name"), max_length=100)
@@ -130,7 +127,7 @@ class Product(models.Model):
         DRAFT = "draft", _("Draft")
         ACTIVE = "active", _("Active")
         HIDDEN = "hidden", _("Hidden")
-        SOLD = "sold", _("Sold (archive)")
+        SOLD = "sold", _("Sold")
 
     class NewBadge(models.TextChoices):
         AUTO = "auto", _("Automatic (first 30 days after publishing)")
@@ -192,8 +189,8 @@ class Product(models.Model):
         _("one of a kind"),
         default=True,
         help_text=_(
-            "Checked: a single, unrepeatable piece — stock is always 1 and it moves to the "
-            "archive once sold. Unchecked: you can make several identical pieces, so stock "
+            "Checked: a single, unrepeatable piece — stock is always 1 and it leaves the "
+            "shop once sold. Unchecked: you can make several identical pieces, so stock "
             "can be more than 1."
         ),
     )
@@ -220,7 +217,7 @@ class Product(models.Model):
     updated_at = models.DateTimeField(_("updated"), auto_now=True)
     published_at = models.DateTimeField(_("first published"), null=True, blank=True)
     sold_at = models.DateTimeField(
-        _("sold"), null=True, blank=True, help_text=_("Set automatically; orders the archive.")
+        _("sold"), null=True, blank=True, help_text=_("Set automatically when the piece is sold.")
     )
 
     class Meta:

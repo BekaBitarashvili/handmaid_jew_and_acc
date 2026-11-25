@@ -387,7 +387,7 @@ class ProductAdmin(BaseModelAdmin, TabbedTranslationAdmin):
             set_visibility(product, False)
         messages.success(request, gettext("Selected products are hidden."))
 
-    @admin.action(description=_("Mark as sold (move to archive)"))
+    @admin.action(description=_("Mark as sold"))
     def mark_as_sold(self, request: HttpRequest, queryset):
         for product in queryset:
             try:
@@ -398,7 +398,7 @@ class ProductAdmin(BaseModelAdmin, TabbedTranslationAdmin):
                     gettext("%(sku)s is reserved by an unpaid order and was not changed.")
                     % {"sku": product.sku},
                 )
-        messages.success(request, gettext("Selected products moved to the archive."))
+        messages.success(request, gettext("Selected products are marked as sold."))
 
     @admin.action(description=_("Duplicate as a new draft"))
     def duplicate(self, request: HttpRequest, queryset):

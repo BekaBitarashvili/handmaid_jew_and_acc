@@ -353,19 +353,6 @@
     color: var(--color-taupe-text);
   }
 
-  /* Archive cards read like a gallery (SPEC §6.1): greyscale that returns to colour on
-     hover/focus. Touch screens have no hover, so they get a gentler desaturation. */
-  .archive-photo {
-    filter: grayscale(0.6);
-    transition: filter 600ms var(--ease-atelier);
-    @media (hover: hover) {
-      filter: grayscale(1);
-      :where(.group:hover, .group:focus-within) & {
-        filter: grayscale(0);
-      }
-    }
-  }
-
   /* Owner-written HTML (sanitised to p, strong, em, a, ul, ol, li, h3). */
   .rich-text {
     color: var(--color-cocoa);

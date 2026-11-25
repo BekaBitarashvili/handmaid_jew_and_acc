@@ -117,7 +117,7 @@ class TestAccordions:
         assert '<details class="accordion" open>' in html  # description open by default
         assert "<p>Long description.</p>" in html
         assert ">Story<" not in html  # empty sections are left out
-        assert 'href="/en/stones/amber/"' in html
+        assert "Amber" in html and "/stones/" not in html
         assert "Length 45 cm" in html and "12 g" in html
         assert "Pickup" in html and "7 ₾" in html
         assert "0 ₾" not in html  # unset (0) delivery prices are not shown

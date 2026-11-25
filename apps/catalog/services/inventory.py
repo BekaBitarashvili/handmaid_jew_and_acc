@@ -16,7 +16,7 @@ class StockReservedError(Exception):
 
 @transaction.atomic
 def mark_sold(product: Product) -> None:
-    """Owner sold the piece outside the shop: stock to 0, product to the archive."""
+    """Owner sold the piece outside the shop: stock to 0, status sold (leaves the listings)."""
     variants = list(ProductVariant.objects.select_for_update().filter(product=product))
     if any(v.reserved for v in variants):
         raise StockReservedError(product.sku)

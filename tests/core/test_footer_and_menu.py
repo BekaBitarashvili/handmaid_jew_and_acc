@@ -34,7 +34,7 @@ class TestFooter:
         shop = section(page, 'id="footer-shop"', "</nav>")
         assert 'href="/en/shop/necklaces/"' in shop and 'href="/en/shop/earrings/"' in shop
         assert "Hidden one" not in shop
-        assert 'href="/en/archive/"' in shop and 'href="/en/stones/"' in shop
+        assert "/archive/" not in shop and "/stones/" not in shop
 
     def test_pages_that_do_not_exist_yet_are_plain_text(self, page):
         footer = section(page, "<footer", "</footer>")
@@ -65,7 +65,7 @@ class TestMobileMenu:
     def test_links_in_order(self, page):
         menu = section(page, 'id="mobile-menu"', "</nav>")
         hrefs = re.findall(r'class="menu-item"[^>]*><a href="([^"]+)"', menu)
-        assert hrefs == ["/en/shop/", "/en/shop/necklaces/", "/en/shop/earrings/", "/en/stones/"]
+        assert hrefs == ["/en/shop/", "/en/shop/necklaces/", "/en/shop/earrings/"]
 
     def test_bottom_area_has_wishlist_contact_and_language(self, page):
         menu = section(page, 'id="mobile-menu"', "</nav>")

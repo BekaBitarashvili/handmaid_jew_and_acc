@@ -20,8 +20,6 @@ the merchant agreements and must not be redrawn.
         <ul class="mt-4 space-y-2 text-small">
           <li><a class="hover:text-linen" href="{% url 'catalog:shop' %}">{% translate "All pieces" %}</a></li>
           {% for category in categories %}<li><a class="hover:text-linen" href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>{% endfor %}
-          <li><a class="hover:text-linen" href="{% url 'catalog:archive' %}">{% translate "Archive" %}</a></li>
-          <li><a class="hover:text-linen" href="{% url 'catalog:stones' %}">{% translate "Stones" %}</a></li>
         </ul>
       </nav>
 

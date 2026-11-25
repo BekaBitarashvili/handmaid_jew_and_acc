@@ -26,7 +26,7 @@ left out. No policy text is invented here (CLAUDE.md): returns live on the Shipp
             {% for stone in stones %}
               <li class="flex items-center gap-3">
                 <span class="size-3 rounded-full border border-espresso/15" style="background: {{ stone.color_hex|default:'transparent' }}" aria-hidden="true"></span>
-                <a class="link" href="{{ stone.get_absolute_url }}">{{ stone.name }}</a>
+                <span class="text-espresso">{{ stone.name }}</span>
                 {% if stone.short_description %}<span class="text-small text-taupe-text">— {{ stone.short_description }}</span>{% endif %}
               </li>
             {% endfor %}

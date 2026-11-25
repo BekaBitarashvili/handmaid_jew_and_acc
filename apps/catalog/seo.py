@@ -9,7 +9,7 @@ from apps.core.money import tetri_to_gel
 from apps.core.seo import Seo, alternates, breadcrumbs, describe
 
 from .images import picture
-from .models import Category, Product, ProductImage, Stone
+from .models import Category, Product, ProductImage
 
 SCHEMA = "https://schema.org/"
 
@@ -110,38 +110,4 @@ def listing_seo(
         # Filter and sort combinations are endless: keep them out of the index.
         noindex=filtered or page > 1,
         json_ld=[breadcrumbs(request, _shop_crumbs(category))] if category else [],
-    )
-
-
-def archive_seo(request: HttpRequest, *, filtered: bool) -> Seo:
-    return Seo(
-        title=f"{_('Archive')} | {_brand()}",
-        description=describe(_("Pieces that have found their owners.")),
-        canonical=request.build_absolute_uri(reverse("catalog:archive")),
-        alternates=alternates(request, lambda: reverse("catalog:archive")),
-        noindex=filtered,
-    )
-
-
-def stones_seo(request: HttpRequest, stone: Stone | None = None) -> Seo:
-    brand = _brand()
-    if stone is None:
-        return Seo(
-            title=f"{_('Stones')} | {brand}",
-            description=describe(_("The natural stones we work with.")),
-            canonical=request.build_absolute_uri(reverse("catalog:stones")),
-            alternates=alternates(request, lambda: reverse("catalog:stones")),
-        )
-    return Seo(
-        title=f"{stone.name} — {_('Stones')} | {brand}",
-        description=describe(stone.short_description, stone.story),
-        canonical=request.build_absolute_uri(stone.get_absolute_url()),
-        alternates=alternates(request, stone.get_absolute_url),
-        og_image=request.build_absolute_uri(stone.image.url) if stone.image else "",
-        json_ld=[
-            breadcrumbs(
-                request,
-                [(_("Stones"), reverse("catalog:stones")), (stone.name, stone.get_absolute_url())],
-            )
-        ],
     )

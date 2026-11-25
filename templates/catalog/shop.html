@@ -1,56 +1,69 @@
 {% extends "base.html" %}
 {% load i18n %}
-
-
+{% comment %}
+Shop / category / New Arrivals / Sale / search results — one template (redesign §3).
+Category chips on top; stone, material and price live in a drawer (right side on desktop,
+full sheet on phones). One GET form for everything, enhanced with HTMX.
+{% endcomment %}
 {% block content %}
-<div class="container-site pb-24 pt-8 md:pt-14">
-  {% if category %}
-    <nav aria-label="{% translate 'Breadcrumb' %}" class="mb-6 text-small text-taupe-text">
-      <ol class="flex flex-wrap gap-2">
-        <li><a class="link text-taupe-text" href="{% url 'catalog:shop' %}">{% translate "Shop" %}</a></li>
-        {% if category.parent %}<li aria-hidden="true">/</li><li><a class="link text-taupe-text" href="{{ category.parent.get_absolute_url }}">{{ category.parent.name }}</a></li>{% endif %}
-        <li aria-hidden="true">/</li><li aria-current="page">{{ category.name }}</li>
-      </ol>
-    </nav>
-  {% endif %}
-  <header class="max-w-3xl">
-    <h1>{{ title }}</h1>
-    {% if category.description %}<p class="prose-column mt-4 text-cocoa">{{ category.description }}</p>{% endif %}
+<div class="container-site pb-24 pt-10 md:pt-16">
+  <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+    <div>
+      {% if category.parent %}
+        <a href="{{ category.parent.get_absolute_url }}" class="link text-small text-taupe-text">{{ category.parent.name }}</a>
+      {% endif %}
+      <h1 class="display">{{ title }}</h1>
+    </div>
+    {% if category.description %}<p class="prose-column text-cocoa md:max-w-md md:text-right">{{ category.description }}</p>{% endif %}
   </header>
 
-  {# One form for the whole layout: filter panel + sort live together. Works without JavaScript too. #}
+  {# Category chips. On the plain shop they are clean category URLs; on New / Sale a filter. #}
+  <nav aria-label="{% translate 'Categories' %}" class="scrollbar-none -mx-4 mt-8 overflow-x-auto px-4 md:mx-0 md:px-0">
+    <ul class="flex gap-2 whitespace-nowrap">
+      <li><a href="{{ collection_url }}{% if filters.query %}?q={{ filters.query|urlencode }}{% endif %}" class="chip" {% if not selected_category %}aria-current="page"{% endif %}>{% translate "All" %}</a></li>
+      {% for chip in chips %}
+        <li>
+          <a href="{% if collection == 'all' %}{{ chip.get_absolute_url }}{% else %}{{ collection_url }}?category={{ chip.slug }}{% endif %}"
+             class="chip" {% if selected_category and chip.pk == selected_category.pk or selected_category and chip.pk == selected_category.parent_id %}aria-current="page"{% endif %}>{{ chip.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+
   <form id="filters" method="get" action="{{ request.path }}"
         hx-get="{{ request.path }}" hx-target="#results" hx-swap="outerHTML" hx-sync="this:replace"
         hx-trigger="change, submit"
         x-data="filterSheet" x-effect="lockScroll(open)" @keydown.escape="open = false"
-        class="mt-8 md:mt-12 md:grid md:grid-cols-[13rem_1fr] md:gap-12 lg:grid-cols-[15rem_1fr]">
+        class="mt-6">
+    {# Keep context that isn't edited in the drawer. #}
+    {% if filters.query %}<input type="hidden" name="q" value="{{ filters.query }}">{% endif %}
+    {% if collection != "all" %}{% for c in filters.categories %}<input type="hidden" name="category" value="{{ c.slug }}">{% endfor %}{% endif %}
 
-    {# Filter panel: a left column from 768px; a full-height sheet on phones. #}
-    <aside id="filter-panel" aria-label="{% translate 'Filters' %}"
-           class="max-md:fixed max-md:inset-0 max-md:z-50 max-md:flex-col max-md:bg-linen md:block"
-           :class="open ? 'max-md:flex' : 'max-md:hidden'" x-cloak>
-      <div class="flex items-center justify-between border-b border-sand px-4 py-4 md:hidden">
-        <p class="font-serif text-h3 text-espresso">{% translate "Filters" %}</p>
+    {# Filter drawer: right-hand panel on desktop, full-height sheet on phones. #}
+    <div x-show="open" x-cloak x-transition.opacity.duration.300ms @click="open = false"
+         class="fixed inset-0 z-50 bg-umber/30" aria-hidden="true"></div>
+    <aside id="filter-panel" aria-label="{% translate 'Filters' %}" x-cloak x-show="open"
+           x-transition:enter="transition duration-400 ease-atelier" x-transition:enter-start="opacity-0 md:translate-x-8"
+           x-transition:leave="transition duration-300 ease-atelier" x-transition:leave-end="opacity-0 md:translate-x-8"
+           class="fixed inset-y-0 right-0 z-50 flex w-full flex-col bg-linen md:max-w-md md:border-l md:border-sand">
+      <div class="flex items-center justify-between border-b border-sand px-5 py-4">
+        <p class="italic-serif font-serif text-h3 text-espresso">{% translate "Filters" %}</p>
         <button type="button" @click="open = false" class="-mr-2 p-2 text-cocoa">
           {% include "components/icon.html" with name="x" %}<span class="sr-only">{% translate "Close filters" %}</span>
         </button>
       </div>
-
-      <div class="max-md:flex-1 max-md:overflow-y-auto max-md:px-4 max-md:py-6 md:sticky md:top-28">
+      <div class="flex-1 overflow-y-auto px-5 py-6">
         {% include "catalog/_filter_fields.html" %}
       </div>
-
-      <div class="flex items-center gap-4 border-t border-sand px-4 py-4 md:hidden">
-        <a href="{{ request.path }}" class="link text-small">{% translate "Clear all" %}</a>
-        <button type="submit" @click="open = false" class="btn btn-primary ml-auto">
+      <div class="flex items-center gap-4 border-t border-sand px-5 py-4">
+        <a href="{{ request.path }}{% if filters.query %}?q={{ filters.query|urlencode }}{% endif %}" class="link text-small">{% translate "Clear all" %}</a>
+        <button type="submit" @click="open = false" class="btn btn-dark ml-auto">
           {% translate "Show" %} <span id="sheet-count">{{ total_text }}</span>
         </button>
       </div>
     </aside>
 
-    <div>
-      {% include "catalog/_results_partial.html" %}
-    </div>
+    {% include "catalog/_results_partial.html" %}
   </form>
 </div>
 {% endblock %}

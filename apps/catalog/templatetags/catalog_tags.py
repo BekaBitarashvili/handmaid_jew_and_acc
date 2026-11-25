@@ -37,14 +37,30 @@ def product_picture(
     }
 
 
-@register.simple_tag
-def price_text(product: Product) -> str:
-    """Card price: 145 ₾, or "from 45 ₾" when variant prices differ (needs with_card_data)."""
+@register.inclusion_tag("components/price.html")
+def price_block(product: Product, size: str = "card"):
+    """Price for listings (needs with_card_data): sale = old struck through + new + badge;
+    "from" when variant prices differ."""
     low = getattr(product, "min_price", product.price)
     high = getattr(product, "max_price", product.price)
-    if low != high:
-        return _("from %(price)s") % {"price": format_gel(low)}
-    return format_gel(low)
+    sale_low = getattr(product, "sale_min_price", low)
+    sale_high = getattr(product, "sale_max_price", high)
+    on_sale = sale_low < low
+    return {
+        "size": size,
+        "on_sale": on_sale,
+        "is_range": sale_low != sale_high,
+        "old": format_gel(low),
+        "current": format_gel(sale_low),
+        "percent_off": round((low - sale_low) * 100 / low) if on_sale and low else 0,
+    }
+
+
+@register.simple_tag
+def percent_off(product: Product) -> int:
+    low = getattr(product, "min_price", product.price)
+    sale_low = getattr(product, "sale_min_price", low)
+    return round((low - sale_low) * 100 / low) if low and sale_low < low else 0
 
 
 @register.simple_tag

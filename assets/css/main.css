@@ -246,26 +246,25 @@
     font-weight: 500;
   }
 
-  /* Buttons: rectangular, generous, quiet. */
+  /* Buttons (reference): flat, small radius, quiet serif label — a light fill, a 1px
+     outline, and a dark variant for the main action on light pages. */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 3rem;
-    padding: 0.75rem 1.75rem;
+    min-height: 2.75rem;
+    padding: 0.625rem 1.5rem;
     border: 1px solid transparent;
-    border-radius: var(--radius-xs);
-    font-family: var(--font-sans);
-    font-size: var(--text-small);
-    font-weight: 500;
-    letter-spacing: 0.06em;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.01em;
     transition-property: background-color, color, border-color;
     cursor: pointer;
     &:lang(ka) {
-      font-size: calc(var(--text-small) + 1px);
-      font-weight: 400;
-      letter-spacing: 0.06em;
+      font-size: 0.9375rem;
     }
     &:disabled,
     &[aria-disabled="true"] {
@@ -275,6 +274,32 @@
       color: var(--color-sold-text);
     }
   }
+  .btn-light {
+    background-color: var(--color-oat);
+    color: var(--color-espresso);
+    &:hover:not(:disabled) {
+      background-color: var(--color-sand);
+    }
+  }
+  .btn-outline,
+  .btn-secondary {
+    background-color: transparent;
+    border-color: currentColor;
+    color: var(--color-espresso);
+    &:hover:not(:disabled) {
+      background-color: color-mix(in oklab, currentColor 8%, transparent);
+    }
+  }
+  /* On photos / dark sections: outline in linen. */
+  .btn-outline-light {
+    background-color: transparent;
+    border-color: color-mix(in oklab, var(--color-linen) 80%, transparent);
+    color: var(--color-linen);
+    &:hover {
+      background-color: color-mix(in oklab, var(--color-linen) 12%, transparent);
+    }
+  }
+  .btn-dark,
   .btn-primary {
     background-color: var(--color-espresso);
     color: var(--color-linen);
@@ -282,14 +307,75 @@
       background-color: var(--color-cocoa);
     }
   }
-  .btn-secondary {
-    background-color: transparent;
-    border-color: var(--color-cocoa);
+
+  /* Category chips (shop). */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding: 0.25rem 1rem;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-serif);
+    font-size: 1rem;
     color: var(--color-cocoa);
-    &:hover:not(:disabled) {
-      background-color: var(--color-cocoa);
-      color: var(--color-linen);
+    transition-property: border-color, color, background-color;
+    &:hover {
+      border-color: var(--color-clay);
     }
+    &[aria-current] {
+      border-color: var(--color-espresso);
+      background-color: var(--color-shell);
+      color: var(--color-espresso);
+    }
+  }
+
+  /* Product cards (reference): small upright serif name, quiet price, square cart button. */
+  .card-name {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: var(--color-espresso);
+  }
+  .cart-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-sm);
+    color: var(--color-cocoa);
+    transition-property: border-color, color;
+    &:hover {
+      border-color: var(--color-espresso);
+      color: var(--color-espresso);
+    }
+  }
+  /* Small sale pill on card photos: espresso on oat (9.5:1). */
+  .sale-badge {
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    background-color: var(--color-oat);
+    color: var(--color-espresso);
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Round "-30%" badge (banner, product page): linen on clay-text (5.2:1). */
+  .sale-badge-round {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 999px;
+    background-color: var(--color-clay-text);
+    color: var(--color-linen);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.375rem;
   }
 
   /* Text link: 1px clay underline that grows from the left on hover. */

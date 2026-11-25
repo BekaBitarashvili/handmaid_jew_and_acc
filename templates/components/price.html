@@ -1,0 +1,7 @@
+{% load i18n %}{% comment %}
+Price: regular, "from" for variant ranges, or sale — old price struck through + new price.
+A sale is also announced in words for screen readers (never colour alone, SPEC §9.2).
+{% endcomment %}{% if on_sale %}<span class="flex flex-wrap items-baseline gap-x-2">
+  <span class="price price-old {% if size == 'large' %}text-body{% else %}text-small{% endif %}"><span class="sr-only">{% translate "Original price" %}: </span>{{ old }}</span>
+  <span class="price price-sale"><span class="sr-only">{% translate "Sale price" %}: </span>{% if is_range %}{% blocktranslate with price=current %}from {{ price }}{% endblocktranslate %}{% else %}{{ current }}{% endif %}</span>
+</span>{% else %}<span class="price">{% if is_range %}{% blocktranslate with price=current %}from {{ price }}{% endblocktranslate %}{% else %}{{ current }}{% endif %}</span>{% endif %}

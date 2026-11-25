@@ -94,23 +94,28 @@ def product_seo(request: HttpRequest, product: Product, images: list[ProductImag
 
 
 def listing_seo(
-    request: HttpRequest, category: Category | None, *, filtered: bool, page: int
+    request: HttpRequest,
+    category: Category | None,
+    *,
+    collection: str = "all",
+    title: str,
+    filtered: bool,
+    page: int,
 ) -> Seo:
     brand = _brand()
-    if category is None:
-        url_for = lambda: reverse("catalog:shop")  # noqa: E731
-        title = f"{_('Shop')} | {brand}"
-        description = describe(_("Handmade jewelry with natural stones"))
-    else:
+    if category is not None:
         url_for = category.get_absolute_url
-        title = f"{category.name} | {brand}"
         description = describe(category.description, _("Handmade jewelry with natural stones"))
+    else:
+        name = {"all": "catalog:shop", "new": "catalog:new", "sale": "catalog:sale"}[collection]
+        url_for = lambda: reverse(name)  # noqa: E731
+        description = describe(_("Handmade jewelry with natural stones"))
     return Seo(
-        title=title,
+        title=f"{title} | {brand}",
         description=description,
         canonical=request.build_absolute_uri(url_for()),  # never the filtered URL
         alternates=alternates(request, url_for),
-        # Filter and sort combinations are endless: keep them out of the index.
+        # Filter, sort and search combinations are endless: keep them out of the index.
         noindex=filtered or page > 1,
         json_ld=[breadcrumbs(request, _shop_crumbs(category))] if category else [],
     )

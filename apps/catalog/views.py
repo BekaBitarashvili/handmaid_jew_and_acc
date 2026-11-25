@@ -2,8 +2,9 @@
 
 from django.http import HttpRequest, HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.translation import gettext as _
-from django.utils.translation import ngettext
+from django.utils.translation import ngettext, pgettext_lazy
 
 from apps.core.money import format_gel
 from apps.orders.models import DeliveryOption
@@ -12,10 +13,14 @@ from . import filters as shop_filters
 from .lookup import by_translated_slug
 from .models import Category, Product
 from .queries import (
+    COLLECTION_ALL,
+    COLLECTION_NEW,
+    COLLECTION_SALE,
     category_scope,
     facet_options,
     filter_products,
     related_products,
+    top_categories,
     visible_for,
     with_card_data,
 )
@@ -30,7 +35,26 @@ def _redirect_to(obj, request: HttpRequest) -> HttpResponsePermanentRedirect:
     return HttpResponsePermanentRedirect(obj.get_absolute_url() + (f"?{query}" if query else ""))
 
 
-def shop(request: HttpRequest, slug: str | None = None) -> HttpResponse:
+COLLECTION_TITLES = {
+    COLLECTION_ALL: pgettext_lazy("page title", "Shop"),
+    COLLECTION_NEW: pgettext_lazy("page title", "New Arrivals"),
+    COLLECTION_SALE: pgettext_lazy("page title", "Sale"),
+}
+COLLECTION_URLS = {
+    COLLECTION_ALL: "catalog:shop",
+    COLLECTION_NEW: "catalog:new",
+    COLLECTION_SALE: "catalog:sale",
+}
+
+
+def listing(
+    request: HttpRequest, collection: str = COLLECTION_ALL, slug: str | None = None
+) -> HttpResponse:
+    """Shop, a category, New Arrivals, Sale and search results: one template (redesign §3).
+
+    A category is part of the path on the plain shop (/shop/<category>/, clean URLs for
+    the home tiles) and a ?category= filter on New Arrivals and Sale.
+    """
     category = None
     if slug is not None:
         category, wrong_language = by_translated_slug(Category.objects.filter(is_active=True), slug)
@@ -38,25 +62,24 @@ def shop(request: HttpRequest, slug: str | None = None) -> HttpResponse:
             return _redirect_to(category, request)
 
     base = category_scope(category)
-    # On a category page only its subcategories can be chosen; the shop offers all.
     if category is None:
         category_choices = Category.objects.filter(is_active=True)
     else:
         category_choices = category.children.filter(is_active=True)
     filters, page = shop_filters.parse(request.GET, category_choices=category_choices)
-    results = filter_products(base, filters)
+    results = filter_products(base, filters, collection=collection)
     total = results.count()
     size = shop_filters.PAGE_SIZE
-    has_more = total > page * size
     target = request.htmx.target if request.htmx else None
 
     context = {
+        "collection": collection,
         "category": category,
         "filters": filters,
         "page": page,
         "total": total,
         "total_text": ngettext("%(count)d piece", "%(count)d pieces", total) % {"count": total},
-        "has_more": has_more,
+        "has_more": total > page * size,
         "next_query": shop_filters.querystring(filters, page + 1),
         "eager_count": 4 if page == 1 else 0,
     }
@@ -70,12 +93,20 @@ def shop(request: HttpRequest, slug: str | None = None) -> HttpResponse:
     # Full page or filter change: everything up to `page` (so ?page=3 shows 36 pieces).
     context["products"] = results[: page * size]
     facets = facet_options(base)
+    if filters.query:
+        title = _("Search: “%(query)s”") % {"query": filters.query}
+    elif category is not None:
+        title = category.name
+    else:
+        title = COLLECTION_TITLES[collection]
+    selected_category = category or (filters.categories[0] if filters.categories else None)
     context.update(
         {
             "facets": facets,
-            "category_choices": facets["categories"]
-            if category is None
-            else category_choices.filter(pk__in=facets["categories"]),
+            "chips": top_categories(),
+            "selected_category": selected_category,
+            "collection_url": reverse(COLLECTION_URLS[collection]),
+            "subcategories": category.children.filter(is_active=True) if category else [],
             "selected": {
                 "category": {c.pk for c in filters.categories},
                 "stone": {s.pk for s in filters.stones},
@@ -83,11 +114,17 @@ def shop(request: HttpRequest, slug: str | None = None) -> HttpResponse:
             },
             "min_value": shop_filters._lari(filters.min_price) if filters.min_price else "",
             "max_value": shop_filters._lari(filters.max_price) if filters.max_price else "",
-            "active_count": shop_filters.active_count(filters),
+            "active_count": shop_filters.active_count(filters)
+            - (len(filters.categories) if collection != COLLECTION_ALL else 0),
+            "title": title,
             "seo": listing_seo(
-                request, category, filtered=shop_filters.is_filtered(filters), page=page
+                request,
+                category,
+                collection=collection,
+                title=str(title),
+                filtered=shop_filters.is_filtered(filters),
+                page=page,
             ),
-            "title": category.name if category else _("Shop"),
         }
     )
 

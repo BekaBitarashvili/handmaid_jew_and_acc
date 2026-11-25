@@ -14,6 +14,9 @@ from apps.core.fields import MoneyField, RichTextField
 
 NEW_PRODUCT_DAYS = 30
 
+# /shop/new/ and /shop/sale/ are fixed URLs, so no category may use these slugs.
+RESERVED_CATEGORY_SLUGS = frozenset({"new", "sale"})
+
 code_validator = RegexValidator(r"^[A-Z]{3}$", _("Exactly 3 capital Latin letters, e.g. NEC."))
 color_validator = RegexValidator(r"^#[0-9A-Fa-f]{6}$", _("A hex color like #C8862A."))
 
@@ -65,6 +68,11 @@ class Category(models.Model):
         return reverse("catalog:category", kwargs={"slug": self.slug})
 
     def clean(self) -> None:
+        for lang in ("ka", "en"):
+            if getattr(self, f"slug_{lang}", None) in RESERVED_CATEGORY_SLUGS:
+                raise ValidationError(
+                    {f"slug_{lang}": _("This URL is reserved for New Arrivals / Sale.")}
+                )
         if self.parent_id is None:
             return
         if self.parent_id == self.pk:

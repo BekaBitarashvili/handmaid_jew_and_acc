@@ -10,7 +10,11 @@ LANGUAGES = ("ka", "en")
 
 def unique_slug(model: type[models.Model], field: str, base: str, exclude_pk=None) -> str:
     """`base`, or `base-2`, `base-3`… — whatever is free in `field`."""
+    from apps.catalog.models import RESERVED_CATEGORY_SLUGS, Category
+
     base = base or "item"
+    if model is Category and base in RESERVED_CATEGORY_SLUGS:
+        base = f"{base}-items"
     max_length = model._meta.get_field(field).max_length
     base = base[: max_length - 4].strip("-")
     queryset = model._default_manager.all()

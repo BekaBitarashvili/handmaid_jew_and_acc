@@ -11,11 +11,11 @@ function lockPageScroll(locked) {
 }
 
 document.addEventListener("alpine:init", () => {
-  // Shop filters: a full-height sheet on phones, a static column from 768px.
+  // Shop filters: a drawer (right side on desktop, full sheet on phones).
   Alpine.data("filterSheet", () => ({
     open: false,
     lockScroll(open) {
-      lockPageScroll(open && PHONE.matches);
+      lockPageScroll(open);
     },
   }));
 

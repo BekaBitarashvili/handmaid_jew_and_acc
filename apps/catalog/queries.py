@@ -5,6 +5,7 @@ variants and also filtering by stones would multiply the sums.
 """
 
 from dataclasses import dataclass, field
+from datetime import timedelta
 
 from django.db.models import (
     BooleanField,
@@ -25,8 +26,17 @@ from django.db.models import (
     When,
 )
 from django.db.models.functions import Coalesce
+from django.utils import timezone
 
-from .models import Category, Material, Product, ProductImage, ProductVariant, Stone
+from .models import (
+    NEW_PRODUCT_DAYS,
+    Category,
+    Material,
+    Product,
+    ProductImage,
+    ProductVariant,
+    Stone,
+)
 
 PUBLIC = (Product.Status.ACTIVE, Product.Status.SOLD)
 
@@ -34,6 +44,11 @@ SORT_NEWEST = "newest"
 SORT_PRICE_ASC = "price_asc"
 SORT_PRICE_DESC = "price_desc"
 SORTS = (SORT_NEWEST, SORT_PRICE_ASC, SORT_PRICE_DESC)
+
+COLLECTION_ALL = "all"
+COLLECTION_NEW = "new"
+COLLECTION_SALE = "sale"
+COLLECTIONS = (COLLECTION_ALL, COLLECTION_NEW, COLLECTION_SALE)
 
 
 def _variant_subquery(aggregate):
@@ -114,6 +129,7 @@ class ProductFilters:
     min_price: int | None = None  # tetri
     max_price: int | None = None  # tetri
     sort: str = SORT_NEWEST
+    query: str = ""  # simple search (Phase 3: Postgres full-text)
 
 
 def category_scope(category: Category | None) -> QuerySet[Product]:
@@ -124,8 +140,56 @@ def category_scope(category: Category | None) -> QuerySet[Product]:
     return qs.filter(Q(category=category) | Q(category__parent=category))
 
 
-def filter_products(base: QuerySet[Product], filters: ProductFilters) -> QuerySet[Product]:
-    qs = with_card_data(base)
+def new_condition(now=None) -> Q:
+    """Database version of Product.is_new: owner override, else published in the last 30 days."""
+    now = now or timezone.now()
+    recent = now - timedelta(days=NEW_PRODUCT_DAYS)
+    return Q(new_badge=Product.NewBadge.YES) | (
+        Q(new_badge=Product.NewBadge.AUTO) & Q(published_at__gte=recent)
+    )
+
+
+def search_condition(text: str) -> Q:
+    """Name, descriptions, stones and materials in both languages (case-insensitive)."""
+    condition = Q()
+    for lang in ("ka", "en"):
+        condition |= (
+            Q(**{f"name_{lang}__icontains": text})
+            | Q(**{f"short_description_{lang}__icontains": text})
+            | Q(**{f"description_{lang}__icontains": text})
+            | Q(
+                Exists(
+                    Stone.objects.filter(products=OuterRef("pk")).filter(
+                        **{f"name_{lang}__icontains": text}
+                    )
+                )
+            )
+            | Q(
+                Exists(
+                    Material.objects.filter(products=OuterRef("pk")).filter(
+                        **{f"name_{lang}__icontains": text}
+                    )
+                )
+            )
+        )
+    return condition
+
+
+def collection_scope(collection: str, base: QuerySet[Product]) -> QuerySet[Product]:
+    """New Arrivals and Sale are filtered views of the shop (redesign §3)."""
+    if collection == COLLECTION_NEW:
+        return base.filter(new_condition())
+    return base
+
+
+def filter_products(
+    base: QuerySet[Product], filters: ProductFilters, *, collection: str = COLLECTION_ALL
+) -> QuerySet[Product]:
+    qs = with_card_data(collection_scope(collection, base))
+    if collection == COLLECTION_SALE:
+        qs = qs.filter(sale_min_price__lt=F("min_price"))
+    if filters.query:
+        qs = qs.filter(search_condition(filters.query))
     if filters.categories:
         qs = qs.filter(
             Q(category__in=filters.categories) | Q(category__parent__in=filters.categories)

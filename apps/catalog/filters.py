@@ -59,6 +59,7 @@ def parse(
         min_price=_price(params.get("min")),
         max_price=_price(params.get("max")),
         sort=params.get("sort") if params.get("sort") in SORTS else SORT_NEWEST,
+        query=" ".join((params.get("q") or "").split())[:80],
     )
     if (
         filters.min_price is not None
@@ -77,6 +78,8 @@ def _lari(tetri: int) -> str:
 def querystring(filters: ProductFilters, page: int | None = None) -> str:
     """Canonical query string without defaults, e.g. "stone=karva&max=150"."""
     pairs: list[tuple[str, str]] = []
+    if filters.query:
+        pairs.append(("q", filters.query))
     pairs += [("category", c.slug) for c in filters.categories]
     pairs += [("stone", s.slug) for s in filters.stones]
     pairs += [("material", str(m.pk)) for m in filters.materials]
@@ -103,4 +106,4 @@ def active_count(filters: ProductFilters) -> int:
 
 
 def is_filtered(filters: ProductFilters) -> bool:
-    return active_count(filters) > 0 or filters.sort != SORT_NEWEST
+    return active_count(filters) > 0 or filters.sort != SORT_NEWEST or bool(filters.query)

@@ -73,9 +73,7 @@ bottom. Context: cart, notices, oob.
     </div>
     <p class="mt-1 text-small text-taupe-text">{% translate "Delivery is added at checkout, once we know the address." %}</p>
 
-    {# TODO(1d): checkout. #}
-    <button type="button" class="btn btn-dark mt-6 w-full" disabled aria-describedby="checkout-soon">{% translate "Checkout" %}</button>
-    <p id="checkout-soon" class="mt-2 text-center text-small text-taupe-text">{% translate "Checkout opens soon." %}</p>
+    {% if cart.lines %}<a href="{% url 'orders:checkout' %}" class="btn btn-dark mt-6 w-full">{% translate "Checkout" %}</a>{% endif %}
   </aside>
 </div>
 
@@ -84,7 +82,7 @@ bottom. Context: cart, notices, oob.
 <div class="fixed inset-x-0 bottom-0 z-30 border-t border-sand bg-linen lg:hidden">
   <div class="container-site flex items-center justify-between gap-4 py-3">
     <p><span class="block text-small text-taupe-text">{% translate "Total" %}</span><span class="price text-h3">{{ cart.total|gel }}</span></p>
-    <button type="button" class="btn btn-dark" disabled>{% translate "Checkout" %}</button>
+    <a href="{% url 'orders:checkout' %}" class="btn btn-dark">{% translate "Checkout" %}</a>
   </div>
 </div>
 {% endif %}

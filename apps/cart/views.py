@@ -56,6 +56,9 @@ def _respond(
 
 @require_GET
 def detail(request: HttpRequest) -> HttpResponse:
+    from apps.orders.checkout_views import close_unpaid_checkout
+
+    close_unpaid_checkout(request)  # back from the bank page: release this browser's hold
     cart = get_cart(request).build()
     notices = [str(m) for m in messages.get_messages(request)] + cart.notices
     return render(

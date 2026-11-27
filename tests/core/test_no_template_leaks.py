@@ -9,12 +9,16 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def catalog():
+def catalog(client):
+    from apps.orders.models import DeliveryOption
+
     stone = StoneFactory(slug_en="amber")
     product = ProductFactory(status=Product.Status.ACTIVE, slug_en="amber-ring")
     product.stones.set([stone])
     ProductImageFactory(product=product)
     ProductFactory(status=Product.Status.SOLD)
+    DeliveryOption.objects.create(code="courier_tbilisi", name="Courier", price=600)
+    client.post("/en/cart/add/", {"variant": product.variants.get().pk})
 
 
 @pytest.mark.parametrize(
@@ -25,6 +29,10 @@ def catalog():
         "/{lang}/shop/?stone=amber",
         "/{lang}/product/amber-ring/",
         "/{lang}/no-such-page/",
+        "/{lang}/cart/",
+        "/{lang}/checkout/",
+        "/{lang}/wishlist/",
+        "/{lang}/terms/",
     ],
 )
 @pytest.mark.parametrize("lang", ["ka", "en"])

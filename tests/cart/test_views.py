@@ -148,7 +148,7 @@ class TestPages:
         assert "from 5 ₾" in page and "Pickup free" in page
         assert "Add 130 ₾ more for free delivery." in page
         assert 'style="width: 35%"' in page
-        assert "Checkout opens soon." in page
+        assert 'href="/en/checkout/"' in page
 
     def test_free_delivery_reached(self, client, en):
         DeliveryOption.objects.create(code="tbilisi", name="Tbilisi", price=500)

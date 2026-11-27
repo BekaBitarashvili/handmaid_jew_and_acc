@@ -80,6 +80,8 @@ class Order(models.Model):
 
     number = models.CharField(_("order number"), max_length=12, unique=True)
     public_token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    # One-time token of the checkout form: a double submit can never create a second order.
+    checkout_token = models.CharField(max_length=64, blank=True, default="", editable=False)
     language = models.CharField(_("language"), max_length=5, default="ka")
     status = models.CharField(
         _("status"), max_length=20, choices=Status.choices, default=Status.AWAITING_PAYMENT
@@ -159,6 +161,13 @@ class Order(models.Model):
         indexes = [
             models.Index(fields=["status", "reservation_expires_at"]),
             models.Index(fields=["needs_attention"]),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["checkout_token"],
+                condition=~models.Q(checkout_token=""),
+                name="order_checkout_token_unique",
+            )
         ]
 
     def __str__(self) -> str:

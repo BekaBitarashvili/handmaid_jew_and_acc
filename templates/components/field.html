@@ -1,0 +1,28 @@
+{% load i18n %}{% comment %}
+One form field in the shop style: label, input (or textarea), help text, error.
+Context: field (BoundField), type ("text" | "email" | "tel" | "textarea"), autocomplete,
+inputmode, placeholder, optional (adds "(optional)"), xshow (Alpine condition), maxlength,
+counter (live "n / max" for textareas), class (wrapper).
+{% endcomment %}<div class="{{ class|default:'' }}"{% if xshow %} x-show="{{ xshow }}"{% endif %}>
+  <label for="{{ field.id_for_label }}" class="field-label">{{ field.label }}{% if optional %} <span class="text-taupe-text">({% translate "optional" %})</span>{% endif %}</label>
+  {% if type == "textarea" %}
+    <div {% if counter %}x-data="{ n: {{ field.value|default:''|length }} }"{% endif %}>
+      <textarea id="{{ field.id_for_label }}" name="{{ field.html_name }}" rows="{{ rows|default:3 }}" class="field-input min-h-0 py-3"
+                {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+                {% if counter %}@input="n = $el.value.length"{% endif %}
+                {% if field.errors %}aria-invalid="true"{% endif %}
+                aria-describedby="{{ field.id_for_label }}-help{% if counter %} {{ field.id_for_label }}-count{% endif %}{% if field.errors %} {{ field.id_for_label }}-error{% endif %}">{{ field.value|default:"" }}</textarea>
+      {% if counter %}<p id="{{ field.id_for_label }}-count" class="field-help text-right"><span x-text="n">{{ field.value|default:''|length }}</span> / {{ maxlength }}</p>{% endif %}
+    </div>
+  {% else %}
+    <input id="{{ field.id_for_label }}" name="{{ field.html_name }}" type="{{ type|default:'text' }}" class="field-input"
+           value="{{ field.value|default:'' }}"
+           {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
+           {% if inputmode %}inputmode="{{ inputmode }}"{% endif %}
+           {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}
+           {% if field.errors %}aria-invalid="true"{% endif %}
+           aria-describedby="{{ field.id_for_label }}-help{% if field.errors %} {{ field.id_for_label }}-error{% endif %}">
+  {% endif %}
+  {% if field.help_text %}<p id="{{ field.id_for_label }}-help" class="field-help">{{ field.help_text }}</p>{% endif %}
+  {% for error in field.errors %}<p id="{{ field.id_for_label }}-error" class="field-error">{{ error }}</p>{% endfor %}
+</div>

@@ -70,6 +70,7 @@ class CheckoutData:
     consent_privacy: bool = False
     consent_marketing: bool = False
     expected_total: int | None = None  # what the customer saw on the button
+    checkout_token: str | None = None  # one per checkout form (double-submit guard)
 
 
 @dataclass
@@ -120,6 +121,7 @@ def place_order(
 
         order = Order.objects.create(
             number=next_order_number(),
+            checkout_token=data.checkout_token or "",
             language=language,
             payment_method=data.payment_method,
             first_name=data.first_name,

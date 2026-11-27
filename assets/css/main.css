@@ -498,6 +498,45 @@
     }
   }
 
+  /* Checkout: section titles and radio "cards" (delivery, payment). */
+  .checkout-legend {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: var(--text-h3);
+    color: var(--color-espresso);
+    &:lang(ka) {
+      font-style: normal;
+    }
+  }
+  .choice-card {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 3.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color 300ms var(--ease-atelier);
+    &:hover {
+      border-color: var(--color-taupe-text);
+    }
+    &:has(input:checked) {
+      border-color: var(--color-espresso);
+      background-color: var(--color-shell);
+    }
+    &:has(input:focus-visible) {
+      outline: 2px solid var(--color-clay-text);
+      outline-offset: 2px;
+    }
+  }
+  .checkout-summary > summary {
+    list-style: none;
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
   /* Cart messages (sold, quantity lowered, price changed, added). */
   .cart-notices {
     display: grid;

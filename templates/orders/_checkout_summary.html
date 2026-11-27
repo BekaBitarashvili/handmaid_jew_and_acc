@@ -1,0 +1,41 @@
+{% load i18n catalog_tags money %}{% comment %}
+Checkout summary (swapped by HTMX when delivery or gift wrap change). Carries the total the
+customer sees: the hidden `expected_total` goes back with the order, and the Pay button
+label follows out-of-band.
+Context: cart, quote, option, notices, oob.
+{% endcomment %}<div id="checkout-summary-body">
+  {% if notices and oob %}<div class="mb-5">{% include "cart/_notices.html" %}</div>{% endif %}
+  <ul class="divide-y divide-sand">
+    {% for line in cart.lines %}{% with product=line.product %}
+      <li class="flex gap-3 py-3">
+        <div class="relative size-14 shrink-0 overflow-hidden bg-shell">
+          {% if line.image %}{% product_picture line.image alt="" css="h-full w-full object-cover" %}{% endif %}
+          {% if line.qty > 1 %}<span class="absolute right-0.5 top-0.5 rounded-full bg-espresso px-1.5 text-[0.6875rem] text-linen">{{ line.qty }}</span>{% endif %}
+        </div>
+        <div class="min-w-0 flex-1 text-small">
+          <p class="card-name">{{ product.name }}</p>
+          {% if line.show_variant_name %}<p class="text-taupe-text">{{ line.variant.name }}</p>{% endif %}
+        </div>
+        <p class="text-right text-small">
+          {% if line.price.on_sale %}<span class="price price-old"><span class="sr-only">{% translate "Original price" %}: </span>{{ line.original_total|gel }}</span><br>{% endif %}
+          <span class="price">{{ line.total|gel }}</span>
+        </p>
+      </li>
+    {% endwith %}{% endfor %}
+  </ul>
+  {% if cart.gone %}
+    <p class="mt-3 text-small text-sold-text">{% blocktranslate count n=cart.gone|length %}{{ n }} piece is no longer available and is not part of this order.{% plural %}{{ n }} pieces are no longer available and are not part of this order.{% endblocktranslate %}</p>
+  {% endif %}
+  <dl class="mt-4 space-y-2 border-t border-sand pt-4 text-small">
+    <div class="flex justify-between gap-4"><dt class="text-cocoa">{% translate "Subtotal" %}</dt><dd class="price">{{ cart.subtotal|gel }}</dd></div>
+    {% if cart.savings %}<div class="flex justify-between gap-4 text-clay-text"><dt>{% translate "You save" %}</dt><dd class="price text-clay-text">−{{ cart.savings|gel }}</dd></div>{% endif %}
+    {% if cart.gift_wrap %}<div class="flex justify-between gap-4"><dt class="text-cocoa">{% translate "Gift wrap" %}</dt><dd class="price">{% if cart.gift_wrap_total %}{{ cart.gift_wrap_total|gel }}{% else %}{% translate "Free" %}{% endif %}</dd></div>{% endif %}
+    {% if option %}<div class="flex justify-between gap-4"><dt class="text-cocoa">{{ option.name }}</dt><dd class="price">{% if quote.shipping %}{{ quote.shipping|gel }}{% else %}{% translate "Free" %}{% endif %}</dd></div>{% endif %}
+  </dl>
+  <div class="mt-4 flex items-baseline justify-between border-t border-sand pt-4">
+    <p class="font-serif text-h3 text-espresso">{% translate "Total" %}</p>
+    <p class="price text-h3">{{ quote.total|gel }}</p>
+  </div>
+  <input type="hidden" name="expected_total" value="{{ quote.total }}">
+</div>
+{% if oob %}<span id="pay-total" hx-swap-oob="true">{{ quote.total|gel }}</span>{% endif %}

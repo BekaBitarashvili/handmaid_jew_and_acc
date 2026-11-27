@@ -22,6 +22,9 @@ def max_form_depth(html: str) -> int:
 
 
 def test_no_page_nests_forms(client, en):
+    from apps.orders.models import DeliveryOption
+
+    DeliveryOption.objects.create(code="courier_tbilisi", name="Courier", price=600)
     product = ProductFactory(status=Product.Status.ACTIVE, slug_en="ring")
     sold = ProductFactory(status=Product.Status.SOLD, slug_en="sold-ring")
     client.post("/en/cart/add/", {"variant": product.variants.get().pk})
@@ -38,6 +41,7 @@ def test_no_page_nests_forms(client, en):
         "/en/cart/",
         "/en/wishlist/",
         "/en/account/",
+        "/en/checkout/",
     ):
         response = client.get(path, follow=True)
         assert response.status_code == 200, path

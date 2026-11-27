@@ -41,7 +41,7 @@ trix-editor {
 .order-head { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; }
 .order-number { font-size: 28px; font-weight: 600; line-height: 1.1; margin: 0; }
 .order-meta { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 6px 0 0; font-size: 14px; color: #6e5c48; }
-.order-badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #e6d9cc; color: #2a1a0f; }
+.order-badge { display: inline-block; white-space: nowrap; margin: 1px 0; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; background: #e6d9cc; color: #2a1a0f; }
 .order-badge--new, .order-badge--processing { background: #f3e2b8; }
 .order-badge--delivered, .order-badge--pay-paid { background: #d9e8d2; }
 .order-badge--cancelled, .order-badge--pay-failed, .order-badge--pay-refunded { background: #f1d6cf; }

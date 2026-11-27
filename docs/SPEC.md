@@ -125,15 +125,15 @@ Session key `cart` (Phase 1c): `{"lines": {variant_id: {"qty", "seen", "gone"}},
 
 ### orders
 - **Order**:
-  - number (human-friendly, unique: `A-260001` style, sequential per year), public_token (UUID, for status page link)
-  - language, status (see §7), payment_status (`pending`|`paid`|`failed`|`refunded`)
-  - customer: first_name, last_name, email, phone (Georgian format validation, `+995`),
-  - shipping: city, address_line, notes; delivery_method (`courier_tbilisi` | `courier_regions` | `pickup`) — configurable list with prices in `DeliveryOption` model
+  - number `YY-NNNN` (two-digit year, counter from 1001 each year: `26-1001`, `26-1002`, …; locked per-year counter row), public_token (UUID, for the status page link), checkout_token (one per checkout form; unique when set — a double submit never creates a second order)
+  - language (customer emails and snapshots in it), status (see §7), payment_status (`pending`|`paid`|`failed`|`refunded`), payment_method (`bog`|`tbc`), cancel_reason (`payment_failed`|`expired`|`replaced`|`owner`)
+  - customer: first_name, last_name, email, phone — any country, parsed with `phonenumbers` (default region GE, so `555 12 34 56` works), stored in E.164
+  - delivery (**Georgia only**, the owner delivers herself): delivery_option (FK) + snapshots delivery_name / delivery_code / requires_address; city (fixed to Tbilisi for `courier_tbilisi`, free text for `courier_regions`, empty for pickup), address_line, delivery_notes; optional recipient_name + recipient_phone (Georgian +995 only, mobile or landline) when the piece is a gift for someone else — the slip and admin show the recipient first
   - gift: gift_wrap (bool), gift_note (≤ 300 chars), hide_prices_on_slip (bool)
   - subtotal, discount_total, promo_code (FK nullable, snapshot `promo_code_text`), gift_wrap_price, shipping_price, total
-  - consent_terms (bool, required), consent_marketing (bool, optional), ip_address, user_agent
-  - reservation_expires_at, created_at, paid_at, updated_at
-- **OrderItem**: order, variant (FK, PROTECT), snapshots: product_name, variant_name, sku, unit_price, qty, line_total, image_url.
+  - consent_terms + consent_privacy (required), consent_marketing (optional, unchecked by default), consented_at, ip_address, user_agent
+  - reservation_expires_at, created_at, paid_at, updated_at; customer_note (shown on the order page and in the shipped / cancelled email), internal_notes, needs_attention + attention_reason (a flag, not a status). Promo fields arrive with promo codes (Phase 3).
+- **OrderItem**: order, variant (FK, PROTECT), snapshots in the order language: product_name, variant_name, sku, original_unit_price (before sale), unit_price, qty, line_total, image_url.
 - **OrderStatusHistory**: order, from_status, to_status, changed_by, note, created_at.
 - **DeliveryOption**: name 🌐, code, price, free_over_threshold (bool), estimated_days 🌐, is_active, sort_order.
 
@@ -142,7 +142,7 @@ Session key `cart` (Phase 1c): `{"lines": {variant_id: {"qty", "seen", "gone"}},
 
 ### pages
 - **HeroSlide** (redesign): image, image_mobile (optional), title 🌐, subtitle 🌐, primary_text 🌐 / primary_link, secondary_text 🌐 / secondary_link (language-neutral paths such as `/shop/new/`, prefixed with the active language at render), sort_order, is_active.
-- **Page** (About, Shipping & Returns, Privacy Policy, Terms, Cookie Policy): slug, title 🌐, body 🌐 (rich text), seo fields, `is_legal`.
+- **Page** (Phase 1d: Terms, Privacy; later Shipping & Returns, Cookie Policy): key, title 🌐, body 🌐 (rich text), is_legal, updated_at. Created by a data migration with empty text: the page shows "Text to be provided by the owner." (noindex) until the owner pastes the lawyer-approved text. Footer and checkout consents link to them.
 - **FAQItem**: question 🌐, answer 🌐, group, sort_order.
 - **ContactMessage**: name, email/phone, message, created_at, is_handled.
 - **CommissionRequest**: reference_product (nullable), name, email, phone, description, budget (optional), reference_image (optional), status (`new`|`in_talks`|`accepted`|`declined`), created_at.
@@ -173,21 +173,21 @@ Sold product: page stays live (SEO), shows the price **muted next to "Sold"** + 
 - Header cart count updated via HTMX out-of-band swap; `HX-Trigger: cart-open` opens the drawer after adding.
 
 ### 6.4 Checkout (single page, guest)
-Sections: Contact (name, email, phone) → Delivery (method radio + city + address; hidden for pickup) → Gift (wrap, note, hide prices) → Payment (BOG / TBC radio, card logos) → Summary → consent checkboxes (Terms + Privacy required; marketing optional, unchecked by default) → "Pay ₾X".
+Sections: Contact (first / last name, email, phone) → Delivery (radio cards from `DeliveryOption` with the price for this order; "Courier in Tbilisi" has no city field, "Courier to the regions" needs a city, pickup hides the address; optional recipient name and Georgian phone) → Gift (wrap, note ≤ 300 with a live counter, hide prices on the slip) → Payment (BOG / TBC radio; both go to the fake provider until 1e, with a "Test mode" note) → consent checkboxes (Terms + Privacy required, linking to their pages; marketing optional, unchecked) → "Pay ₾X". The summary (sticky on desktop, collapsible on phones) follows delivery / gift wrap via HTMX and carries the total the customer saw. Rate limit: 10 orders per IP per 10 minutes.
 
 On submit (`orders.services.place_order`):
 1. Re-validate cart, prices, promo code.
 2. `transaction.atomic()` + `select_for_update()` on variants: check `available ≥ qty`, increment `reserved`.
 3. Create `Order` (status `awaiting_payment`, `reservation_expires_at = now + 15 min`) + items.
-4. Create `Payment`, call provider → redirect to hosted page.
-If stock is gone: friendly message "Someone just took this piece" + suggest wishlist/similar.
+4. Create `Payment`, call provider → redirect to hosted page. The browser remembers the order; returning to the cart or checkout (back from the bank page) first asks the bank, then closes that unpaid order (`replaced`) so its own pieces are free again.
+If stock is gone: "Someone has just taken X. Please check your order." Any cart change since the page was shown (sold, price, quantity) or a different total → nothing is created, the page explains what changed. Snapshots are written in the order language.
 
 ### 6.5 Payment return & confirmation
 - Provider **callback** (server-to-server) is the source of truth. Verify signature/status by calling provider API; idempotent.
 - On success: atomically `stock -= qty`, `reserved -= qty`, mark product `sold` if unique & 0 left, order → `new`, payment_status `paid`, increment promo `used_count`, enqueue notifications.
 - On fail/cancel/expiry: release reservation, order → `cancelled` (payment_status `failed`).
-- huey periodic task every minute: expire reservations past `reservation_expires_at` (after one final status check with the provider).
-- Return URL → `/order/<public_token>/` showing status (polls via HTMX every 3s while pending, max ~60s).
+- huey periodic task every minute (`payments.tasks.expire_reservations`, also `manage.py expire_reservations`): expire reservations past `reservation_expires_at` after one final status check with the provider. The checkout and the order page also apply an overdue expiry (dev runs no scheduler).
+- Return URL → `/order/<public_token>/` showing status (polls via HTMX every 3s while awaiting payment, max ~60s, then "we'll email you"); asks the bank on each poll. noindex, `Cache-Control: private, no-store`, `Referrer-Policy: no-referrer`. A payment after the hold ended is accepted normally while the pieces are still free.
 - Edge case: payment succeeded after reservation expired and item already sold → flag order `needs_attention`, notify owner to refund. Covered by tests.
 
 ### 6.6 Order status page
@@ -202,7 +202,7 @@ If stock is gone: friendly message "Someone just took this piece" + suggest wish
 | Cancelled/refunded | Email | Email |
 | Contact / Commission request | Auto-reply email | Email |
 
-Emails: HTML (same visual identity, minimal) + plain text, in order language. SMS via a Georgian SMS gateway behind an `SmsBackend` interface (provider TBD; console backend in dev).
+Emails (Phase 1d): HTML in the linen look (table markup, inline styles, italic headings in English, upright in Georgian) + plain text; customer emails in the order language (confirmation, shipped with the note for the customer, delivered with the pieces' care text, cancelled for paid orders), owner emails in Georgian to the owner notification email (new paid order, needs attention, cancellation). Sent by huey after commit, retried, never twice; absolute links via `SITE_URL`. SMS: Phase 3 (gateway TBD) behind an `SmsBackend` interface.
 
 ---
 
@@ -214,7 +214,7 @@ awaiting_payment ──paid──► new ──► processing ──► shipped 
         └─fail/expire──► cancelled ◄───┴─────────────┘ (manual, with refund note)
 needs_attention (system flag, resolved manually)
 ```
-Every transition logged in `OrderStatusHistory`; allowed transitions enforced in `orders.services.change_status`. Refunds performed manually in bank merchant portal (MVP); owner marks `refunded`.
+Every transition logged in `OrderStatusHistory` (with who and an optional note); allowed transitions enforced in `orders.services.change_status`: awaiting_payment → cancelled; new → processing / cancelled; processing → shipped / cancelled; shipped → delivered / cancelled. Cancelling an unpaid order releases its hold; cancelling a paid one returns the pieces to the shop ("Return the pieces to the shop", ticked by default — a unique piece goes back on sale). Refunds performed manually in the bank merchant portal (MVP); owner marks `refunded` (paid + cancelled only).
 
 ---
 
@@ -234,7 +234,7 @@ class PaymentProvider(Protocol):
 - Credentials via env: `BOG_CLIENT_ID`, `BOG_CLIENT_SECRET`, `TBC_API_KEY`, `TBC_CLIENT_ID`, `TBC_CLIENT_SECRET`, sandbox flags.
 - Amounts sent in GEL with 2 decimals (convert from tetri in one helper).
 - All raw requests/callbacks stored on `Payment` (without secrets) for auditing.
-- Fake provider (`payments.providers.fake`) for dev & tests: simulates success/failure/delay.
+- Fake provider (`payments.providers.fake`) for dev & tests: a local "bank" page with Pay / Decline / Pay with a 15-second delay (found by polling), HMAC-signed callbacks. `PAYMENT_PROVIDERS` maps bog / tbc to a provider (both `fake` in 1d); system check `payments.E001` refuses the fake provider unless `PAYMENTS_ALLOW_FAKE` (dev and test settings only).
 
 ---
 
@@ -321,7 +321,7 @@ Django Admin + `django-unfold`, tested on a phone.
 - **Admin language**: Georgian by default (language cookie, else `ka`); the header switch flips to English. All project labels, help texts, actions and sections are translated in `locale/ka/`; unfold / Django admin UI strings in `locale_vendor/ka/` (kept separate because `makemessages --no-obsolete` would drop them). Django's `capfirst` is patched (`apps/core/georgian.py`) so Georgian labels never start with a Mtavruli capital.
 - **Categories, Stones, Materials, DeliveryOptions, Pages, FAQ**: simple CRUD with sort order.
 - **Sales & Promo codes**: CRUD, show usage counts, active/expired filter.
-- **Orders**: list (number, date, customer, total, status, payment status) with big tap-friendly status-change action; detail with items + images, gift info, customer contact (tap-to-call / tap-to-email), status history, internal notes; print-friendly **packing slip** (respects hide-prices) — `/admin/orders/<id>/slip/`.
+- **Orders** (Phase 1d): list opens on "Needs action" (new, being prepared, shipped, flagged) — number + date, customer + phone, total, status and payment badges; search by number, name, email, phone, recipient. Detail: attention banner with "Mark as resolved", big buttons for the allowed next steps only (each with a confirmation: internal note, note for the customer, return-to-shop), refund for paid cancelled orders, tap-to-call / tap-to-email (gift recipient first), read-only items, history and payments, internal notes. Print-friendly **packing slip** (A5) — `/<admin>/orders/order/<id>/slip/`: recipient first, prices hidden when asked, gift note in its own box.
 - **Commission requests & Contact messages**: inbox style.
 - **SiteSettings**: brand name, logo, contacts, thresholds, announcement bar.
 - Security: strong password, 2FA (`django-otp`), admin URL not `/admin/` (env var), login rate limiting (`django-axes`).
@@ -330,7 +330,7 @@ Django Admin + `django-unfold`, tested on a phone.
 
 ## 11. Legal, privacy & trust
 
-- Pages (owner provides final text; ship with clearly marked placeholders, **do not invent legal text**): Terms & Conditions, Privacy Policy (in line with Georgia's Law on Personal Data Protection), Shipping & Returns (consumer-protection right of withdrawal — owner to confirm terms with a lawyer), Cookie Policy.
+- Pages (owner provides final text; ship with clearly marked placeholders, **do not invent legal text**): Terms & Conditions and Privacy Policy exist as placeholders since 1d (in line with Georgia's Law on Personal Data Protection once written), Shipping & Returns (consumer-protection right of withdrawal — owner to confirm terms with a lawyer), Cookie Policy.
 - Checkout consents stored on order with timestamp.
 - Cookie banner: essential cookies only by default; analytics only after opt-in (Accept / Reject equal prominence).
 - Data minimization: no customer accounts, no card data, order data retention per policy; admin action to anonymize an order's personal data on request.

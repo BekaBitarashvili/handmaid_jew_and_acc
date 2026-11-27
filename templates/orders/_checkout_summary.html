@@ -38,4 +38,5 @@ Context: cart, quote, option, notices, oob.
   </div>
   <input type="hidden" name="expected_total" value="{{ quote.total }}">
 </div>
-{% if oob %}<span id="pay-total" hx-swap-oob="true">{{ quote.total|gel }}</span>{% endif %}
+{% if oob %}<span id="pay-total" hx-swap-oob="true">{{ quote.total|gel }}</span>
+<span id="summary-total" class="price lg:hidden" aria-hidden="true" hx-swap-oob="true">{{ quote.total|gel }}</span>{% endif %}

@@ -170,6 +170,7 @@ CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"
 # the real BOG / TBC providers. The fake one is refused outside dev/test (payments.E001).
 PAYMENT_PROVIDERS = {"bog": "fake", "tbc": "fake"}
 PAYMENTS_ALLOW_FAKE = False
+CHECKOUT_RATE_LIMIT = 10  # orders per IP per 10 minutes (SPEC §12)
 
 # --- Background jobs (huey) -------------------------------------------------
 

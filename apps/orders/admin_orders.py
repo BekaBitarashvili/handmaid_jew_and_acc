@@ -27,15 +27,6 @@ from .services import (
 )
 
 S = Order.Status
-STATUS_COLORS = {
-    S.AWAITING_PAYMENT: "info",
-    S.NEW: "warning",
-    S.PROCESSING: "warning",
-    S.SHIPPED: "info",
-    S.DELIVERED: "success",
-    S.CANCELLED: "danger",
-}
-PAYMENT_COLORS = {"pending": "info", "paid": "success", "failed": "danger", "refunded": "danger"}
 # The owner's next step, worded as an action.
 ACTION_LABELS = {
     S.PROCESSING: _("Start preparing"),
@@ -137,7 +128,8 @@ class PaymentInline(ReadOnlyInline):
 
 @admin.register(Order)
 class OrderAdmin(BaseModelAdmin):
-    list_display = ("order", "customer", "total_display", "status_badge", "payment_badge")
+    # Three columns so a phone shows everything without sideways scrolling (like products).
+    list_display = ("order", "customer", "state")
     list_filter = (ViewFilter, "status", "payment_status", "needs_attention", "created_at")
     search_fields = (
         "number",
@@ -229,10 +221,22 @@ class OrderAdmin(BaseModelAdmin):
     def order(self, obj: Order):
         flag = format_html(' <span title="{}">⚠</span>', _("needs attention"))
         return format_html(
-            "<strong>{}</strong>{}<br><small>{}</small>",
+            "<strong>{}</strong>{}<br><small>{} · {}</small>",
             obj.number,
             flag if obj.needs_attention else "",
             obj.created_at.strftime("%d.%m %H:%M"),
+            format_gel(obj.total),
+        )
+
+    @display(description=_("status"), ordering="status")
+    def state(self, obj: Order):
+        return format_html(
+            '<span class="order-badge order-badge--{}">{}</span><br>'
+            '<span class="order-badge order-badge--pay-{}">{}</span>',
+            obj.status,
+            obj.get_status_display(),
+            obj.payment_status,
+            obj.get_payment_status_display(),
         )
 
     @display(description=_("customer"))
@@ -242,14 +246,6 @@ class OrderAdmin(BaseModelAdmin):
     @display(description=_("total"), ordering="total")
     def total_display(self, obj: Order):
         return format_gel(obj.total)
-
-    @display(description=_("status"), ordering="status", label=STATUS_COLORS)
-    def status_badge(self, obj: Order):
-        return obj.status, obj.get_status_display()
-
-    @display(description=_("payment"), ordering="payment_status", label=PAYMENT_COLORS)
-    def payment_badge(self, obj: Order):
-        return obj.payment_status, obj.get_payment_status_display()
 
     # --- detail ----------------------------------------------------------------------
 

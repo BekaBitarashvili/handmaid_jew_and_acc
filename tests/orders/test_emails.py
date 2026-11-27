@@ -112,7 +112,7 @@ class TestStatusEmails:
         run(change_status, order, S.CANCELLED, customer_note="The clasp broke; refunded.")
         customer, owner = mail.outbox
         assert "was cancelled" in customer.subject and "The clasp broke" in html(customer)
-        assert "refund" in html(owner)
+        assert "მერჩანტ-პორტალში" in html(owner)  # owner emails are Georgian (refund reminder)
 
     def test_unpaid_cancellation_sends_nothing(self, run, en):
         run(fail_payment, order_for(piece()).pk)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-28 00:06+0400\n"
+"POT-Creation-Date: 2026-11-28 02:04+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -136,7 +136,7 @@ msgstr "ფოტოები — თანმიმდევრობის შ
 msgid "preview"
 msgstr "გადახედვა"
 
-#: apps/catalog/admin.py apps/catalog/models.py
+#: apps/catalog/admin.py apps/catalog/models.py apps/orders/models.py
 msgid "variant"
 msgstr "ვარიანტი"
 
@@ -164,11 +164,12 @@ msgstr "საძიებო სისტემები (SEO)"
 msgid "System"
 msgstr "სისტემური"
 
-#: apps/catalog/admin.py apps/catalog/models.py
+#: apps/catalog/admin.py apps/catalog/models.py apps/orders/models.py
 msgid "product"
 msgstr "პროდუქტი"
 
-#: apps/catalog/admin.py apps/catalog/models.py apps/promotions/admin.py
+#: apps/catalog/admin.py apps/catalog/models.py apps/orders/admin_orders.py
+#: apps/orders/models.py apps/payments/models.py apps/promotions/admin.py
 msgid "status"
 msgstr "სტატუსი"
 
@@ -248,7 +249,7 @@ msgstr "ზუსტად 3 ლათინური მთავრული �
 msgid "A hex color like #C8862A."
 msgstr "ფერი hex ფორმატში, მაგ. #C8862A."
 
-#: apps/catalog/models.py apps/orders/models.py
+#: apps/catalog/models.py apps/orders/admin_orders.py apps/orders/models.py
 msgid "name"
 msgstr "დასახელება"
 
@@ -284,7 +285,8 @@ msgstr "მშობელი კატეგორია"
 msgid "Only top-level categories can be parents (two levels at most)."
 msgstr "მშობელი შეიძლება იყოს მხოლოდ ზედა დონის კატეგორია (მაქსიმუმ ორი დონე)."
 
-#: apps/catalog/models.py apps/orders/models.py apps/pages/models.py
+#: apps/catalog/models.py apps/orders/admin_orders.py apps/orders/models.py
+#: apps/pages/models.py apps/payments/models.py
 msgid "order"
 msgstr "რიგი"
 
@@ -472,7 +474,7 @@ msgstr "SEO აღწერა"
 msgid "created"
 msgstr "შექმნილია"
 
-#: apps/catalog/models.py
+#: apps/catalog/models.py apps/pages/models.py
 msgid "updated"
 msgstr "განახლებულია"
 
@@ -627,7 +629,8 @@ msgid "Brand"
 msgstr "ბრენდი"
 
 #: apps/core/admin.py apps/core/templatetags/navigation.py apps/pages/views.py
-#: templates/components/footer.html templates/pages/contact.html
+#: templates/components/footer.html templates/orders/checkout.html
+#: templates/pages/contact.html
 msgid "Contact"
 msgstr "კონტაქტი"
 
@@ -759,6 +762,14 @@ msgstr "საიტის პარამეტრები"
 msgid "Site settings"
 msgstr "საიტის პარამეტრები"
 
+#: apps/core/phones.py
+msgid "Enter a valid phone number."
+msgstr "შეიყვანეთ სწორი ტელეფონის ნომერი."
+
+#: apps/core/phones.py
+msgid "The recipient's number must be Georgian (+995)."
+msgstr "მიმღების ნომერი უნდა იყოს ქართული (+995)."
+
 #: apps/core/templatetags/navigation.py
 msgctxt "main nav"
 msgid "New Arrivals"
@@ -773,13 +784,354 @@ msgstr "ფასდაკლება"
 msgid "About"
 msgstr "ჩვენ შესახებ"
 
-#: apps/orders/admin.py tests/core/test_georgian.py
+#: apps/orders/admin.py apps/orders/admin_orders.py apps/orders/models.py
+#: tests/core/test_georgian.py
 msgid "price"
 msgstr "ფასი"
+
+#: apps/orders/admin_forms.py
+msgid "Internal note"
+msgstr "შიდა შენიშვნა"
+
+#: apps/orders/admin_forms.py
+msgid "Only you see this (status history)."
+msgstr "ამას მხოლოდ თქვენ ხედავთ (სტატუსის ისტორია)."
+
+#: apps/orders/admin_forms.py
+msgid "Note for the customer"
+msgstr "შენიშვნა მყიდველისთვის"
+
+#: apps/orders/admin_forms.py
+msgid "Shown on the order page and in the email, e.g. a delivery time window."
+msgstr "ჩანს შეკვეთის გვერდზე და ელფოსტაში, მაგ. მიწოდების დრო."
+
+#: apps/orders/admin_forms.py
+msgid "Return the pieces to the shop"
+msgstr "ნივთების მაღაზიაში დაბრუნება"
+
+#: apps/orders/admin_forms.py
+msgid "One-of-a-kind pieces go back on sale."
+msgstr "ერთადერთი ეგზემპლარები ისევ გაიყიდება."
+
+#: apps/orders/admin_forms.py
+msgid "Note"
+msgstr "შენიშვნა"
+
+#: apps/orders/admin_orders.py
+msgid "Start preparing"
+msgstr "მომზადების დაწყება"
+
+#: apps/orders/admin_orders.py
+msgid "Mark as shipped"
+msgstr "გაგზავნილად მონიშვნა"
+
+#: apps/orders/admin_orders.py
+msgid "Mark as delivered"
+msgstr "მიტანილად მონიშვნა"
+
+#: apps/orders/admin_orders.py
+msgid "Cancel order"
+msgstr "შეკვეთის გაუქმება"
+
+#: apps/orders/admin_orders.py
+msgid "show"
+msgstr "ჩვენება"
+
+#: apps/orders/admin_orders.py
+msgid "All orders"
+msgstr "ყველა შეკვეთა"
+
+#: apps/orders/admin_orders.py
+msgid "Needs action"
+msgstr "საჭიროებს მოქმედებას"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "pieces"
+msgstr "ნივთები"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "total"
+msgstr "სულ"
+
+#: apps/orders/admin_orders.py apps/payments/models.py
+msgid "amount"
+msgstr "თანხა"
+
+#: apps/orders/admin_orders.py templates/admin/orders/order/change_form.html
+msgid "Customer"
+msgstr "მყიდველი"
+
+#: apps/orders/admin_orders.py apps/orders/forms.py
+#: templates/admin/orders/order/change_form.html
+#: templates/cart/_page_partial.html templates/emails/_delivery.html
+#: templates/emails/_delivery.txt templates/orders/_detail_partial.html
+#: templates/orders/checkout.html
+msgid "Delivery"
+msgstr "მიწოდება"
+
+#: apps/orders/admin_orders.py templates/emails/_delivery.html
+#: templates/orders/_detail_partial.html templates/orders/checkout.html
+msgid "Gift"
+msgstr "საჩუქარი"
+
+#: apps/orders/admin_orders.py
+msgid "Totals"
+msgstr "ჯამები"
+
+#: apps/orders/admin_orders.py
+msgid "Payment and consents"
+msgstr "გადახდა და თანხმობები"
+
+#: apps/orders/admin_orders.py
+msgid "Notes"
+msgstr "შენიშვნები"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "needs attention"
+msgstr "საჭიროებს ყურადღებას"
+
+#: apps/orders/admin_orders.py
+msgid "customer"
+msgstr "მყიდველი"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "phone"
+msgstr "ტელეფონი"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "email"
+msgstr "ელფოსტა"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "address"
+msgstr "მისამართი"
+
+#: apps/orders/admin_orders.py
+msgid "recipient"
+msgstr "მიმღები"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "gift wrap"
+msgstr "საჩუქრის შეფუთვა"
+
+#: apps/orders/admin_orders.py apps/orders/models.py
+msgid "delivery"
+msgstr "მიწოდება"
+
+#: apps/orders/admin_orders.py
+msgid "consents"
+msgstr "თანხმობები"
+
+#: apps/orders/admin_orders.py
+msgid "terms"
+msgstr "წესები"
+
+#: apps/orders/admin_orders.py
+msgid "privacy"
+msgstr "კონფიდენციალურობა"
+
+#: apps/orders/admin_orders.py
+msgid "news by email"
+msgstr "სიახლეები ელფოსტით"
+
+#: apps/orders/admin_orders.py
+msgid "This status change is not possible."
+msgstr "სტატუსის ეს ცვლილება შეუძლებელია."
+
+#: apps/orders/admin_orders.py
+#, python-format
+msgid "Order %(number)s: %(status)s."
+msgstr "შეკვეთა %(number)s: %(status)s."
+
+#: apps/orders/admin_orders.py
+#, python-format
+msgid "%(action)s — order %(number)s"
+msgstr "%(action)s — შეკვეთა %(number)s"
+
+#: apps/orders/admin_orders.py
+msgid "Marked as refunded."
+msgstr "მონიშნულია, როგორც დაბრუნებული."
+
+#: apps/orders/admin_orders.py
+msgid "Only a paid, cancelled order can be refunded."
+msgstr "თანხის დაბრუნება შესაძლებელია მხოლოდ გადახდილ, გაუქმებულ შეკვეთაზე."
+
+#: apps/orders/admin_orders.py
+#, python-format
+msgid "Mark order %(number)s as refunded"
+msgstr "შეკვეთა %(number)s — თანხა დაბრუნებულია"
+
+#: apps/orders/admin_orders.py templates/admin/orders/order/change_form.html
+msgid "Mark refunded"
+msgstr "თანხა დაბრუნებულია"
+
+#: apps/orders/admin_orders.py
+msgid "Marked as resolved."
+msgstr "მონიშნულია მოგვარებულად."
+
+#: apps/orders/admin_orders.py
+#, python-format
+msgid "Resolve order %(number)s"
+msgstr "შეკვეთა %(number)s — მოგვარება"
+
+#: apps/orders/admin_orders.py apps/orders/services/status.py
+msgid "Resolved"
+msgstr "მოგვარებულია"
 
 #: apps/orders/apps.py config/settings/base.py
 msgid "Orders"
 msgstr "შეკვეთები"
+
+#: apps/orders/checkout_views.py templates/cart/_page_partial.html
+#: templates/orders/checkout.html
+msgid "Checkout"
+msgstr "შეკვეთის გაფორმება"
+
+#: apps/orders/checkout_views.py
+msgid "Too many attempts. Please wait a few minutes."
+msgstr "ძალიან ბევრი მცდელობა. გთხოვთ, რამდენიმე წუთი მოიცადოთ."
+
+#: apps/orders/checkout_views.py
+msgid "The payment could not be started. Please try again."
+msgstr "გადახდის დაწყება ვერ მოხერხდა. გთხოვთ, სცადოთ თავიდან."
+
+#: apps/orders/emails.py
+#, python-format
+msgid "Thank you for your order %(number)s"
+msgstr "გმადლობთ შეკვეთისთვის — %(number)s"
+
+#: apps/orders/emails.py
+#, python-format
+msgid "Your order %(number)s is on its way"
+msgstr "თქვენი შეკვეთა %(number)s გზაშია"
+
+#: apps/orders/emails.py
+#, python-format
+msgid "Your order %(number)s has arrived"
+msgstr "თქვენი შეკვეთა %(number)s მიტანილია"
+
+#: apps/orders/emails.py
+#, python-format
+msgid "Your order %(number)s was cancelled"
+msgstr "თქვენი შეკვეთა %(number)s გაუქმდა"
+
+#: apps/orders/emails.py
+#, python-format
+msgid "New order %(number)s — %(total)s"
+msgstr "ახალი შეკვეთა %(number)s — %(total)s"
+
+#: apps/orders/emails.py
+#, python-format
+msgid "Needs attention: order %(number)s"
+msgstr "საჭიროებს ყურადღებას: შეკვეთა %(number)s"
+
+#: apps/orders/emails.py templates/emails/owner_cancelled.html
+#: templates/emails/owner_cancelled.txt
+#, python-format
+msgid "Order %(number)s cancelled"
+msgstr "შეკვეთა %(number)s გაუქმდა"
+
+#: apps/orders/forms.py templates/core/styleguide.html
+msgid "First name"
+msgstr "სახელი"
+
+#: apps/orders/forms.py
+msgid "Last name"
+msgstr "გვარი"
+
+#: apps/orders/forms.py templates/core/styleguide.html
+#: templates/pages/contact.html
+msgid "Email"
+msgstr "ელფოსტა"
+
+#: apps/orders/forms.py templates/core/styleguide.html
+#: templates/pages/contact.html
+msgid "Phone"
+msgstr "ტელეფონი"
+
+#: apps/orders/forms.py
+msgid "For delivery questions. Any country; Georgian numbers without +995 work too."
+msgstr "მიწოდების საკითხებისთვის. ნებისმიერი ქვეყნის ნომერი; ქართული ნომერი +995-ის გარეშეც შეგიძლიათ."
+
+#: apps/orders/forms.py
+msgid "City or village"
+msgstr "ქალაქი ან სოფელი"
+
+#: apps/orders/forms.py templates/pages/contact.html
+msgid "Address"
+msgstr "მისამართი"
+
+#: apps/orders/forms.py
+msgid "Notes for delivery"
+msgstr "შენიშვნა მიწოდებისთვის"
+
+#: apps/orders/forms.py
+msgid "Entrance, floor, the best time to reach you."
+msgstr "სადარბაზო, სართული, როდის დაგიკავშირდეთ."
+
+#: apps/orders/forms.py
+msgid "Recipient name"
+msgstr "მიმღების სახელი"
+
+#: apps/orders/forms.py
+msgid "Recipient phone"
+msgstr "მიმღების ტელეფონი"
+
+#: apps/orders/forms.py
+msgid "A Georgian number (+995)."
+msgstr "ქართული ნომერი (+995)."
+
+#: apps/orders/forms.py templates/admin/orders/order/change_form.html
+#: templates/admin/orders/order/slip.html templates/cart/_page_partial.html
+#: templates/emails/_items.html templates/emails/_items.txt
+#: templates/orders/_checkout_summary.html
+#: templates/orders/_detail_partial.html templates/orders/checkout.html
+msgid "Gift wrap"
+msgstr "საჩუქრის შეფუთვა"
+
+#: apps/orders/forms.py templates/emails/_delivery.txt
+msgid "Gift note"
+msgstr "საჩუქრის ბარათი"
+
+#: apps/orders/forms.py
+msgid "We write it by hand on a card."
+msgstr "ბარათზე ხელით დავწერთ."
+
+#: apps/orders/forms.py
+msgid "Hide prices on the packing slip"
+msgstr "ფასები არ ჩანდეს შეფუთვის ფურცელზე"
+
+#: apps/orders/forms.py templates/orders/checkout.html
+msgid "Payment"
+msgstr "გადახდა"
+
+#: apps/orders/forms.py
+msgid "I accept the terms and conditions"
+msgstr "ვეთანხმები წესებსა და პირობებს"
+
+#: apps/orders/forms.py
+msgid "Please accept the terms and conditions."
+msgstr "გთხოვთ, დაეთანხმოთ წესებსა და პირობებს."
+
+#: apps/orders/forms.py
+msgid "I have read the privacy policy"
+msgstr "გავეცანი კონფიდენციალურობის პოლიტიკას"
+
+#: apps/orders/forms.py
+msgid "Please confirm you have read the privacy policy."
+msgstr "გთხოვთ, დაადასტუროთ, რომ გაეცანით კონფიდენციალურობის პოლიტიკას."
+
+#: apps/orders/forms.py
+msgid "Send me news about new pieces by email (optional)"
+msgstr "მომწერეთ ახალი ნივთების შესახებ ელფოსტით (არასავალდებულო)"
+
+#: apps/orders/forms.py
+msgid "Enter the city or village."
+msgstr "მიუთითეთ ქალაქი ან სოფელი."
+
+#: apps/orders/forms.py
+msgid "Enter the delivery address."
+msgstr "მიუთითეთ მიწოდების მისამართი."
 
 #: apps/orders/models.py
 msgid "code"
@@ -825,9 +1177,291 @@ msgstr "მიწოდების მეთოდი"
 msgid "delivery options"
 msgstr "მიწოდების მეთოდები"
 
+#: apps/orders/models.py tests/orders/test_services.py
+msgid "Tbilisi"
+msgstr "თბილისი"
+
+#: apps/orders/models.py
+msgid "Awaiting payment"
+msgstr "ელოდება გადახდას"
+
+#: apps/orders/models.py templates/core/styleguide.html
+msgid "New"
+msgstr "ახალი"
+
+#: apps/orders/models.py apps/orders/views.py
+msgid "Being prepared"
+msgstr "მზადდება"
+
+#: apps/orders/models.py apps/orders/views.py
+msgid "Shipped"
+msgstr "გაგზავნილია"
+
+#: apps/orders/models.py apps/orders/views.py
+#: templates/orders/_detail_partial.html
+msgid "Delivered"
+msgstr "მიტანილია"
+
+#: apps/orders/models.py
+msgid "Cancelled"
+msgstr "გაუქმებულია"
+
+#: apps/orders/models.py apps/payments/models.py
+msgid "Pending"
+msgstr "მოლოდინში"
+
+#: apps/orders/models.py apps/orders/views.py apps/payments/models.py
+#: templates/emails/owner_attention.html templates/emails/owner_attention.txt
+msgid "Paid"
+msgstr "გადახდილია"
+
+#: apps/orders/models.py apps/payments/models.py
+msgid "Failed"
+msgstr "ვერ შესრულდა"
+
+#: apps/orders/models.py apps/orders/services/status.py
+msgid "Refunded"
+msgstr "თანხა დაბრუნებულია"
+
+#: apps/orders/models.py
+msgid "Payment did not go through"
+msgstr "გადახდა ვერ შესრულდა"
+
+#: apps/orders/models.py
+msgid "Not paid in time"
+msgstr "დროულად არ გადაიხადა"
+
+#: apps/orders/models.py
+msgid "Replaced by a new checkout"
+msgstr "ჩანაცვლდა ახალი შეკვეთით"
+
+#: apps/orders/models.py
+msgid "Cancelled by the shop"
+msgstr "გაუქმდა მაღაზიის მიერ"
+
+#: apps/orders/models.py
+msgid "Bank of Georgia"
+msgstr "საქართველოს ბანკი"
+
+#: apps/orders/models.py
+msgid "TBC Bank"
+msgstr "თიბისი ბანკი"
+
+#: apps/orders/models.py
+msgid "order number"
+msgstr "შეკვეთის ნომერი"
+
+#: apps/orders/models.py
+msgid "language"
+msgstr "ენა"
+
+#: apps/orders/models.py apps/payments/models.py
+msgid "payment"
+msgstr "გადახდა"
+
+#: apps/orders/models.py
+msgid "payment method"
+msgstr "გადახდის მეთოდი"
+
+#: apps/orders/models.py
+msgid "first name"
+msgstr "სახელი"
+
+#: apps/orders/models.py
+msgid "last name"
+msgstr "გვარი"
+
+#: apps/orders/models.py
+msgid "city"
+msgstr "ქალაქი"
+
+#: apps/orders/models.py
+msgid "delivery notes"
+msgstr "შენიშვნა მიწოდებისთვის"
+
+#: apps/orders/models.py
+msgid "recipient name"
+msgstr "მიმღების სახელი"
+
+#: apps/orders/models.py
+msgid "recipient phone"
+msgstr "მიმღების ტელეფონი"
+
+#: apps/orders/models.py
+msgid "gift note"
+msgstr "საჩუქრის ბარათი"
+
+#: apps/orders/models.py
+msgid "hide prices on the packing slip"
+msgstr "ფასები არ ჩანდეს შეფუთვის ფურცელზე"
+
+#: apps/orders/models.py
+msgid "sale savings"
+msgstr "ფასდაკლებით დაზოგილი"
+
+#: apps/orders/models.py
+msgid "accepted the terms"
+msgstr "დაეთანხმა წესებს"
+
+#: apps/orders/models.py
+msgid "accepted the privacy policy"
+msgstr "გაეცნო კონფიდენციალურობის პოლიტიკას"
+
+#: apps/orders/models.py
+msgid "agreed to news by email"
+msgstr "თანახმაა მიიღოს სიახლეები ელფოსტით"
+
+#: apps/orders/models.py
+msgid "consents given"
+msgstr "თანხმობის დრო"
+
+#: apps/orders/models.py
+msgid "IP address"
+msgstr "IP მისამართი"
+
+#: apps/orders/models.py
+msgid "browser"
+msgstr "ბრაუზერი"
+
+#: apps/orders/models.py
+msgid "pieces held until"
+msgstr "ნივთები დაჯავშნილია"
+
+#: apps/orders/models.py
+msgid "paid"
+msgstr "გადახდილია"
+
+#: apps/orders/models.py
+msgid "note for the customer"
+msgstr "შენიშვნა მყიდველისთვის"
+
+#: apps/orders/models.py
+msgid "Shown on the order page and in the shipped email, e.g. a delivery time."
+msgstr "ჩანს შეკვეთის გვერდზე და გაგზავნის შეტყობინებაში, მაგ. მიწოდების დრო."
+
+#: apps/orders/models.py
+msgid "internal notes"
+msgstr "შიდა შენიშვნები"
+
+#: apps/orders/models.py
+msgid "Only you see these."
+msgstr "ამას მხოლოდ თქვენ ხედავთ."
+
+#: apps/orders/models.py
+msgid "cancelled because"
+msgstr "გაუქმების მიზეზი"
+
+#: apps/orders/models.py
+msgid "what needs attention"
+msgstr "რას საჭიროებს"
+
+#: apps/orders/models.py
+msgid "placed"
+msgstr "შეკვეთის დრო"
+
+#: apps/orders/models.py
+msgid "orders"
+msgstr "შეკვეთები"
+
+#: apps/orders/models.py
+msgid "price before sale"
+msgstr "ფასი ფასდაკლებამდე"
+
+#: apps/orders/models.py
+msgid "quantity"
+msgstr "რაოდენობა"
+
+#: apps/orders/models.py
+msgid "item"
+msgstr "ნივთი"
+
+#: apps/orders/models.py
+msgid "items"
+msgstr "ნივთები"
+
+#: apps/orders/models.py
+msgid "from"
+msgstr "საიდან"
+
+#: apps/orders/models.py
+msgid "to"
+msgstr "სად"
+
+#: apps/orders/models.py
+msgid "by"
+msgstr "ვინ"
+
+#: apps/orders/models.py
+msgid "note"
+msgstr "შენიშვნა"
+
+#: apps/orders/models.py
+msgid "when"
+msgstr "როდის"
+
+#: apps/orders/models.py
+msgid "status change"
+msgstr "სტატუსის ცვლილება"
+
+#: apps/orders/models.py
+msgid "status history"
+msgstr "სტატუსის ისტორია"
+
+#: apps/orders/services/checkout.py
+#, python-format
+msgid "Someone has just taken %(name)s. Please check your order."
+msgstr "„%(name)s“ ახლახან სხვამ შეიძინა. გთხოვთ, გადაამოწმოთ შეკვეთა."
+
+#: apps/orders/services/checkout.py
+msgid "Someone just took one of the pieces."
+msgstr "ერთ-ერთი ნივთი ახლახან სხვამ შეიძინა."
+
+#: apps/orders/services/checkout.py
+msgid "Your cart is empty."
+msgstr "კალათა ცარიელია."
+
+#: apps/orders/services/checkout.py
+msgid "The total has changed. Please check your order and try again."
+msgstr "ჯამი შეიცვალა. გთხოვთ, გადაამოწმოთ შეკვეთა და სცადოთ თავიდან."
+
+#: apps/orders/services/lifecycle.py
+#, python-format
+msgid "Paid after the 15-minute hold ended, but %(name)s was sold meanwhile. Refund the customer or offer a similar piece."
+msgstr "გადახდა მოხდა 15-წუთიანი ჯავშნის დასრულების შემდეგ, თუმცა „%(name)s“ ამასობაში გაიყიდა. დაუბრუნეთ თანხა მყიდველს ან შესთავაზეთ მსგავსი ნივთი."
+
+#: apps/orders/services/lifecycle.py
+msgid "Paid after the hold ended; the pieces were still free."
+msgstr "გადახდა მოხდა ჯავშნის დასრულების შემდეგ; ნივთები ჯერ კიდევ თავისუფალი იყო."
+
+#: apps/orders/services/lifecycle.py
+msgid "The customer started a new checkout."
+msgstr "მყიდველმა ახალი შეკვეთა დაიწყო."
+
+#: apps/orders/services/lifecycle.py
+msgid "Not paid within 15 minutes; the pieces were released."
+msgstr "15 წუთში არ გადაიხადა; ნივთები გათავისუფლდა."
+
+#: apps/orders/services/lifecycle.py
+msgid "The payment did not go through."
+msgstr "გადახდა ვერ შესრულდა."
+
+#: apps/orders/views.py
+msgid "Placed"
+msgstr "გაფორმებულია"
+
+#: apps/orders/views.py templates/admin/orders/order/slip.html
+#: templates/orders/_detail_partial.html
+#, python-format
+msgid "Order %(number)s"
+msgstr "შეკვეთა %(number)s"
+
 #: apps/pages/admin.py
 msgid "Buttons"
 msgstr "ღილაკები"
+
+#: apps/pages/admin.py apps/pages/models.py
+msgid "text"
+msgstr "ტექსტი"
 
 #: apps/pages/apps.py
 msgid "Pages"
@@ -885,6 +1519,26 @@ msgstr "მთავარი ბანერის სლაიდი"
 msgid "hero slides"
 msgstr "მთავარი ბანერის სლაიდები"
 
+#: apps/pages/models.py
+msgid "Terms and conditions"
+msgstr "წესები და პირობები"
+
+#: apps/pages/models.py
+msgid "Privacy policy"
+msgstr "კონფიდენციალურობის პოლიტიკა"
+
+#: apps/pages/models.py
+msgid "page"
+msgstr "გვერდი"
+
+#: apps/pages/models.py
+msgid "legal page"
+msgstr "იურიდიული გვერდი"
+
+#: apps/pages/models.py
+msgid "pages"
+msgstr "გვერდები"
+
 #: apps/pages/views.py templates/components/header.html
 #: templates/pages/account.html
 msgid "Account"
@@ -892,6 +1546,18 @@ msgstr "ანგარიში"
 
 #: apps/payments/apps.py
 msgid "Payments"
+msgstr "გადახდები"
+
+#: apps/payments/models.py
+msgid "provider"
+msgstr "პროვაიდერი"
+
+#: apps/payments/models.py
+msgid "provider reference"
+msgstr "პროვაიდერის ნომერი"
+
+#: apps/payments/models.py
+msgid "payments"
 msgstr "გადახდები"
 
 #: apps/promotions/admin.py
@@ -1090,6 +1756,10 @@ msgid "Settings"
 msgstr "პარამეტრები"
 
 #: config/settings/base.py
+msgid "Terms and privacy"
+msgstr "წესები და კონფიდენციალურობა"
+
+#: config/settings/base.py
 msgid "Users"
 msgstr "მომხმარებლები"
 
@@ -1108,6 +1778,59 @@ msgstr "შესაძლოა, ნივთმა, რომელსაც �
 #: templates/404.html
 msgid "Back to the home page"
 msgstr "მთავარ გვერდზე დაბრუნება"
+
+#: templates/admin/orders/order/change_form.html
+msgid "Needs attention"
+msgstr "საჭიროებს ყურადღებას"
+
+#: templates/admin/orders/order/change_form.html
+msgid "Mark as resolved"
+msgstr "მოგვარებულად მონიშვნა"
+
+#: templates/admin/orders/order/change_form.html
+msgid "Packing slip"
+msgstr "შეფუთვის ფურცელი"
+
+#: templates/admin/orders/order/change_form.html
+msgid "Recipient (gift)"
+msgstr "მიმღები (საჩუქარი)"
+
+#: templates/admin/orders/order/change_form.html
+msgid "Buyer"
+msgstr "მყიდველი"
+
+#: templates/admin/orders/order/confirm.html
+msgid "Back"
+msgstr "უკან"
+
+#: templates/admin/orders/order/slip.html
+#, python-format
+msgid "Packing slip %(number)s"
+msgstr "შეფუთვის ფურცელი %(number)s"
+
+#: templates/admin/orders/order/slip.html
+msgid "Deliver to"
+msgstr "მიმღები"
+
+#: templates/admin/orders/order/slip.html
+#, python-format
+msgid "A gift from %(name)s"
+msgstr "საჩუქარი %(name)s-სგან"
+
+#: templates/admin/orders/order/slip.html
+msgid "Pieces"
+msgstr "ნივთები"
+
+#: templates/admin/orders/order/slip.html templates/cart/_page_partial.html
+#: templates/emails/_items.html templates/emails/_items.txt
+#: templates/orders/_checkout_summary.html
+#: templates/orders/_detail_partial.html
+msgid "Total"
+msgstr "სულ"
+
+#: templates/admin/orders/order/slip.html
+msgid "Print"
+msgstr "ბეჭდვა"
 
 #: templates/base.html
 msgid "Skip to content"
@@ -1130,10 +1853,14 @@ msgid "Close cart"
 msgstr "კალათის დახურვა"
 
 #: templates/cart/_drawer_partial.html templates/cart/_page_partial.html
+#: templates/emails/_items.html templates/orders/_checkout_summary.html
 msgid "You save"
 msgstr "დაზოგავთ"
 
 #: templates/cart/_drawer_partial.html templates/cart/_page_partial.html
+#: templates/emails/_items.html templates/emails/_items.txt
+#: templates/orders/_checkout_summary.html
+#: templates/orders/_detail_partial.html
 msgid "Subtotal"
 msgstr "ნივთების ჯამი"
 
@@ -1160,7 +1887,8 @@ msgstr "წაშლა"
 
 #: templates/cart/_line.html templates/catalog/product_detail.html
 #: templates/components/price.html templates/core/styleguide.html
-#: templates/pages/home.html
+#: templates/orders/_checkout_summary.html
+#: templates/orders/_detail_partial.html templates/pages/home.html
 msgid "Original price"
 msgstr "საწყისი ფასი"
 
@@ -1201,17 +1929,11 @@ msgstr "ერთით მეტი"
 msgid "Summary"
 msgstr "შეჯამება"
 
-#: templates/cart/_page_partial.html
-msgid "Gift wrap"
-msgstr "საჩუქრის შეფუთვა"
-
-#: templates/cart/_page_partial.html
+#: templates/cart/_page_partial.html templates/emails/_items.html
+#: templates/emails/_items.txt templates/orders/_checkout_summary.html
+#: templates/orders/_detail_partial.html templates/orders/checkout.html
 msgid "Free"
 msgstr "უფასო"
-
-#: templates/cart/_page_partial.html
-msgid "Delivery"
-msgstr "მიწოდება"
 
 #: templates/cart/_page_partial.html templates/components/price.html
 #, python-format
@@ -1237,20 +1959,8 @@ msgid "Add %(amount)s more for free delivery."
 msgstr "დაამატეთ კიდევ %(amount)s და მიწოდება უფასო იქნება."
 
 #: templates/cart/_page_partial.html
-msgid "Total"
-msgstr "სულ"
-
-#: templates/cart/_page_partial.html
 msgid "Delivery is added at checkout, once we know the address."
 msgstr "მიწოდების ღირებულება დაემატება შეკვეთისას, მისამართის მითითების შემდეგ."
-
-#: templates/cart/_page_partial.html
-msgid "Checkout"
-msgstr "შეკვეთის გაფორმება"
-
-#: templates/cart/_page_partial.html
-msgid "Checkout opens soon."
-msgstr "შეკვეთის გაფორმება მალე გაიხსნება."
 
 #: templates/catalog/_filter_fields.html
 msgid "Type"
@@ -1519,6 +2229,10 @@ msgstr "ჯერ არაფერი შეგინახავთ"
 msgid "Tap ♡ on a piece you love to keep it here."
 msgstr "შეეხეთ ♡-ს მოწონებულ ნივთზე და ის აქ შეინახება."
 
+#: templates/components/field.html
+msgid "optional"
+msgstr "არასავალდებულო"
+
 #: templates/components/footer.html
 msgid "Information"
 msgstr "ინფორმაცია"
@@ -1592,20 +2306,8 @@ msgid "Read the story"
 msgstr "ისტორიის წაკითხვა"
 
 #: templates/core/styleguide.html
-msgid "First name"
-msgstr "სახელი"
-
-#: templates/core/styleguide.html templates/pages/contact.html
-msgid "Phone"
-msgstr "ტელეფონი"
-
-#: templates/core/styleguide.html
 msgid "We'll text you when the order ships."
 msgstr "შეკვეთის გაგზავნისას SMS-ით შეგატყობინებთ."
-
-#: templates/core/styleguide.html templates/pages/contact.html
-msgid "Email"
-msgstr "ელფოსტა"
 
 #: templates/core/styleguide.html
 msgid "Enter a valid email address."
@@ -1615,9 +2317,266 @@ msgstr "შეიყვანეთ სწორი ელფოსტის მ
 msgid "I agree to the Terms and the Privacy Policy"
 msgstr "ვეთანხმები წესებსა და პირობებს და კონფიდენციალურობის პოლიტიკას"
 
-#: templates/core/styleguide.html
-msgid "New"
-msgstr "ახალი"
+#: templates/emails/_delivery.html templates/emails/_delivery.txt
+#: templates/orders/_detail_partial.html
+msgid "Recipient"
+msgstr "მიმღები"
+
+#: templates/emails/_delivery.html templates/orders/_detail_partial.html
+msgid "Gift wrapped"
+msgstr "საჩუქრად შეფუთული"
+
+#: templates/emails/_delivery.html
+msgid "No prices on the packing slip"
+msgstr "შეფუთვის ფურცელზე ფასების გარეშე"
+
+#: templates/emails/cancelled.html
+#, python-format
+msgid "Order %(number)s was cancelled."
+msgstr "შეკვეთა %(number)s გაუქმდა."
+
+#: templates/emails/cancelled.html
+msgid "Order cancelled"
+msgstr "შეკვეთა გაუქმდა"
+
+#: templates/emails/cancelled.html templates/emails/cancelled.txt
+#: templates/emails/confirmation.html templates/emails/confirmation.txt
+#: templates/emails/delivered.html templates/emails/delivered.txt
+#: templates/emails/shipped.html templates/emails/shipped.txt
+#, python-format
+msgid "Dear %(name)s,"
+msgstr "ძვირფასო %(name)s,"
+
+#: templates/emails/cancelled.html templates/emails/cancelled.txt
+#, python-format
+msgid "your order %(number)s has been cancelled."
+msgstr "თქვენი შეკვეთა %(number)s გაუქმდა."
+
+#: templates/emails/cancelled.html templates/emails/cancelled.txt
+msgid "If you have any questions, just reply to this email."
+msgstr "თუ კითხვები გაქვთ, უბრალოდ უპასუხეთ ამ წერილს."
+
+#: templates/emails/cancelled.html templates/emails/cancelled.txt
+#: templates/emails/confirmation.html templates/emails/confirmation.txt
+#: templates/emails/delivered.html templates/emails/delivered.txt
+#: templates/emails/shipped.html templates/emails/shipped.txt
+msgid "View your order"
+msgstr "შეკვეთის ნახვა"
+
+#: templates/emails/confirmation.html
+#, python-format
+msgid "Order %(number)s is confirmed."
+msgstr "შეკვეთა %(number)s დადასტურებულია."
+
+#: templates/emails/confirmation.html templates/orders/_detail_partial.html
+msgid "Thank you"
+msgstr "გმადლობთ"
+
+#: templates/emails/confirmation.html templates/emails/confirmation.txt
+#, python-format
+msgid "we have received your payment for order %(number)s. Each piece is now being prepared by hand — we will let you know when it is on its way."
+msgstr "მივიღეთ თქვენი გადახდა შეკვეთისთვის %(number)s. თითოეულ ნივთს ახლა ხელით ვამზადებთ — როცა გამოგიგზავნით, შეგატყობინებთ."
+
+#: templates/emails/confirmation.html templates/emails/confirmation.txt
+msgid "Questions? Just reply to this email."
+msgstr "კითხვები გაქვთ? უბრალოდ უპასუხეთ ამ წერილს."
+
+#: templates/emails/delivered.html
+msgid "Your pieces have arrived."
+msgstr "თქვენი ნივთები მიტანილია."
+
+#: templates/emails/delivered.html
+msgid "With care"
+msgstr "სიყვარულით"
+
+#: templates/emails/delivered.html templates/emails/delivered.txt
+#, python-format
+msgid "your order %(number)s has arrived. Thank you for choosing a handmade piece — we hope it brings you joy for a long time."
+msgstr "თქვენი შეკვეთა %(number)s მიტანილია. გმადლობთ, რომ ხელნაკეთი ნივთი აირჩიეთ — იმედი გვაქვს, დიდხანს გაგახარებთ."
+
+#: templates/emails/delivered.html templates/emails/delivered.txt
+msgid "Caring for your pieces"
+msgstr "ნივთების მოვლა"
+
+#: templates/emails/owner_attention.html templates/emails/owner_attention.txt
+#, python-format
+msgid "Order %(number)s needs attention"
+msgstr "შეკვეთა %(number)s საჭიროებს ყურადღებას"
+
+#: templates/emails/owner_attention.html templates/emails/owner_cancelled.html
+#: templates/emails/owner_new_order.html
+msgid "Open in the admin"
+msgstr "ადმინში გახსნა"
+
+#: templates/emails/owner_cancelled.html templates/emails/owner_cancelled.txt
+msgid "Remember to refund the payment in the bank's merchant portal, then mark the order as refunded."
+msgstr "არ დაგავიწყდეთ თანხის დაბრუნება ბანკის მერჩანტ-პორტალში, შემდეგ კი შეკვეთის მონიშვნა დაბრუნებულად."
+
+#: templates/emails/owner_new_order.html templates/emails/owner_new_order.txt
+#, python-format
+msgid "New order %(number)s"
+msgstr "ახალი შეკვეთა %(number)s"
+
+#: templates/emails/shipped.html
+#, python-format
+msgid "Order %(number)s is on its way."
+msgstr "შეკვეთა %(number)s გზაშია."
+
+#: templates/emails/shipped.html templates/orders/_detail_partial.html
+msgid "On its way"
+msgstr "გზაშია"
+
+#: templates/emails/shipped.html templates/emails/shipped.txt
+#, python-format
+msgid "your order %(number)s has left the atelier."
+msgstr "თქვენი შეკვეთა %(number)s ატელიედან გამოიგზავნა."
+
+#: templates/orders/_checkout_summary.html
+#, python-format
+msgid "%(n)s piece is no longer available and is not part of this order."
+msgid_plural "%(n)s pieces are no longer available and are not part of this order."
+msgstr[0] "%(n)s ნივთი აღარ არის ხელმისაწვდომი და ამ შეკვეთაში არ შედის."
+msgstr[1] "%(n)s ნივთი აღარ არის ხელმისაწვდომი და ამ შეკვეთაში არ შედის."
+
+#: templates/orders/_detail_partial.html
+msgid "Still waiting for confirmation"
+msgstr "ჯერ კიდევ ველოდებით დადასტურებას"
+
+#: templates/orders/_detail_partial.html
+#, python-format
+msgid "We'll email you at %(email)s as soon as the bank confirms the payment."
+msgstr "როგორც კი ბანკი გადახდას დაადასტურებს, მოგწერთ მისამართზე %(email)s."
+
+#: templates/orders/_detail_partial.html
+msgid "Check again"
+msgstr "თავიდან შემოწმება"
+
+#: templates/orders/_detail_partial.html
+msgid "Waiting for the bank…"
+msgstr "ველოდებით ბანკს…"
+
+#: templates/orders/_detail_partial.html
+msgid "This usually takes a few seconds. Please keep this page open."
+msgstr "ჩვეულებრივ, ამას რამდენიმე წამი სჭირდება. გთხოვთ, ეს გვერდი არ დახუროთ."
+
+#: templates/orders/_detail_partial.html
+msgid "The time to pay ran out"
+msgstr "გადახდის დრო ამოიწურა"
+
+#: templates/orders/_detail_partial.html
+msgid "Pieces are held for 15 minutes while you pay. They are back in your cart, as long as they are still available."
+msgstr "გადახდის დროს ნივთები 15 წუთით იჯავშნება. ისინი ისევ თქვენს კალათაშია, თუ ჯერ კიდევ ხელმისაწვდომია."
+
+#: templates/orders/_detail_partial.html
+msgid "This checkout was closed"
+msgstr "ეს შეკვეთა დაიხურა"
+
+#: templates/orders/_detail_partial.html
+msgid "You started a new checkout, so this one was closed."
+msgstr "ახალი შეკვეთა დაიწყეთ, ამიტომ ეს დაიხურა."
+
+#: templates/orders/_detail_partial.html
+msgid "This order was cancelled"
+msgstr "ეს შეკვეთა გაუქმდა"
+
+#: templates/orders/_detail_partial.html
+msgid "The payment did not go through"
+msgstr "გადახდა ვერ შესრულდა"
+
+#: templates/orders/_detail_partial.html
+msgid "No money was taken. Your pieces are back in your cart, as long as they are still available."
+msgstr "თანხა არ ჩამოგეჭრათ. ნივთები ისევ თქვენს კალათაშია, თუ ჯერ კიდევ ხელმისაწვდომია."
+
+#: templates/orders/_detail_partial.html
+msgid "Back to your cart"
+msgstr "კალათაში დაბრუნება"
+
+#: templates/orders/_detail_partial.html
+msgid "Thank you — we received your payment"
+msgstr "გმადლობთ — გადახდა მივიღეთ"
+
+#: templates/orders/_detail_partial.html
+msgid "We will contact you shortly about your order."
+msgstr "მალე დაგიკავშირდებით შეკვეთასთან დაკავშირებით."
+
+#: templates/orders/_detail_partial.html
+msgid "Your order has left the atelier."
+msgstr "თქვენი შეკვეთა ატელიედან გამოიგზავნა."
+
+#: templates/orders/_detail_partial.html
+msgid "Thank you for choosing a handmade piece."
+msgstr "გმადლობთ, რომ ხელნაკეთი ნივთი აირჩიეთ."
+
+#: templates/orders/_detail_partial.html
+#, python-format
+msgid "A confirmation is on its way to %(email)s."
+msgstr "დადასტურება გამოგზავნილია მისამართზე %(email)s."
+
+#: templates/orders/_detail_partial.html
+msgid "A note from us"
+msgstr "ჩვენი შენიშვნა"
+
+#: templates/orders/_detail_partial.html
+msgid "Order progress"
+msgstr "შეკვეთის მიმდინარეობა"
+
+#: templates/orders/_detail_partial.html
+msgid "Your pieces"
+msgstr "თქვენი ნივთები"
+
+#: templates/orders/_detail_partial.html
+msgid "Questions?"
+msgstr "კითხვები?"
+
+#: templates/orders/_detail_partial.html
+msgid "Reply to your confirmation email or write to us — mention your order number."
+msgstr "უპასუხეთ დადასტურების წერილს ან მოგვწერეთ — მიუთითეთ შეკვეთის ნომერი."
+
+#: templates/orders/checkout.html
+msgid "Please check the highlighted fields."
+msgstr "გთხოვთ, გადაამოწმოთ მონიშნული ველები."
+
+#: templates/orders/checkout.html
+msgid "Order summary"
+msgstr "შეკვეთის შეჯამება"
+
+#: templates/orders/checkout.html
+msgid "We deliver within Georgia."
+msgstr "მიწოდება ხდება საქართველოს მასშტაბით."
+
+#: templates/orders/checkout.html
+msgid "Recipient name and phone (if different from you)"
+msgstr "მიმღების სახელი და ტელეფონი (თუ თქვენგან განსხვავდება)"
+
+#: templates/orders/checkout.html
+msgid "You pay by card on your bank's secure page. We never see your card details."
+msgstr "ბარათით იხდით ბანკის დაცულ გვერდზე. თქვენი ბარათის მონაცემებს ჩვენ ვერ ვხედავთ."
+
+#: templates/orders/checkout.html
+msgid "Test mode: no real payment is made."
+msgstr "სატესტო რეჟიმი: რეალური გადახდა არ ხდება."
+
+#: templates/orders/checkout.html
+msgid "Consents"
+msgstr "თანხმობები"
+
+#: templates/orders/checkout.html
+#, python-format
+msgid "I accept the <a class=\"link\" href=\"%(terms_url)s\" target=\"_blank\">terms and conditions</a>"
+msgstr "ვეთანხმები <a class=\"link\" href=\"%(terms_url)s\" target=\"_blank\">წესებსა და პირობებს</a>"
+
+#: templates/orders/checkout.html
+#, python-format
+msgid "I have read the <a class=\"link\" href=\"%(privacy_url)s\" target=\"_blank\">privacy policy</a>"
+msgstr "გავეცანი <a class=\"link\" href=\"%(privacy_url)s\" target=\"_blank\">კონფიდენციალურობის პოლიტიკას</a>"
+
+#: templates/orders/checkout.html templates/payments/fake_bank.html
+msgid "Pay"
+msgstr "გადახდა"
+
+#: templates/orders/checkout.html
+msgid "Your pieces are held for 15 minutes while you pay."
+msgstr "გადახდის დროს ნივთები 15 წუთით თქვენთვის იჯავშნება."
 
 #: templates/pages/about.html
 msgid "The story of the atelier will appear here soon."
@@ -1634,10 +2593,6 @@ msgstr "შეკვეთისთვის ანგარიში არა�
 #: templates/pages/contact.html
 msgid "Questions about a piece, a custom order or delivery — write or call."
 msgstr "კითხვები ნივთზე, ინდივიდუალურ შეკვეთაზე ან მიწოდებაზე — მოგვწერეთ ან დაგვირეკეთ."
-
-#: templates/pages/contact.html
-msgid "Address"
-msgstr "მისამართი"
 
 #: templates/pages/home.html
 msgid "Featured"
@@ -1667,6 +2622,39 @@ msgstr "სპეციალური შეთავაზება"
 #: templates/pages/home.html
 msgid "Shop Sale"
 msgstr "ფასდაკლებული ნივთები"
+
+#: templates/pages/legal.html
+msgid "Text to be provided by the owner."
+msgstr "ტექსტს მოგვაწვდის მაღაზიის მფლობელი."
+
+#: templates/pages/legal.html
+#, python-format
+msgid "Last updated %(date)s"
+msgstr "ბოლოს განახლდა: %(date)s"
+
+#: templates/payments/fake_bank.html
+msgid "Test payment — no money moves"
+msgstr "სატესტო გადახდა — თანხა არ ირიცხება"
+
+#: templates/payments/fake_bank.html
+msgid "Order"
+msgstr "შეკვეთა"
+
+#: templates/payments/fake_bank.html
+msgid "Amount"
+msgstr "თანხა"
+
+#: templates/payments/fake_bank.html
+msgid "Decline"
+msgstr "უარყოფა"
+
+#: templates/payments/fake_bank.html
+msgid "Pay with a 15-second delay"
+msgstr "გადახდა 15-წამიანი დაყოვნებით"
+
+#: templates/payments/fake_bank.html
+msgid "In production this is the bank's own payment page."
+msgstr "რეალურ მაღაზიაში აქ ბანკის საკუთარი გადახდის გვერდი იქნება."
 
 #: templates/unfold/forms/helpers/toolbar.html
 msgid "Paragraph"

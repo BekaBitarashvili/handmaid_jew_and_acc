@@ -104,7 +104,8 @@ class TestDetail:
         assert paid.variant.stock == 0
         assert Product.objects.get(pk=paid.variant.product_id).status == Product.Status.SOLD
 
-    def test_forbidden_step_is_refused(self, admin_client, paid):
+    def test_forbidden_step_is_refused(self, admin_client, paid, settings):
+        admin_client.cookies[settings.LANGUAGE_COOKIE_NAME] = "en"  # the admin's EN switch
         response = admin_client.post(url("status", paid.pk, "delivered"), {}, follow=True)
         assert "This status change is not possible." in text(response)
         paid.refresh_from_db()

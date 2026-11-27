@@ -38,6 +38,12 @@ Context: order, items, steps, polling, gave_up_waiting, next_poll, poll_every, c
       {% else %}
         <h1 class="display mt-6">{% translate "This order was cancelled" %}</h1>
       {% endif %}
+    {% elif order.status == "shipped" %}
+      <h1 class="display mt-6">{% translate "On its way" %}</h1>
+      <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "Your order has left the atelier." %}</p>
+    {% elif order.status == "delivered" %}
+      <h1 class="display mt-6">{% translate "Delivered" %}</h1>
+      <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "Thank you for choosing a handmade piece." %}</p>
     {% else %}
       <h1 class="display mt-6">{% translate "Thank you" %}</h1>
       <p class="mx-auto mt-4 max-w-md text-cocoa">{% blocktranslate with email=order.email %}A confirmation is on its way to {{ email }}.{% endblocktranslate %}</p>

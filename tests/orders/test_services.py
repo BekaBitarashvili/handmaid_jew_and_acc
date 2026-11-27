@@ -91,6 +91,14 @@ class TestPlaceOrder:
             tbilisi_ka = translation.gettext("Tbilisi")
         assert (order.delivery_name, order.city) == ("კურიერი", tbilisi_ka)
 
+    def test_item_photo_is_a_small_jpeg(self, en):
+        from tests.catalog.factories import ProductImageFactory
+
+        variant = piece()
+        ProductImageFactory(product=variant.product)
+        url = order_for(variant).items.get().image_url
+        assert url.endswith(".jpg") and "160x160" in url
+
     def test_empty_cart(self):
         with pytest.raises(EmptyCart):
             place_order(cart_with(), data(), language="en")

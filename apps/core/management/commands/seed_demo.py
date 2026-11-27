@@ -30,9 +30,11 @@ from apps.catalog.models import (
 )
 from apps.catalog.seed import seed_catalog
 from apps.core.models import SiteSettings
-from apps.orders.seed import seed_delivery_options
+from apps.orders.models import Order, OrderNumberSequence
+from apps.orders.seed import seed_delivery_options, seed_orders
 from apps.pages.models import HeroSlide
 from apps.pages.seed import seed_hero
+from apps.payments.models import Payment
 from apps.promotions.models import Sale
 from apps.promotions.seed import seed_sale
 
@@ -68,6 +70,7 @@ class Command(BaseCommand):
             ("Hero slides", seed_hero),
             ("Sale", seed_sale),
             ("Delivery options", seed_delivery_options),
+            ("Orders", seed_orders),
         ]
         for label, seeder in seeders:
             with transaction.atomic():
@@ -77,13 +80,15 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def reset_catalog(self) -> None:
-        for model in (Sale, HeroSlide, ProductImage, ProductVariant):
+        # Orders first: their items protect the variants they bought.
+        for model in (Payment, Order, OrderNumberSequence, Sale, HeroSlide, ProductImage):
             model.objects.all().delete()
+        ProductVariant.objects.all().delete()
         Product.objects.all().delete()
         Category.objects.filter(parent__isnull=False).delete()
         for model in (Category, Stone, Material, SkuSequence):
             model.objects.all().delete()
-        self.stdout.write("Demo catalog, sales and hero slides removed.")
+        self.stdout.write("Demo catalog, orders, sales and hero slides removed.")
 
     def seed_site_settings(self) -> str:
         existed = SiteSettings.objects.filter(pk=SiteSettings.SINGLETON_PK).exists()

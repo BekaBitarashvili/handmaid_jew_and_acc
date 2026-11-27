@@ -1,5 +1,6 @@
 """Placing an order (SPEC §6.4): re-check the cart, hold the pieces, write the snapshots."""
 
+import logging
 from dataclasses import dataclass
 from datetime import timedelta
 
@@ -8,6 +9,7 @@ from django.utils import timezone, translation
 from django.utils.translation import gettext as _
 
 from apps.cart.services import Cart, SessionCart, delivery_price
+from apps.catalog.images import rendition
 from apps.catalog.services import inventory
 from apps.core.models import SiteSettings
 
@@ -15,6 +17,7 @@ from ..models import DeliveryOption, Order, OrderItem, OrderStatusHistory
 from ..numbers import next_order_number
 
 RESERVATION_MINUTES = 15
+logger = logging.getLogger(__name__)
 
 
 class CheckoutError(Exception):
@@ -71,6 +74,19 @@ class CheckoutData:
     consent_marketing: bool = False
     expected_total: int | None = None  # what the customer saw on the button
     checkout_token: str | None = None  # one per checkout form (double-submit guard)
+
+
+def _thumbnail_url(image) -> str:
+    """A small JPEG of the piece for the order page, emails and the slip (email clients
+    handle JPEG everywhere; the original upload is far too heavy for a 56px thumbnail)."""
+    if image is None:
+        return ""
+    try:
+        thumb = rendition(image.image, 160, "jpg")
+    except Exception:  # a broken file must never block an order
+        logger.exception("order thumbnail failed for image %s", image.pk)
+        thumb = None
+    return thumb.url if thumb else image.image.url
 
 
 @dataclass
@@ -170,7 +186,7 @@ def _place_order(session_cart, data, language, ip_address, user_agent) -> Order:
                 unit_price=line.price.current,
                 qty=line.qty,
                 line_total=line.total,
-                image_url=line.image.image.url if line.image else "",
+                image_url=_thumbnail_url(line.image),
             )
             for line in cart.lines
         )

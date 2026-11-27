@@ -224,6 +224,15 @@ class TestOrderPage:
         page = client.get(expired.get_absolute_url()).content.decode()  # expires on view
         assert "The time to pay ran out" in page
 
+    def test_headline_follows_the_status(self, client, en):
+        from apps.orders.services import change_status, confirm_payment
+
+        order = confirm_payment(order_for(piece()).pk)
+        for to in ("processing", "shipped"):
+            order = change_status(order, to)
+        page = client.get(order.get_absolute_url()).content.decode()
+        assert "On its way" in page and "confirmation is on its way" not in page
+
     def test_unknown_token_404(self, client, en):
         assert client.get("/en/order/00000000-0000-0000-0000-000000000000/").status_code == 404
 

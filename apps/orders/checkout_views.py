@@ -3,6 +3,7 @@ choices through HTMX; placing the order is a plain POST that ends on the bank's 
 
 import uuid
 
+from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.db import IntegrityError
@@ -24,8 +25,7 @@ from .services import CheckoutError, EmptyCart, fail_payment, place_order, quote
 from .views import CHECKOUT_ORDER_KEY
 
 TOKEN_KEY = "checkout_token"
-RATE_LIMIT = 10  # orders per IP ...
-RATE_WINDOW = 10 * 60  # ... per 10 minutes
+RATE_WINDOW = 10 * 60  # settings.CHECKOUT_RATE_LIMIT orders per IP per 10 minutes
 
 
 def _client_ip(request: HttpRequest) -> str | None:
@@ -36,7 +36,7 @@ def _rate_limited(request: HttpRequest) -> bool:
     key = f"checkout-rate:{_client_ip(request)}"
     cache.add(key, 0, RATE_WINDOW)
     try:
-        return cache.incr(key) > RATE_LIMIT
+        return cache.incr(key) > settings.CHECKOUT_RATE_LIMIT
     except ValueError:  # the key expired in between (or a dummy cache): don't block
         return False
 

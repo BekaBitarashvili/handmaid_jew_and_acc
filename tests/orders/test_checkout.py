@@ -209,7 +209,7 @@ class TestPurchase:
 
     def test_rate_limit(self, shopper, en, options, settings, monkeypatch):
         settings.CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
-        monkeypatch.setattr("apps.orders.checkout_views.RATE_LIMIT", 0)
+        settings.CHECKOUT_RATE_LIMIT = 0
         response = shopper.post("/en/checkout/", form(shopper, options["regions"]))
         assert response.status_code == 429 and not Order.objects.exists()
 
@@ -223,6 +223,7 @@ class TestSummary:
         html = text(shopper.get(url, {"delivery": options["pickup"].pk}, **HTMX))
         assert 'name="expected_total" value="10000"' in html
         assert '<span id="pay-total" hx-swap-oob="true">100 ₾</span>' in html
+        assert re.search(r'<span id="summary-total"[^>]*hx-swap-oob="true">100 ₾<', html)
         html = text(
             shopper.get(url, {"delivery": options["regions"].pk, "gift_wrap": "on"}, **HTMX)
         )

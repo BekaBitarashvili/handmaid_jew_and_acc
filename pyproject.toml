@@ -15,6 +15,7 @@ dependencies = [
     "gunicorn>=27.0.1",
     "huey>=3.5.4",
     "nh3==0.3.7",
+    "phonenumbers>=9.0.44",
     "pillow>=13.0.0",
     "psycopg[binary]>=3.2",
     "redis>=8.2.0",

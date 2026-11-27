@@ -1,3 +1,4 @@
+import re
 from datetime import timedelta
 
 import pytest
@@ -130,3 +131,57 @@ class TestReservedSlugs:
         )
         fill_translated_slugs(category)
         assert category.slug_en == "new-items" and category.slug_ka == "sale-items"
+
+
+class TestCollectionChips:
+    """New Arrivals and Sale only offer categories that have pieces in that view."""
+
+    @pytest.fixture
+    def categories(self):
+        return {
+            name: CategoryFactory(slug_en=name.lower(), name_en=name)
+            for name in ("Necklaces", "Earrings", "Bracelets")
+        }
+
+    @staticmethod
+    def chip_names(page):
+        nav = (
+            page.split('aria-label="Categories"')[1].split("</ul>")[0]
+            if 'aria-label="Categories"' in page
+            else page
+        )
+        return set(re.findall(r'class="chip"[^>]*>([^<]+)</a>', nav))
+
+    def test_sale_chips(self, client, en, categories):
+        ProductFactory(status=ACTIVE, category=categories["Earrings"], name_en="On sale")
+        ProductFactory(status=ACTIVE, category=categories["Necklaces"], name_en="Full price")
+        percent_sale(categories=[categories["Earrings"]])
+        assert self.chip_names(html(client.get("/en/shop/sale/"))) == {"All", "Earrings"}
+
+    def test_new_chips_count_subcategory_pieces_for_the_parent(self, client, en, categories):
+        brooches = CategoryFactory(
+            slug_en="brooches", name_en="Brooches", parent=categories["Bracelets"]
+        )
+        old = timezone.now() - timedelta(days=90)
+        ProductFactory(status=ACTIVE, category=brooches, published_at=timezone.now())
+        ProductFactory(status=ACTIVE, category=categories["Necklaces"], published_at=old)
+        assert self.chip_names(html(client.get("/en/shop/new/"))) == {"All", "Bracelets"}
+
+    def test_selected_empty_category_stays_visible(self, client, en, categories):
+        ProductFactory(status=ACTIVE, category=categories["Earrings"])
+        percent_sale(categories=[categories["Earrings"]])
+        names = self.chip_names(html(client.get("/en/shop/sale/?category=necklaces")))
+        assert names == {"All", "Earrings", "Necklaces"}
+
+    def test_sold_or_hidden_pieces_do_not_count(self, client, en, categories):
+        ProductFactory(status=Product.Status.SOLD, category=categories["Bracelets"])
+        percent_sale(all_=True)
+        assert self.chip_names(html(client.get("/en/shop/sale/"))) == {"All"}
+
+    def test_shop_keeps_all_categories(self, client, en, categories):
+        assert self.chip_names(html(client.get("/en/shop/"))) == {
+            "All",
+            "Necklaces",
+            "Earrings",
+            "Bracelets",
+        }

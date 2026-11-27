@@ -258,3 +258,20 @@ def related_products(product: Product, limit: int = 4) -> list[Product]:
 
 def top_categories() -> QuerySet[Category]:
     return Category.objects.filter(is_active=True, parent__isnull=True).order_by("sort_order", "pk")
+
+
+def chip_categories(
+    base: QuerySet[Product], collection: str, selected: list[Category] | tuple = ()
+) -> QuerySet[Category]:
+    """Category chips for a listing. The shop shows every category; New Arrivals and Sale
+    only those with a piece in that view (a subcategory's piece counts for its parent).
+    A selected category stays visible even when empty, so the active filter never hides."""
+    categories = top_categories()
+    if collection == COLLECTION_ALL:
+        return categories
+    pairs = filter_products(base, ProductFilters(), collection=collection).values_list(
+        "category_id", "category__parent_id"
+    )
+    keep = {pk for pair in pairs for pk in pair if pk}
+    keep |= {c.parent_id or c.pk for c in selected}
+    return categories.filter(pk__in=keep)

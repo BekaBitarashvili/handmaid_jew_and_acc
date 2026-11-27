@@ -18,10 +18,10 @@ from .queries import (
     COLLECTION_NEW,
     COLLECTION_SALE,
     category_scope,
+    chip_categories,
     facet_options,
     filter_products,
     related_products,
-    top_categories,
     visible_for,
     with_card_data,
 )
@@ -104,7 +104,7 @@ def listing(
     context.update(
         {
             "facets": facets,
-            "chips": top_categories(),
+            "chips": chip_categories(base, collection, filters.categories),
             "selected_category": selected_category,
             "collection_url": reverse(COLLECTION_URLS[collection]),
             "subcategories": category.children.filter(is_active=True) if category else [],

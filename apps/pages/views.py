@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
@@ -15,7 +15,7 @@ from apps.core.models import SiteSettings
 from apps.core.seo import Seo, alternates, describe, simple_seo
 from apps.promotions.services import applies, running_sales
 
-from .models import HeroSlide
+from .models import HeroSlide, Page
 
 
 def home(request: HttpRequest) -> HttpResponse:
@@ -87,4 +87,18 @@ def account(request: HttpRequest) -> HttpResponse:
         request,
         "pages/account.html",
         {"seo": simple_seo(request, "pages:account", _("Account"), noindex=True)},
+    )
+
+
+def legal_page(request: HttpRequest, key: str) -> HttpResponse:
+    """Terms / Privacy. Until the owner adds the text, the page says it is coming (and stays
+    out of search results)."""
+    page = get_object_or_404(Page, key=key)
+    return render(
+        request,
+        "pages/legal.html",
+        {
+            "page": page,
+            "seo": simple_seo(request, f"pages:{key}", page.title, noindex=page.is_placeholder),
+        },
     )

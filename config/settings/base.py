@@ -324,6 +324,11 @@ UNFOLD = {
                 "title": _("Settings"),
                 "items": [
                     {
+                        "title": _("Terms and privacy"),
+                        "icon": "gavel",
+                        "link": _admin_url("admin:pages_page_changelist"),
+                    },
+                    {
                         "title": _("Site settings"),
                         "icon": "tune",
                         "link": _admin_url("admin:core_sitesettings_changelist"),

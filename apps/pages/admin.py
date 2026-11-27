@@ -6,7 +6,7 @@ from unfold.decorators import display
 
 from apps.core.admin_base import BaseModelAdmin
 
-from .models import HeroSlide
+from .models import HeroSlide, Page
 
 
 @admin.register(HeroSlide)
@@ -30,3 +30,22 @@ class HeroSlideAdmin(BaseModelAdmin, TabbedTranslationAdmin):
         return format_html(
             '<img src="{}" alt="" style="width:96px;height:42px;object-fit:cover">', obj.image.url
         )
+
+
+@admin.register(Page)
+class PageAdmin(BaseModelAdmin, TabbedTranslationAdmin):
+    """Terms and Privacy exist from the start (checkout links to them); the owner pastes the
+    lawyer-approved text. They can't be added or deleted here."""
+
+    list_display = ("title", "key", "has_text", "updated_at")
+    fields = ("title", "body")
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    @display(description=_("text"), boolean=True)
+    def has_text(self, obj: Page):
+        return not obj.is_placeholder

@@ -1,6 +1,9 @@
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+
+from apps.core.fields import RichTextField
 
 LINK_HELP = _(
     "A shop path such as /shop/new/ (the language is added automatically) or a full "
@@ -57,3 +60,33 @@ class HeroSlide(models.Model):
     @property
     def secondary_url(self) -> str:
         return localized_link(self.secondary_link)
+
+
+class Page(models.Model):
+    """Legal and info pages (SPEC §5 pages). The owner provides the text (with a lawyer for
+    the legal ones); until then the page says so — no invented legal text."""
+
+    class Key(models.TextChoices):
+        TERMS = "terms", _("Terms and conditions")
+        PRIVACY = "privacy", _("Privacy policy")
+
+    key = models.CharField(_("page"), max_length=20, choices=Key.choices, unique=True)
+    title = models.CharField(_("title"), max_length=150)
+    body = RichTextField(_("text"), blank=True)
+    is_legal = models.BooleanField(_("legal page"), default=True)
+    updated_at = models.DateTimeField(_("updated"), auto_now=True)
+
+    class Meta:
+        verbose_name = _("page")
+        verbose_name_plural = _("pages")
+        ordering = ("key",)
+
+    def __str__(self) -> str:
+        return self.title
+
+    def get_absolute_url(self) -> str:
+        return reverse(f"pages:{self.key}")
+
+    @property
+    def is_placeholder(self) -> bool:
+        return not (self.body or "").strip()

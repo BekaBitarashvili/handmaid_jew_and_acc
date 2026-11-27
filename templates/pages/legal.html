@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-site py-16 md:py-24">
+  <div class="mx-auto max-w-2xl">
+    <h1 class="display">{{ page.title }}</h1>
+    {% if page.is_placeholder %}
+      <p class="mt-8 border-l-2 border-clay-text bg-shell px-5 py-4 text-cocoa" role="note">{% translate "Text to be provided by the owner." %}</p>
+    {% else %}
+      <div class="rich-text mt-8">{{ page.body|safe }}</div>
+      <p class="mt-10 text-small text-taupe-text">{% blocktranslate with date=page.updated_at|date:"j F Y" %}Last updated {{ date }}{% endblocktranslate %}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

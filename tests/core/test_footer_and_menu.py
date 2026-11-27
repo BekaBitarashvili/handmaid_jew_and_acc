@@ -74,7 +74,7 @@ class TestFooter:
 
     def test_pages_that_do_not_exist_yet_are_plain_text(self, page):
         footer = section(page, "<footer", "</footer>")
-        for label in ("FAQ", "Terms", "Privacy", "Cookies"):
+        for label in ("FAQ", "Cookies"):  # Terms and Privacy exist (placeholders)
             assert f'<span class="nav-link text-taupe-text">{label}</span>' in footer
         assert 'href="#"' not in footer
 

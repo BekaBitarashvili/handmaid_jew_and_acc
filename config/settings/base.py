@@ -316,6 +316,11 @@ UNFOLD = {
                 "title": _("Orders"),
                 "items": [
                     {
+                        "title": _("Orders"),
+                        "icon": "receipt_long",
+                        "link": _admin_url("admin:orders_order_changelist"),
+                    },
+                    {
                         "title": _("Delivery options"),
                         "icon": "local_shipping",
                         "link": _admin_url("admin:orders_deliveryoption_changelist"),

@@ -1,0 +1,18 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+{% comment %}Confirmation step for status changes, refunds and resolving (with optional notes).{% endcomment %}
+{% block breadcrumbs %}{% endblock %}
+{% block content %}
+<div class="order-confirm">
+  <h1 class="order-confirm-title">{{ title }}</h1>
+  <p class="order-meta">{{ original.customer_name }} · {{ original.get_status_display }} · {{ original.get_payment_status_display }}</p>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}{% include "unfold/helpers/field.html" with field=field %}{% endfor %}
+    <div class="order-actions">
+      <button type="submit" class="order-btn {% if danger %}order-btn--danger{% else %}order-btn--primary{% endif %}">{{ submit_label }}</button>
+      <a class="order-btn" href="{{ back_url }}">{% translate "Back" %}</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

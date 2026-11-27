@@ -28,3 +28,6 @@ class DeliveryOptionAdmin(BaseModelAdmin, TabbedTranslationAdmin):
     @display(description=_("price"), ordering="price")
     def price_display(self, obj: DeliveryOption):
         return format_gel(obj.price)
+
+
+from . import admin_orders  # noqa: E402, F401  (Order admin: list, detail, slip)

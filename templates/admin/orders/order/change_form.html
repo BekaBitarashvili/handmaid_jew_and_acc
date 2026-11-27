@@ -1,0 +1,61 @@
+{% extends "admin/change_form.html" %}
+{% load i18n money %}
+{% comment %}
+Order detail: a panel above the fields with what the owner needs on a phone — attention
+banner, the number and statuses, big buttons for the next steps, tap-to-call / tap-to-email
+(the recipient first when the piece is a gift) and the packing slip.
+{% endcomment %}
+{% block form_before %}
+{% if original %}
+<div class="order-panel">
+  {% if original.needs_attention %}
+    <div class="order-alert" role="alert">
+      <strong>⚠ {% translate "Needs attention" %}</strong>
+      <p>{{ original.attention_reason }}</p>
+      <a class="order-btn" href="{% url 'admin:orders_order_resolve' original.pk %}">{% translate "Mark as resolved" %}</a>
+    </div>
+  {% endif %}
+
+  <div class="order-head">
+    <div>
+      <p class="order-number">{{ original.number }}</p>
+      <p class="order-meta">
+        <span class="order-badge order-badge--{{ original.status }}">{{ original.get_status_display }}</span>
+        <span class="order-badge order-badge--pay-{{ original.payment_status }}">{{ original.get_payment_status_display }}</span>
+        <span>{{ original.created_at|date:"d.m.Y H:i" }}</span>
+        <span>{{ original.total|gel }}</span>
+      </p>
+    </div>
+    <div class="order-actions">
+      {% for to, label, danger in order_actions %}
+        <a class="order-btn {% if danger %}order-btn--danger{% else %}order-btn--primary{% endif %}" href="{% url 'admin:orders_order_status' original.pk to %}">{{ label }}</a>
+      {% endfor %}
+      {% if can_refund %}<a class="order-btn" href="{% url 'admin:orders_order_refund' original.pk %}">{% translate "Mark refunded" %}</a>{% endif %}
+      <a class="order-btn" href="{% url 'admin:orders_order_slip' original.pk %}" target="_blank" rel="noopener">{% translate "Packing slip" %}</a>
+    </div>
+  </div>
+
+  <div class="order-contacts">
+    {% if original.has_recipient %}
+      <div class="order-contact order-contact--recipient">
+        <p class="order-contact-label">{% translate "Recipient (gift)" %}</p>
+        <p class="order-contact-name">{{ original.recipient_name|default:"—" }}</p>
+        {% if original.recipient_phone %}<a class="order-btn" href="tel:{{ original.recipient_phone }}">📞 {{ recipient_phone }}</a>{% endif %}
+      </div>
+    {% endif %}
+    <div class="order-contact">
+      <p class="order-contact-label">{% if original.has_recipient %}{% translate "Buyer" %}{% else %}{% translate "Customer" %}{% endif %}</p>
+      <p class="order-contact-name">{{ original.customer_name }}</p>
+      <a class="order-btn" href="tel:{{ original.phone }}">📞 {{ order_phone }}</a>
+      <a class="order-btn" href="mailto:{{ original.email }}?subject={{ original.number|urlencode }}">✉ {{ original.email }}</a>
+    </div>
+    <div class="order-contact">
+      <p class="order-contact-label">{% translate "Delivery" %}</p>
+      <p class="order-contact-name">{{ original.delivery_name }}</p>
+      {% if original.requires_address %}<p>{{ original.address_line }}{% if original.city %}, {{ original.city }}{% endif %}</p>{% endif %}
+      {% if original.gift_note %}<p class="order-gift">🎁 “{{ original.gift_note }}”</p>{% elif original.gift_wrap %}<p class="order-gift">🎁 {% translate "Gift wrap" %}</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

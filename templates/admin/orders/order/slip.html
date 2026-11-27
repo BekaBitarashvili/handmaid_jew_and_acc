@@ -1,0 +1,69 @@
+{% load i18n money phones %}<!doctype html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>{% blocktranslate with number=order.number %}Packing slip {{ number }}{% endblocktranslate %}</title>
+  {% comment %}
+  Packing slip (SPEC §10): printed on A5/A4 and packed with the pieces. Prices are left out
+  when the customer asked (a gift); the gift note gets its own box; the recipient comes first.
+  {% endcomment %}
+  <style>
+    @page { size: A5; margin: 12mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; font: 14px/1.5 "FiraGO", Arial, "Noto Sans Georgian", sans-serif; font-synthesis: none; color: #2a1a0f; background: #fff; }
+    .slip { max-width: 148mm; margin: 0 auto; }
+    .brand { font: 22px "Cormorant Garamond", Georgia, "Noto Serif Georgian", serif; letter-spacing: .5px; }
+    .brand span { color: #a48c7a; }
+    header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 1px solid #dccfc2; padding-bottom: 12px; }
+    .muted { color: #6e5c48; font-size: 12px; }
+    h2 { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #6e5c48; margin: 18px 0 6px; font-weight: 500; }
+    .to { font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+    td { padding: 8px 0; border-bottom: 1px solid #e6d9cc; vertical-align: top; }
+    td.qty, td.price { text-align: right; white-space: nowrap; padding-left: 12px; }
+    img { width: 44px; height: 44px; object-fit: cover; margin-right: 10px; vertical-align: middle; }
+    .note { margin-top: 18px; padding: 14px 16px; border: 1px dashed #a48c7a; font: italic 17px/1.5 "Cormorant Garamond", Georgia, "Noto Serif Georgian", serif; white-space: pre-line; }
+    .total { text-align: right; margin-top: 8px; font-size: 15px; }
+    .actions { text-align: center; margin: 24px 0 0; }
+    .actions button { font: inherit; padding: 10px 24px; border: 1px solid #2a1a0f; background: #2a1a0f; color: #efe5db; border-radius: 2px; cursor: pointer; }
+    @media print { body { padding: 0; } .actions { display: none; } }
+  </style>
+</head>
+<body>
+<div class="slip">
+  <header>
+    <div class="brand"><span>✦</span> {{ site_settings.brand_name }}</div>
+    <div class="muted">{% blocktranslate with number=order.number %}Order {{ number }}{% endblocktranslate %} · {{ order.created_at|date:"d.m.Y" }}</div>
+  </header>
+
+  <h2>{% translate "Deliver to" %}</h2>
+  {% if order.has_recipient %}
+    <p class="to"><strong>{{ order.recipient_name }}</strong>{% if order.recipient_phone %} · {{ order.recipient_phone|phone }}{% endif %}</p>
+    <p class="muted">{% blocktranslate with name=order.customer_name %}A gift from {{ name }}{% endblocktranslate %}</p>
+  {% else %}
+    <p class="to"><strong>{{ order.customer_name }}</strong> · {{ order.phone|phone }}</p>
+  {% endif %}
+  <p>{{ order.delivery_name }}{% if order.requires_address %}<br>{{ order.address_line }}{% if order.city %}, {{ order.city }}{% endif %}{% endif %}</p>
+  {% if order.delivery_notes %}<p class="muted">{{ order.delivery_notes }}</p>{% endif %}
+
+  <h2>{% translate "Pieces" %}</h2>
+  <table>
+    {% for item in items %}
+      <tr>
+        <td>{% if item.image_url %}<img src="{{ item.image_url }}" alt="">{% endif %}{{ item.product_name }}{% if item.variant_name %} — {{ item.variant_name }}{% endif %}<br><span class="muted">{{ item.sku }}</span></td>
+        <td class="qty">× {{ item.qty }}</td>
+        {% if not order.hide_prices_on_slip %}<td class="price">{{ item.line_total|gel }}</td>{% endif %}
+      </tr>
+    {% endfor %}
+  </table>
+  {% if not order.hide_prices_on_slip %}<p class="total">{% translate "Total" %}: <strong>{{ order.total|gel }}</strong></p>{% endif %}
+
+  {% if order.gift_wrap %}<p><strong>🎁 {% translate "Gift wrap" %}</strong></p>{% endif %}
+  {% if order.gift_note %}<div class="note">{{ order.gift_note }}</div>{% endif %}
+
+  <p class="actions"><button type="button" onclick="window.print()">{% translate "Print" %}</button></p>
+</div>
+</body>
+</html>

@@ -163,17 +163,29 @@ class Cart:
         return self.subtotal + self.gift_wrap_total
 
 
+def free_delivery_reached(subtotal: int, site: SiteSettings) -> bool:
+    """The threshold is measured on the pieces after sales, without gift wrap (SPEC §6.3)."""
+    threshold = site.free_shipping_threshold
+    return threshold is not None and subtotal >= threshold
+
+
+def delivery_price(option: DeliveryOption, subtotal: int, site: SiteSettings | None = None) -> int:
+    """What this option costs for an order of `subtotal` (the one rule: cart and checkout)."""
+    site = site or SiteSettings.load()
+    if option.free_over_threshold and free_delivery_reached(subtotal, site):
+        return 0
+    return option.price
+
+
 def shipping_estimate(subtotal: int, site: SiteSettings | None = None) -> ShippingEstimate:
     site = site or SiteSettings.load()
     threshold = site.free_shipping_threshold
-    free = threshold is not None and subtotal >= threshold
+    free = free_delivery_reached(subtotal, site)
     options = list(DeliveryOption.objects.filter(is_active=True))
-
-    def cost(option: DeliveryOption) -> int:
-        return 0 if free and option.free_over_threshold else option.price
-
-    address = [cost(o) for o in options if o.requires_address]
-    pickup = next((cost(o) for o in options if not o.requires_address), None)
+    address = [delivery_price(o, subtotal, site) for o in options if o.requires_address]
+    pickup = next(
+        (delivery_price(o, subtotal, site) for o in options if not o.requires_address), None
+    )
     remaining = max(threshold - subtotal, 0) if threshold is not None else 0
     progress = 100 if free or not threshold else min(subtotal * 100 // threshold, 99)
     return ShippingEstimate(

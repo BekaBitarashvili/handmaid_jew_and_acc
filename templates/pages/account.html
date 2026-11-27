@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n navigation %}{% url_if_exists "wishlist:list" as wishlist_url %}
+{% load i18n %}
 {% block content %}
 <div class="container-site py-16 md:py-24">
   <div class="mx-auto max-w-xl text-center">
@@ -9,8 +9,7 @@
     <p class="mt-3 text-small text-taupe-text">{% translate "You never need an account to order — checkout works as a guest." %}</p>
     <ul class="mt-12 border-y border-sand text-left">
       <li class="flex items-center justify-between py-4">
-        {% if wishlist_url %}<a class="link font-serif text-h3" href="{{ wishlist_url }}">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</a>
-        {% else %}<span class="font-serif text-h3 text-espresso">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</span>{% endif %}
+        <a class="link font-serif text-h3" href="{% url 'wishlist:list' %}">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</a>
         {% include "components/icon.html" with name="heart" size=18 class="text-cocoa" %}
       </li>
     </ul>

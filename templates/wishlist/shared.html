@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-site py-10 md:py-16">
+  {% include "components/star.html" with size=16 class="text-clay" %}
+  <h1 class="display mt-4">{% translate "A wishlist" %}</h1>
+  <p class="mt-4 max-w-xl text-cocoa">{% translate "Someone shared the pieces they love. Perhaps a gift idea?" %}</p>
+
+  <div class="mt-10">
+    {% if products %}
+      <ul class="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
+        {% for product in products %}<li>{% include "wishlist/_card.html" with removable=False %}</li>{% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-cocoa">{% translate "These pieces are no longer in the shop." %}</p>
+      <a href="{% url 'catalog:shop' %}" class="btn btn-light mt-8">{% translate "Visit the shop" %}</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

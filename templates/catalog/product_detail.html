@@ -94,12 +94,17 @@
                @click="if (!($event.metaKey || $event.ctrlKey)) { $event.preventDefault(); $dispatch('cart-load') }">
               {% include "components/icon.html" with name="check" size=18 %}{% translate "In your cart" %}
             </a>
-            {# TODO(1c step 5): wishlist heart. #}
+            {% include "wishlist/_heart.html" with saved=product.pk|in_set:wishlist_ids %}
           </div>
         {% endif %}
-        {% if product.allow_commission_request and commission %}
-          {% if product.status == "sold" or not product.is_available %}
-            <a href="{{ commission }}" class="btn btn-dark w-full">{% translate "Commission a similar piece" %}</a>
+        {% if product.status == "sold" or not product.is_available %}
+          <div class="flex gap-3">
+            {% if product.allow_commission_request and commission %}
+              <a href="{{ commission }}" class="btn btn-dark flex-1">{% translate "Commission a similar piece" %}</a>
+            {% endif %}
+            {% if not is_preview %}{% include "wishlist/_heart.html" with saved=product.pk|in_set:wishlist_ids %}{% endif %}
+          </div>
+          {% if product.allow_commission_request and commission %}
             <p class="text-small text-taupe-text">{% translate "Each piece is made once. Tell us what you liked about this one, and a similar piece can be made for you." %}</p>
           {% endif %}
         {% endif %}

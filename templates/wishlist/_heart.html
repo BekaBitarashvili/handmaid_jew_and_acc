@@ -1,0 +1,15 @@
+{% load i18n %}{% comment %}
+Wishlist heart on the product page: a toggle button (aria-pressed). HTMX swaps just this
+form and updates "Wishlist (n)" in the menu out-of-band; without JS it posts and comes back.
+Context: product, saved, oob.
+{% endcomment %}<form id="wishlist-heart" method="post" action="{% url 'wishlist:toggle' product.pk %}"
+      hx-post="{% url 'wishlist:toggle' product.pk %}" hx-target="this" hx-swap="outerHTML" hx-disabled-elt="find button">
+  {% csrf_token %}
+  <input type="hidden" name="view" value="heart">
+  <input type="hidden" name="next" value="{{ product.get_absolute_url }}">
+  <button type="submit" class="btn btn-outline heart-button px-4" aria-pressed="{{ saved|yesno:'true,false' }}"
+          aria-label="{% translate 'Save to wishlist' %}">
+    {% include "components/icon.html" with name="heart" size=20 filled=saved %}
+  </button>
+</form>
+{% if oob %}<span id="wishlist-count" hx-swap-oob="true">({{ wishlist_count }})</span>{% endif %}

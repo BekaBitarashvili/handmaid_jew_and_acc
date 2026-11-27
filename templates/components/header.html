@@ -94,8 +94,7 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
     <div class="menu-item container-site" style="--i: {{ nav|length }}">
       <div class="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-sand py-6 text-small">
         <a href="{% url 'pages:account' %}" @click="close(false)" class="link">{% translate "Account" %}</a>
-        {% if wishlist_url %}<a href="{{ wishlist_url }}" @click="close(false)" class="link">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</a>
-        {% else %}<span class="text-taupe-text">{% translate "Wishlist" %} ({{ wishlist_count|default:0 }})</span>{% endif %}
+        <a href="{% url 'wishlist:list' %}" @click="close(false)" class="link">{% translate "Wishlist" %} <span id="wishlist-count">({{ wishlist_count|default:0 }})</span></a>
         {% include "components/language_switcher.html" with class="ml-auto gap-2" %}
       </div>
     </div>

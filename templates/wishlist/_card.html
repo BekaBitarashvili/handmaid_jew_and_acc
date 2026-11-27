@@ -1,0 +1,48 @@
+{% load i18n catalog_tags money %}{% comment %}
+Wishlist card: the shop card's look; sold pieces muted with "Sold" and the commission link.
+On your own wishlist a small ✕ removes the piece (removable=True).
+Context: product (with_card_data), removable.
+{% endcomment %}{% with images=product.images.all %}{% percent_off product as off %}{% commission_url product as commission %}
+<article class="group relative">
+  <a href="{{ product.get_absolute_url }}" class="relative block aspect-square overflow-hidden bg-shell" tabindex="-1" aria-hidden="true">
+    {% if product.is_available %}
+      {% product_picture images.0 alt="" css="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" %}
+    {% else %}
+      {% product_picture images.0 alt="" css="h-full w-full object-cover opacity-70 grayscale" %}
+    {% endif %}
+    {% if off and product.is_available %}<span class="sale-badge absolute left-2 top-2">−{{ off }}%</span>{% endif %}
+  </a>
+  {% if removable %}
+    <form method="post" action="{% url 'wishlist:toggle' product.pk %}" class="absolute right-2 top-2"
+          hx-post="{% url 'wishlist:toggle' product.pk %}" hx-target="#wishlist-grid" hx-swap="innerHTML">
+      {% csrf_token %}<input type="hidden" name="view" value="page"><input type="hidden" name="next" value="{% url 'wishlist:list' %}">
+      <button type="submit" class="flex size-9 items-center justify-center rounded-sm bg-linen/90 text-cocoa hover:text-espresso"
+              aria-label="{% blocktranslate with name=product.name %}Remove {{ name }} from your wishlist{% endblocktranslate %}">
+        {% include "components/icon.html" with name="x" size=16 %}
+      </button>
+    </form>
+  {% endif %}
+  <div class="mt-3 flex items-start justify-between gap-3">
+    <div class="min-w-0">
+      <h3 class="card-name"><a href="{{ product.get_absolute_url }}" class="hover:text-cocoa">{{ product.name }}</a></h3>
+      {% if product.is_available %}
+        <p class="mt-1 text-small">{% price_block product %}</p>
+      {% else %}
+        <p class="mt-1 text-small text-sold-text">
+          {% if product.status == "sold" %}<span class="price text-sold-text">{{ product.price|gel }}</span> · {% translate "Sold" %}{% else %}{% translate "Out of stock" %}{% endif %}
+        </p>
+        {% if commission and product.allow_commission_request %}
+          <a href="{{ commission }}" class="link mt-2 inline-block text-small">{% translate "Commission a similar piece" %}</a>
+        {% endif %}
+      {% endif %}
+    </div>
+    {% if product.is_available %}
+      {% if product.variant_count == 1 %}
+        {% include "components/cart_button.html" with name=product.name url=product.get_absolute_url variant_id=product.first_variant_id in_cart=product.first_variant_id|in_set:cart_variant_ids %}
+      {% else %}
+        {% include "components/cart_button.html" with name=product.name url=product.get_absolute_url variant_id=None %}
+      {% endif %}
+    {% endif %}
+  </div>
+</article>
+{% endwith %}

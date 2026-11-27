@@ -1,0 +1,11 @@
+{% load i18n %}{% comment %}
+Own wishlist grid (swapped into #wishlist-grid after removing a piece).
+Context: products, oob.
+{% endcomment %}{% if oob %}<span id="wishlist-count" hx-swap-oob="true">({{ wishlist_count }})</span>{% endif %}
+{% if products %}
+  <ul class="grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4">
+    {% for product in products %}<li>{% include "wishlist/_card.html" with removable=True %}</li>{% endfor %}
+  </ul>
+{% else %}
+  {% include "components/empty_state.html" with kind="wishlist" %}
+{% endif %}

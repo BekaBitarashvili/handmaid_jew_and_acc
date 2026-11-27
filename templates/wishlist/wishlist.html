@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-site py-10 md:py-16">
+  <h1 class="display">{% translate "Wishlist" %}</h1>
+  <p class="mt-4 max-w-xl text-cocoa">{% translate "Pieces you saved. They stay on this device — no account needed." %}</p>
+
+  <div id="wishlist-grid" class="mt-10">
+    {% include "wishlist/_grid_partial.html" %}
+  </div>
+
+  {% if share_url %}
+    {# Read-only link, e.g. as a gift hint. It contains only the saved pieces. #}
+    <section aria-labelledby="share-title" class="mt-20 max-w-xl border-t border-sand pt-8"
+             x-data="{ copied: false }">
+      <h2 id="share-title" class="text-h3">{% translate "Share your wishlist" %}</h2>
+      <p class="mt-2 text-small text-taupe-text">{% translate "Anyone with this link sees the pieces you saved — a quiet gift hint." %}</p>
+      <div class="mt-4 flex gap-3">
+        <label for="share-url" class="sr-only">{% translate "Share link" %}</label>
+        <input id="share-url" x-ref="url" type="text" readonly value="{{ share_url }}" @focus="$el.select()"
+               class="min-h-11 min-w-0 flex-1 border border-sand bg-shell px-3 text-small text-cocoa">
+        <button type="button" class="btn btn-outline"
+                @click="navigator.clipboard.writeText($refs.url.value).then(() => { copied = true; setTimeout(() => copied = false, 2500) })">
+          <span x-show="!copied">{% translate "Copy link" %}</span>
+          <span x-show="copied" x-cloak>{% translate "Link copied" %}</span>
+        </button>
+      </div>
+      <p class="sr-only" role="status" aria-live="polite" x-text="copied ? '{% translate "Link copied" %}' : ''"></p>
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

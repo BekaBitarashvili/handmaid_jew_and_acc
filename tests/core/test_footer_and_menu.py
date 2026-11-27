@@ -56,7 +56,7 @@ class TestMobileMenu:
         links = re.findall(r'class="menu-link"[^>]*>([^<]+)<', menu)
         assert links == ["Shop", "New Arrivals", "Sale", "About", "Contact"]
         assert 'href="/en/account/"' in menu
-        assert "Wishlist (0)" in menu
+        assert 'Wishlist <span id="wishlist-count">(0)</span>' in menu
         assert "/i18n/setlang/" in menu
 
     def test_page_regions_can_be_made_inert(self, page):

@@ -85,7 +85,7 @@ Browser ── HTMX/Alpine ──► Django (Gunicorn) ──► PostgreSQL
 Money fields are integers in **tetri**. All content text fields marked 🌐 are translated.
 
 ### core
-- **SiteSettings** (singleton): intro_text 🌐 (home intro line), pinterest_url, brand_name, logo (optional, text fallback), contact phone/email/address, social links, free_shipping_threshold, `owner_notification_email`, `owner_notification_phone`, announcement_bar 🌐 (optional), maintenance_mode.
+- **SiteSettings** (singleton): intro_text 🌐 (home intro line), pinterest_url, brand_name, logo (optional, text fallback), contact phone/email/address, social links, free_shipping_threshold (measured on the pieces after sales, without gift wrap), gift_wrap_price (one per order, 0 = free), `owner_notification_email`, `owner_notification_phone`, announcement_bar 🌐 (optional), maintenance_mode.
 
 ### catalog
 - **Category**: show_on_home + home_order (home tiles, up to 4); slugs `new` / `sale` are reserved. name 🌐, slug 🌐, description 🌐, **code** (3 capital letters, unique — the SKU prefix, e.g. `NEC`; read-only once the category has products), image, parent (nullable, max depth 2: a parent must be top-level, a category with children stays top-level), sort_order, is_active.
@@ -112,11 +112,11 @@ Money fields are integers in **tetri**. All content text fields marked 🌐 are 
 - Rich text (Stone.story, Product.description / story): `RichTextField`, edited with unfold's WYSIWYG, sanitised with nh3 on every save to `p, br, strong, em, a, ul, ol, li, h3` (the editor toolbar offers only these).
 
 ### cart (no model — session based)
-Session key `cart`: `{variant_id: qty}` + `gift_wrap`, `promo_code`. Cart service resolves prices fresh on every render.
+Session key `cart` (Phase 1c): `{"lines": {variant_id: {"qty", "seen", "gone"}}, "gift_wrap": bool}`. `apps/cart/services.py` (SessionCart) recomputes every price through the pricing service on each render; `seen` is the unit price the customer last saw (a difference produces one notice), `gone` marks a sold / out-of-stock line that stays visible until removed. Qty capped at `available` and at 10 per line; unique pieces fixed at 1; 30 lines max. Adding reserves nothing (stock is held at checkout, §7). Promo codes: Phase 3.
 
 ### wishlist
-- No account → stored in a signed cookie (list of product IDs, max 50). Heart icon on cards & product page; `/wishlist/` page shows items with availability (sold items shown with "Commission similar" CTA).
-- Optional "Share wishlist" link: `/wishlist/s/<signed-token>/` (read-only) — useful for gift hints.
+- No account → product IDs in a signed cookie (newest first, max 50, 1 year, HttpOnly, SameSite=Lax; no personal data, set only after the customer presses the heart, so strictly necessary). Heart on the **product page** (also on sold pieces; cards stay name + price, redesign); `/wishlist/` shows the pieces in the shop card style, sold ones muted with "Sold" + commission link, hidden / deleted ones dropped (cookie cleaned). "Wishlist (n)" in the mobile menu and the account page.
+- "Share wishlist" link (Phase 1c): `/wishlist/s/<signed-token>/` — read-only, noindex, tampered tokens 404; useful for gift hints.
 
 ### promotions
 - **Sale** (implemented in Phase 1, redesign): name (internal), discount_type (`percent` 1–90 | `fixed` ₾), applies_to_all / products M2M / categories M2M (subcategories included), starts_at, ends_at (empty = open-ended), is_active; home banner fields: show_on_home, banner_title 🌐, banner_subtitle 🌐, banner_image. Best single sale wins per item (no stacking); percent rounds half-up to whole tetri, fixed never below 0. `promotions/services.py` holds the rule in Python (product page, cart, checkout) and as a SQL expression (listings sort and filter by the discounted price); tests keep both identical. Display: old price struck through + new price + "-30%" badge (fixed discounts shown as a percentage). JSON-LD: discounted price, priceValidUntil = ends_at.
@@ -166,10 +166,11 @@ Gallery (swipe on mobile, thumbnails desktop, tap to fullscreen zoom) · name ·
 Sold product: page stays live (SEO), shows the price **muted next to "Sold"** + Commission CTA, no add-to-cart. The price stays in JSON-LD (`SoldOut`). "Commission a similar piece" links to the request form once it exists (Phase 2), until then `mailto:` the contact e-mail with the SKU in the subject. Gallery: one CSS scroll-snap track (native swipe on phones, thumbnails + arrow keys on desktop), tap/click opens a fullscreen `<dialog>` (pinch-zoom on touch, click-to-zoom with a mouse). Variant pills update price / availability / photo without a request. Accordions are native `<details>`; empty sections are left out; delivery prices of 0 (not yet set) are not shown.
 
 ### 6.3 Cart (drawer + page)
-- Add to cart opens a **side drawer** (HTMX swap) — no reload. `/cart/` full page also exists.
-- Change qty (capped at `available`; unique items qty fixed to 1), remove, promo code apply/remove, gift wrap toggle.
-- Totals: subtotal, sale savings, promo discount, gift wrap, shipping (estimate; "free over X ₾" progress hint), total.
-- Header cart count updated via HTMX OOB swap / `HX-Trigger`.
+- "Add to cart" (product page: the selected variant; product cards: directly when the piece has one variant, otherwise a link to the product page) fills and opens a **side drawer** (HTMX) — no reload. The header cart icon opens it too. `/cart/` full page also exists. Without JS the forms post and land on `/cart/`. A one-of-a-kind piece already in the cart shows "In your cart" instead of "Add to cart"; cards show a check.
+- Change qty (− n + stepper; capped at `available` and 10; unique items fixed to 1), remove, gift wrap switch (one per order, page only).
+- Totals (page): subtotal (after sales), sale savings, gift wrap, delivery estimate ("Delivery from X ₾" = cheapest active option that needs an address, plus "Pickup free" or its price; exact price at checkout), free-delivery hint "Add X ₾ more for free delivery" with a thin bar (threshold on items after sales, without gift wrap), total (items + gift wrap; delivery is added at checkout). The drawer shows lines, savings and subtotal.
+- **Never silent**: on every drawer / page render the cart is checked again. A sold, out-of-stock or hidden piece moves to a "No longer available" block (out of the totals, removed by the customer); a lowered quantity or a changed price (sale started / ended, owner edit) gives one clear message. Messages are visible and go to an `aria-live` region.
+- Header cart count updated via HTMX out-of-band swap; `HX-Trigger: cart-open` opens the drawer after adding.
 
 ### 6.4 Checkout (single page, guest)
 Sections: Contact (name, email, phone) → Delivery (method radio + city + address; hidden for pickup) → Gift (wrap, note, hide prices) → Payment (BOG / TBC radio, card logos) → Summary → consent checkboxes (Terms + Privacy required; marketing optional, unchecked by default) → "Pay ₾X".
@@ -294,7 +295,7 @@ Georgian-capable fonts are mandatory — test each with: `ხელნაკე�
 - **Product card** (redesign): square photo (second photo cross-fades on hover, mouse only), upright serif name, price, small square cart button; **no text labels** — only a sale gets a "-30%" pill plus old / new price. "One of a kind — only 1" stays on the product page.
 - **Ornament**: one small thin line-art motif (e.g. a stylized bead/stone outline SVG) used as section divider — sparingly.
 - **Forms**: underline-style or hairline inputs, generous height (48px), labels above, inline validation.
-- **Cart drawer**: slides from right, 420px desktop / full-width mobile.
+- **Cart drawer**: native modal `<dialog>` sliding in from the right, 420px desktop / full-width mobile, 400ms; focus trap, Esc, inert page and backdrop click come from `showModal()`; focus returns to the button that opened it. Empty states (cart, wishlist): star, italic heading, one calm line, quiet buttons.
 - **Toasts**: bottom-center, small, auto-dismiss 3s.
 - **Icons**: thin stroke (1.25px) — Lucide or Phosphor Light.
 
@@ -353,9 +354,9 @@ Django Admin + `django-unfold`, tested on a phone.
 
 **Phase 0 — Foundation**: repo, Docker, settings split, i18n setup, Tailwind + fonts + design tokens, base layout (header/footer), CI (ruff + pytest), seed command with demo data.
 
-**Phase 1 — Sellable MVP**: catalog (models, admin, list/filter/detail), **redesign (reference look, home page, New Arrivals, Sale pricing pulled forward from Phase 3, simple search)**, cart drawer, guest checkout, reservations, fake provider → BOG → TBC, order emails, owner notifications, order status page, admin order management + packing slip, legal page placeholders, cookie banner.
+**Phase 1 — Sellable MVP**: catalog (models, admin, list/filter/detail), **redesign (reference look, home page, New Arrivals, Sale pricing pulled forward from Phase 3, simple search)**, cart drawer + cart page + wishlist (incl. share link) and gift wrap (pulled forward into 1c), guest checkout, reservations, fake provider → BOG → TBC, order emails, owner notifications, order status page, admin order management + packing slip, legal page placeholders, cookie banner.
 
-**Phase 2 — Brand & polish**: About text, commission request form, FAQ / Contact form, wishlist share link, gift wrapping, SEO & sitemaps, performance pass, accessibility audit. (Stone glossary and Archive were dropped in the redesign.)
+**Phase 2 — Brand & polish**: About text, commission request form, FAQ / Contact form, SEO & sitemaps, performance pass, accessibility audit. (Stone glossary and Archive were dropped in the redesign.)
 
 **Phase 3 — Growth**: promo codes, optional customer accounts (order history, saved wishlist — guest checkout always stays), SMS notifications, admin dashboard metrics, full-text search (Postgres), analytics (consent-based), anonymization action, optional API refunds.
 

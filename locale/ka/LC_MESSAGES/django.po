@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-25 23:53+0400\n"
+"POT-Creation-Date: 2026-11-28 00:06+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,85 @@ msgstr ""
 #: apps/cart/apps.py
 msgid "Cart"
 msgstr "კალათა"
+
+#: apps/cart/services.py
+msgid "Added to your cart."
+msgstr "დაემატა კალათაში."
+
+#: apps/cart/services.py
+msgid "This piece is already in your cart — there is only one."
+msgstr "ეს ნივთი უკვე თქვენს კალათაშია — ის მხოლოდ ერთია."
+
+#: apps/cart/services.py
+msgid "You already have all available pieces in your cart."
+msgstr "ყველა ხელმისაწვდომი ეგზემპლარი უკვე თქვენს კალათაშია."
+
+#: apps/cart/services.py
+msgid "Sorry — this piece is no longer available."
+msgstr "სამწუხაროდ, ეს ნივთი აღარ არის ხელმისაწვდომი."
+
+#: apps/cart/services.py
+msgid "Your cart is full. Remove something to add more."
+msgstr "კალათა სავსეა. ახლის დასამატებლად რომელიმე ნივთი წაშალეთ."
+
+#: apps/cart/services.py
+msgid "A piece in your cart is no longer available."
+msgstr "კალათაში არსებული ერთ-ერთი ნივთი აღარ არის ხელმისაწვდომი."
+
+#: apps/cart/services.py apps/catalog/models.py
+#: templates/catalog/product_detail.html templates/core/styleguide.html
+#: templates/wishlist/_card.html
+msgid "Sold"
+msgstr "გაყიდულია"
+
+#: apps/cart/services.py
+#, python-format
+msgid "%(name)s has just been sold."
+msgstr "„%(name)s“ ახლახან გაიყიდა."
+
+#: apps/cart/services.py templates/catalog/product_detail.html
+#: templates/wishlist/_card.html
+msgid "Out of stock"
+msgstr "მარაგში არ არის"
+
+#: apps/cart/services.py
+#, python-format
+msgid "%(name)s is out of stock right now."
+msgstr "„%(name)s“ ამჟამად მარაგში არ არის."
+
+#: apps/cart/services.py templates/cart/_gone_lines.html
+msgid "No longer available"
+msgstr "აღარ არის ხელმისაწვდომი"
+
+#: apps/cart/services.py
+#, python-format
+msgid "%(name)s is no longer available."
+msgstr "„%(name)s“ აღარ არის ხელმისაწვდომი."
+
+#: apps/cart/services.py
+#, python-format
+msgid "Only %(n)s of %(name)s left — quantity changed to %(n)s."
+msgstr "„%(name)s“ მხოლოდ %(n)s დარჩა — რაოდენობა შეიცვალა: %(n)s."
+
+#: apps/cart/services.py
+#, python-format
+msgid "The price of %(name)s changed from %(old)s to %(new)s."
+msgstr "„%(name)s“ — ფასი შეიცვალა: იყო %(old)s, ახლა %(new)s."
+
+#: apps/cart/views.py templates/cart/cart.html
+#: templates/components/cart_drawer.html
+msgid "Your cart"
+msgstr "კალათა"
+
+#: apps/cart/views.py
+#, python-format
+msgid "Only %(n)s available."
+msgstr "ხელმისაწვდომია მხოლოდ %(n)s."
+
+#: apps/cart/views.py
+#, python-format
+msgid "%(name)s was removed from your cart."
+msgstr "„%(name)s“ წაიშალა კალათიდან."
 
 #: apps/catalog/admin.py
 msgid "Photo tips: square photos with the piece in the centre, the same calm backdrop (linen, paper, old wood or stone), daylight, at least 3 shots per piece — detail, full piece, worn. At least 2000px on each side."
@@ -297,11 +376,6 @@ msgstr "აქტიური"
 msgid "Hidden"
 msgstr "დამალული"
 
-#: apps/catalog/models.py templates/catalog/product_detail.html
-#: templates/core/styleguide.html
-msgid "Sold"
-msgstr "გაყიდულია"
-
 #: apps/catalog/models.py
 msgid "Automatic (first 30 days after publishing)"
 msgstr "ავტომატურად (გამოქვეყნებიდან პირველი 30 დღე)"
@@ -487,7 +561,7 @@ msgstr "ეს ვარიანტი სხვა პროდუქტს �
 msgid "Shop"
 msgstr "მაღაზია"
 
-#: apps/catalog/seo.py apps/pages/views.py templates/base.html
+#: apps/catalog/seo.py apps/core/seo.py apps/pages/views.py templates/base.html
 #: templates/pages/home.html
 msgid "Handmade jewelry with natural stones"
 msgstr "ხელნაკეთი სამკაულები ბუნებრივი ქვებით"
@@ -566,8 +640,8 @@ msgid "Legal entity"
 msgstr "იურიდიული პირი"
 
 #: apps/core/admin.py
-msgid "Shipping"
-msgstr "მიწოდება"
+msgid "Shipping & gift wrap"
+msgstr "მიწოდება და საჩუქრის შეფუთვა"
 
 #: apps/core/admin.py
 msgid "Owner notifications"
@@ -638,8 +712,16 @@ msgid "free shipping threshold (₾)"
 msgstr "უფასო მიწოდების ზღვარი (₾)"
 
 #: apps/core/models.py
-msgid "Order subtotal in lari. Empty means no free shipping."
-msgstr "შეკვეთის ჯამი ლარებში. ცარიელი ველი ნიშნავს, რომ უფასო მიწოდება არ მოქმედებს."
+msgid "Measured on the pieces after sales, without gift wrap. Empty means no free shipping."
+msgstr "ითვლება ნივთების ფასით ფასდაკლების შემდეგ, საჩუქრის შეფუთვის გარეშე. ცარიელი ველი ნიშნავს, რომ უფასო მიწოდება არ მოქმედებს."
+
+#: apps/core/models.py
+msgid "gift wrap price (₾)"
+msgstr "საჩუქრის შეფუთვის ფასი (₾)"
+
+#: apps/core/models.py
+msgid "One price per order. 0 means gift wrap is free."
+msgstr "ერთი ფასი შეკვეთაზე. 0 ნიშნავს, რომ საჩუქრის შეფუთვა უფასოა."
 
 #: apps/core/models.py
 msgid "owner notification email"
@@ -948,10 +1030,15 @@ msgstr "მიუთითეთ ფასდაკლების თანხ�
 msgid "The end must be after the start."
 msgstr "დასრულება დაწყების შემდეგ უნდა იყოს."
 
-#: apps/wishlist/apps.py templates/components/header.html
-#: templates/pages/account.html
+#: apps/wishlist/apps.py apps/wishlist/views.py
+#: templates/components/header.html templates/pages/account.html
+#: templates/wishlist/wishlist.html
 msgid "Wishlist"
 msgstr "სურვილების სია"
+
+#: apps/wishlist/views.py
+msgid "Shared wishlist"
+msgstr "გაზიარებული სურვილების სია"
 
 #: config/settings/base.py
 msgid "Georgian"
@@ -1025,6 +1112,145 @@ msgstr "მთავარ გვერდზე დაბრუნება"
 #: templates/base.html
 msgid "Skip to content"
 msgstr "შინაარსზე გადასვლა"
+
+#: templates/cart/_count.html
+#, python-format
+msgid "Cart, %(n)s item"
+msgid_plural "Cart, %(n)s items"
+msgstr[0] "კალათა, %(n)s ნივთი"
+msgstr[1] "კალათა, %(n)s ნივთი"
+
+#: templates/cart/_drawer_partial.html
+#, python-format
+msgid "Your cart (%(n)s)"
+msgstr "კალათა (%(n)s)"
+
+#: templates/cart/_drawer_partial.html templates/components/cart_drawer.html
+msgid "Close cart"
+msgstr "კალათის დახურვა"
+
+#: templates/cart/_drawer_partial.html templates/cart/_page_partial.html
+msgid "You save"
+msgstr "დაზოგავთ"
+
+#: templates/cart/_drawer_partial.html templates/cart/_page_partial.html
+msgid "Subtotal"
+msgstr "ნივთების ჯამი"
+
+#: templates/cart/_drawer_partial.html
+msgid "Gift wrap and delivery are chosen on the next step."
+msgstr "საჩუქრის შეფუთვასა და მიწოდებას შემდეგ ეტაპზე აირჩევთ."
+
+#: templates/cart/_drawer_partial.html
+msgid "View cart"
+msgstr "კალათის ნახვა"
+
+#: templates/cart/_drawer_partial.html templates/cart/_page_partial.html
+msgid "Continue shopping"
+msgstr "ყიდვის გაგრძელება"
+
+#: templates/cart/_gone_lines.html templates/cart/_line.html
+#, python-format
+msgid "Remove %(name)s"
+msgstr "„%(name)s“ — წაშლა"
+
+#: templates/cart/_gone_lines.html templates/cart/_line.html
+msgid "Remove"
+msgstr "წაშლა"
+
+#: templates/cart/_line.html templates/catalog/product_detail.html
+#: templates/components/price.html templates/core/styleguide.html
+#: templates/pages/home.html
+msgid "Original price"
+msgstr "საწყისი ფასი"
+
+#: templates/cart/_line.html templates/catalog/product_detail.html
+#: templates/components/price.html templates/core/styleguide.html
+#: templates/pages/home.html
+msgid "Sale price"
+msgstr "ფასდაკლებული ფასი"
+
+#: templates/cart/_line.html
+#, python-format
+msgid "%(price)s each"
+msgstr "ცალი — %(price)s"
+
+#: templates/cart/_line.html templates/core/styleguide.html
+msgid "One of a kind"
+msgstr "ერთადერთი ეგზემპლარი"
+
+#: templates/cart/_line.html
+#, python-format
+msgid "Quantity of %(name)s"
+msgstr "„%(name)s“ — რაოდენობა"
+
+#: templates/cart/_line.html
+msgid "One less"
+msgstr "ერთით ნაკლები"
+
+#: templates/cart/_line.html
+#, python-format
+msgid "Quantity: %(n)s"
+msgstr "რაოდენობა: %(n)s"
+
+#: templates/cart/_line.html
+msgid "One more"
+msgstr "ერთით მეტი"
+
+#: templates/cart/_page_partial.html
+msgid "Summary"
+msgstr "შეჯამება"
+
+#: templates/cart/_page_partial.html
+msgid "Gift wrap"
+msgstr "საჩუქრის შეფუთვა"
+
+#: templates/cart/_page_partial.html
+msgid "Free"
+msgstr "უფასო"
+
+#: templates/cart/_page_partial.html
+msgid "Delivery"
+msgstr "მიწოდება"
+
+#: templates/cart/_page_partial.html templates/components/price.html
+#, python-format
+msgid "from %(price)s"
+msgstr "%(price)s-დან"
+
+#: templates/cart/_page_partial.html
+#, python-format
+msgid "Pickup %(price)s"
+msgstr "თვითგატანა — %(price)s"
+
+#: templates/cart/_page_partial.html
+msgid "Pickup free"
+msgstr "თვითგატანა უფასოა"
+
+#: templates/cart/_page_partial.html
+msgid "Free delivery"
+msgstr "უფასო მიწოდება"
+
+#: templates/cart/_page_partial.html
+#, python-format
+msgid "Add %(amount)s more for free delivery."
+msgstr "დაამატეთ კიდევ %(amount)s და მიწოდება უფასო იქნება."
+
+#: templates/cart/_page_partial.html
+msgid "Total"
+msgstr "სულ"
+
+#: templates/cart/_page_partial.html
+msgid "Delivery is added at checkout, once we know the address."
+msgstr "მიწოდების ღირებულება დაემატება შეკვეთისას, მისამართის მითითების შემდეგ."
+
+#: templates/cart/_page_partial.html
+msgid "Checkout"
+msgstr "შეკვეთის გაფორმება"
+
+#: templates/cart/_page_partial.html
+msgid "Checkout opens soon."
+msgstr "შეკვეთის გაფორმება მალე გაიხსნება."
 
 #: templates/catalog/_filter_fields.html
 msgid "Type"
@@ -1180,23 +1406,9 @@ msgstr "გადახედვა — ეს პროდუქტი მა�
 msgid "Breadcrumb"
 msgstr "ნავიგაციის ჯაჭვი"
 
-#: templates/catalog/product_detail.html templates/components/price.html
-#: templates/core/styleguide.html templates/pages/home.html
-msgid "Original price"
-msgstr "საწყისი ფასი"
-
-#: templates/catalog/product_detail.html templates/components/price.html
-#: templates/core/styleguide.html templates/pages/home.html
-msgid "Sale price"
-msgstr "ფასდაკლებული ფასი"
-
 #: templates/catalog/product_detail.html templates/core/styleguide.html
 msgid "In stock"
 msgstr "მარაგშია"
-
-#: templates/catalog/product_detail.html
-msgid "Out of stock"
-msgstr "მარაგში არ არის"
 
 #: templates/catalog/product_detail.html
 msgid "One of a kind — only 1"
@@ -1219,14 +1431,11 @@ msgid "Add to cart"
 msgstr "კალათაში დამატება"
 
 #: templates/catalog/product_detail.html
-msgid "Add to wishlist"
-msgstr "სურვილების სიაში დამატება"
-
-#: templates/catalog/product_detail.html
-msgid "Online ordering opens soon."
-msgstr "ონლაინ შეკვეთა მალე გაიხსნება."
+msgid "In your cart"
+msgstr "კალათაშია"
 
 #: templates/catalog/product_detail.html templates/core/styleguide.html
+#: templates/wishlist/_card.html
 msgid "Commission a similar piece"
 msgstr "მსგავსი ნივთის შეკვეთა"
 
@@ -1265,6 +1474,50 @@ msgstr "არჩეული ფოტოები:"
 #: templates/catalog/widgets/multiple_photos.html
 msgid "Choose photos"
 msgstr "ფოტოების არჩევა"
+
+#: templates/components/cart_button.html
+#, python-format
+msgid "%(name)s — in your cart"
+msgstr "„%(name)s“ — კალათაშია"
+
+#: templates/components/cart_button.html
+#, python-format
+msgid "Add %(name)s to cart"
+msgstr "„%(name)s“ — კალათაში დამატება"
+
+#: templates/components/cart_button.html
+#, python-format
+msgid "Choose options for %(name)s"
+msgstr "„%(name)s“ — ვარიანტის არჩევა"
+
+#: templates/components/cart_drawer.html
+msgid "Loading…"
+msgstr "იტვირთება…"
+
+#: templates/components/empty_state.html
+msgid "Your cart is empty"
+msgstr "კალათა ცარიელია"
+
+#: templates/components/empty_state.html
+msgid "Pieces you add will wait here."
+msgstr "დამატებული ნივთები აქ დაგელოდებათ."
+
+#: templates/components/empty_state.html templates/pages/about.html
+#: templates/wishlist/shared.html
+msgid "Visit the shop"
+msgstr "მაღაზიაში გადასვლა"
+
+#: templates/components/empty_state.html templates/pages/home.html
+msgid "New Arrivals"
+msgstr "ახალი ნივთები"
+
+#: templates/components/empty_state.html
+msgid "Nothing saved yet"
+msgstr "ჯერ არაფერი შეგინახავთ"
+
+#: templates/components/empty_state.html
+msgid "Tap ♡ on a piece you love to keep it here."
+msgstr "შეეხეთ ♡-ს მოწონებულ ნივთზე და ის აქ შეინახება."
 
 #: templates/components/footer.html
 msgid "Information"
@@ -1323,13 +1576,6 @@ msgid "Search"
 msgstr "ძიება"
 
 #: templates/components/header.html
-#, python-format
-msgid "Cart, %(n)s item"
-msgid_plural "Cart, %(n)s items"
-msgstr[0] "კალათა, %(n)s ნივთი"
-msgstr[1] "კალათა, %(n)s ნივთი"
-
-#: templates/components/header.html
 msgid "Search the shop"
 msgstr "მაღაზიაში ძიება"
 
@@ -1341,23 +1587,9 @@ msgstr "ძიება: ყელსაბამი, ქარვა, ვერ
 msgid "Close search"
 msgstr "ძიების დახურვა"
 
-#: templates/components/price.html
-#, python-format
-msgid "from %(price)s"
-msgstr "%(price)s-დან"
-
-#: templates/components/product_card.html
-#, python-format
-msgid "View %(name)s"
-msgstr "%(name)s — ნახვა"
-
 #: templates/core/styleguide.html
 msgid "Read the story"
 msgstr "ისტორიის წაკითხვა"
-
-#: templates/core/styleguide.html
-msgid "One of a kind"
-msgstr "ერთადერთი ეგზემპლარი"
 
 #: templates/core/styleguide.html
 msgid "First name"
@@ -1391,10 +1623,6 @@ msgstr "ახალი"
 msgid "The story of the atelier will appear here soon."
 msgstr "ატელიეს ისტორია აქ მალე გამოჩნდება."
 
-#: templates/pages/about.html
-msgid "Visit the shop"
-msgstr "მაღაზიაში გადასვლა"
-
 #: templates/pages/account.html
 msgid "Accounts are coming soon."
 msgstr "ანგარიშები მალე დაემატება."
@@ -1427,10 +1655,6 @@ msgstr "წინა სლაიდი"
 #: templates/pages/home.html
 msgid "Next slide"
 msgstr "შემდეგი სლაიდი"
-
-#: templates/pages/home.html
-msgid "New Arrivals"
-msgstr "ახალი ნივთები"
 
 #: templates/pages/home.html
 msgid "View All"
@@ -1487,3 +1711,48 @@ msgstr "შეიყვანეთ ბმული"
 #: templates/unfold/forms/helpers/toolbar.html
 msgid "Unlink"
 msgstr "ბმულის მოხსნა"
+
+#: templates/wishlist/_card.html
+#, python-format
+msgid "Remove %(name)s from your wishlist"
+msgstr "„%(name)s“ — სურვილების სიიდან წაშლა"
+
+#: templates/wishlist/_heart.html
+msgid "Save to wishlist"
+msgstr "სურვილების სიაში შენახვა"
+
+#: templates/wishlist/shared.html
+msgid "A wishlist"
+msgstr "სურვილების სია"
+
+#: templates/wishlist/shared.html
+msgid "Someone shared the pieces they love. Perhaps a gift idea?"
+msgstr "ვიღაცამ გაგიზიარათ მისთვის სასურველი ნივთები. იქნებ საჩუქრის იდეაა?"
+
+#: templates/wishlist/shared.html
+msgid "These pieces are no longer in the shop."
+msgstr "ეს ნივთები მაღაზიაში აღარ არის."
+
+#: templates/wishlist/wishlist.html
+msgid "Pieces you saved. They stay on this device — no account needed."
+msgstr "თქვენ მიერ შენახული ნივთები. ისინი ამ მოწყობილობაზე ინახება — ანგარიში საჭირო არ არის."
+
+#: templates/wishlist/wishlist.html
+msgid "Share your wishlist"
+msgstr "სურვილების სიის გაზიარება"
+
+#: templates/wishlist/wishlist.html
+msgid "Anyone with this link sees the pieces you saved — a quiet gift hint."
+msgstr "ამ ბმულით ნებისმიერი ნახავს თქვენ მიერ შენახულ ნივთებს — საჩუქრის ფაქიზი მინიშნება."
+
+#: templates/wishlist/wishlist.html
+msgid "Share link"
+msgstr "გასაზიარებელი ბმული"
+
+#: templates/wishlist/wishlist.html
+msgid "Copy link"
+msgstr "ბმულის კოპირება"
+
+#: templates/wishlist/wishlist.html
+msgid "Link copied"
+msgstr "ბმული დაკოპირდა"

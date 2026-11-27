@@ -100,6 +100,14 @@ class Command(BaseCommand):
         filled = [field for field, value in demo.items() if not getattr(site, field)]
         for field in filled:
             setattr(site, field, demo[field])
+        # Demo shop rules so the cart summary has something to show (dev only; the owner
+        # decides the real ones, SPEC §14): free delivery from 200 ₾, gift wrap 5 ₾.
+        if site.free_shipping_threshold is None:
+            site.free_shipping_threshold = 20000
+            filled.append("free_shipping_threshold")
+        if not site.gift_wrap_price:
+            site.gift_wrap_price = 500
+            filled.append("gift_wrap_price")
         if filled:
             site.save(update_fields=filled)
         state = "kept" if existed else "created"

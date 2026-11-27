@@ -39,7 +39,8 @@ bottom. Context: cart, notices, oob.
             </button>
           </form>
         </dt>
-        <dd class="price">{% if cart.gift_wrap_price %}{{ cart.gift_wrap_price|gel }}{% else %}{% translate "Free" %}{% endif %}</dd>
+        {# The price stays visible as information; muted (and not in the total) while off. #}
+        <dd class="price {% if not cart.gift_wrap %}text-taupe-text{% endif %}">{% if cart.gift_wrap_price %}{{ cart.gift_wrap_price|gel }}{% else %}{% translate "Free" %}{% endif %}</dd>
       </div>
 
       {% with ship=cart.shipping %}{% if ship.delivery_from is not None or ship.pickup is not None %}

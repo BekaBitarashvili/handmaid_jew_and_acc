@@ -30,11 +30,15 @@ full sheet on phones). One GET form for everything, enhanced with HTMX.
     </ul>
   </nav>
 
+  {% comment %}
+  The filter form holds only the drawer. The results stay outside it: product cards carry
+  their own add-to-cart forms, and HTML forms can't be nested (the browser would drop the
+  first card's form and end the filter form early). The sort select joins via form="filters".
+  {% endcomment %}
+  <div x-data="filterSheet" x-effect="lockScroll(open)" @keydown.escape="open = false" class="mt-6">
   <form id="filters" method="get" action="{{ request.path }}"
         hx-get="{{ request.path }}" hx-target="#results" hx-swap="outerHTML" hx-sync="this:replace"
-        hx-trigger="change, submit"
-        x-data="filterSheet" x-effect="lockScroll(open)" @keydown.escape="open = false"
-        class="mt-6">
+        hx-trigger="change, submit">
     {# Keep context that isn't edited in the drawer. #}
     {% if filters.query %}<input type="hidden" name="q" value="{{ filters.query }}">{% endif %}
     {% if collection != "all" %}{% for c in filters.categories %}<input type="hidden" name="category" value="{{ c.slug }}">{% endfor %}{% endif %}
@@ -62,8 +66,9 @@ full sheet on phones). One GET form for everything, enhanced with HTMX.
         </button>
       </div>
     </aside>
-
-    {% include "catalog/_results_partial.html" %}
   </form>
+
+  {% include "catalog/_results_partial.html" %}
+  </div>
 </div>
 {% endblock %}

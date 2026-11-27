@@ -119,6 +119,17 @@ class TestChipsAndCards:
         assert 'href="/en/product/ring/"' in page
         assert 'action="/en/cart/add/"' in page and 'class="cart-button"' in page
 
+    def test_card_forms_are_not_nested_in_the_filter_form(self, client, en):
+        """Browsers drop a <form> nested in another one (the first card lost its
+        add-to-cart form and ended the filter form early)."""
+        ProductFactory(status=ACTIVE, published_at=timezone.now())
+        page = html(client.get("/en/shop/"))
+        filter_form = page[page.index('<form id="filters"') :]
+        filter_form = filter_form[: filter_form.index("</form>")]
+        assert "<form" not in filter_form[1:]
+        assert 'id="product-grid"' not in filter_form
+        assert 'form="filters"' in page  # the sort select still belongs to it
+
     def test_card_button_links_to_the_product_when_there_are_variants(self, client, en):
         product = ProductFactory(status=ACTIVE, slug_en="scarf", is_unique=False)
         product.variants.create(name_en="Red", stock=2)

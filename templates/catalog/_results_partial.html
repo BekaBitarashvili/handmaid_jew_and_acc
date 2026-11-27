@@ -11,7 +11,7 @@ Swapped in place on every filter change (hx-target="#results").
     <p class="text-small text-taupe-text max-sm:hidden" id="result-count">{{ total_text }}</p>
     <label class="ml-auto flex items-center gap-2 text-small">
       <span class="text-taupe-text max-sm:sr-only">{% translate "Sort" %}</span>
-      <select name="sort" class="field-input min-h-10 w-auto py-1.5 pr-8 text-small">
+      <select name="sort" form="filters" @change="$el.form.requestSubmit()" class="field-input min-h-10 w-auto py-1.5 pr-8 text-small">
         <option value="newest" {% if filters.sort == "newest" %}selected{% endif %}>{% translate "Newest" %}</option>
         <option value="price_asc" {% if filters.sort == "price_asc" %}selected{% endif %}>{% translate "Price: low to high" %}</option>
         <option value="price_desc" {% if filters.sort == "price_desc" %}selected{% endif %}>{% translate "Price: high to low" %}</option>

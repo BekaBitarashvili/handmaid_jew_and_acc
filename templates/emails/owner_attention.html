@@ -1,0 +1,10 @@
+{% extends "emails/base.html" %}
+{% load i18n money phones %}
+{% block preheader %}{{ order.attention_reason }}{% endblock %}
+{% block heading %}{% blocktranslate with number=order.number %}Order {{ number }} needs attention{% endblocktranslate %}{% endblock %}
+{% block body %}
+<p style="margin:0 0 16px;padding:12px 16px;border-left:2px solid #9e3b2e;background-color:#efe5db;color:#2a1a0f;">{{ order.attention_reason }}</p>
+<p style="margin:0 0 4px;">{{ order.customer_name }} &middot; <a href="tel:{{ order.phone }}" style="color:#2a1a0f;">{{ order.phone|phone }}</a> &middot; <a href="mailto:{{ order.email }}" style="color:#2a1a0f;">{{ order.email }}</a></p>
+<p style="margin:0 0 12px;">{% translate "Paid" %}: {{ order.total|gel }}</p>
+{% if admin_url %}{% translate "Open in the admin" as label %}{% include "emails/_button.html" with url=admin_url label=label %}{% endif %}
+{% endblock %}

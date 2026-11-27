@@ -1,0 +1,13 @@
+{% extends "emails/base.html" %}
+{% load i18n money phones %}
+{% block preheader %}{% translate "Your pieces have arrived." %}{% endblock %}
+{% block heading %}{% translate "With care" %}{% endblock %}
+{% block body %}
+<p style="margin:0 0 12px;">{% blocktranslate with name=order.first_name %}Dear {{ name }},{% endblocktranslate %}</p>
+<p style="margin:0 0 12px;">{% blocktranslate with number=order.number %}your order {{ number }} has arrived. Thank you for choosing a handmade piece — we hope it brings you joy for a long time.{% endblocktranslate %}</p>
+{% if care_tips %}
+  <p style="margin:24px 0 8px;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6e5c48;">{% translate "Caring for your pieces" %}</p>
+  {% for name, tip in care_tips %}<p style="margin:0 0 10px;"><span style="font-family:'Cormorant Garamond',Georgia,'Noto Serif Georgian',serif;font-size:17px;color:#2a1a0f;">{{ name }}</span><br>{{ tip|linebreaksbr }}</p>{% endfor %}
+{% endif %}
+{% translate "View your order" as label %}{% include "emails/_button.html" with url=order_url label=label %}
+{% endblock %}

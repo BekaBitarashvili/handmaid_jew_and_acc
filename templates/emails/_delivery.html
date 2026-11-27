@@ -1,0 +1,21 @@
+{% load i18n phones %}{% comment %}Delivery, recipient and gift details (customer and owner emails).{% endcomment %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px;font-size:14px;">
+  <tr>
+    <td style="padding:12px 0;border-top:1px solid #dccfc2;vertical-align:top;">
+      <span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6e5c48;">{% translate "Delivery" %}</span><br>
+      {{ order.delivery_name }}{% if order.requires_address %}<br>{{ order.address_line }}{% if order.city %}, {{ order.city }}{% endif %}{% endif %}
+      {% if order.delivery_notes %}<br><span style="color:#6e5c48;">{{ order.delivery_notes }}</span>{% endif %}
+      {% if order.has_recipient %}<br><br><span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6e5c48;">{% translate "Recipient" %}</span><br>{{ order.recipient_name }}{% if order.recipient_phone %} &middot; {{ order.recipient_phone|phone }}{% endif %}{% endif %}
+    </td>
+  </tr>
+  {% if order.gift_wrap or order.gift_note %}
+    <tr>
+      <td style="padding:12px 0;border-top:1px solid #dccfc2;vertical-align:top;">
+        <span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:#6e5c48;">{% translate "Gift" %}</span><br>
+        {% if order.gift_wrap %}{% translate "Gift wrapped" %}<br>{% endif %}
+        {% if order.gift_note %}<em>&ldquo;{{ order.gift_note|linebreaksbr }}&rdquo;</em><br>{% endif %}
+        {% if order.hide_prices_on_slip %}<span style="color:#6e5c48;">{% translate "No prices on the packing slip" %}</span>{% endif %}
+      </td>
+    </tr>
+  {% endif %}
+</table>

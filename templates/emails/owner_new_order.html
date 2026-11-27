@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% load i18n money phones %}
+{% block preheader %}{{ order.customer_name }} · {{ order.total|gel }}{% endblock %}
+{% block heading %}{% blocktranslate with number=order.number %}New order {{ number }}{% endblocktranslate %}{% endblock %}
+{% block body %}
+<p style="margin:0 0 4px;font-size:17px;color:#2a1a0f;">{{ order.customer_name }}</p>
+<p style="margin:0 0 12px;"><a href="tel:{{ order.phone }}" style="color:#2a1a0f;">{{ order.phone|phone }}</a> &middot; <a href="mailto:{{ order.email }}" style="color:#2a1a0f;">{{ order.email }}</a></p>
+{% include "emails/_delivery.html" %}
+{% include "emails/_items.html" %}
+{% if admin_url %}{% translate "Open in the admin" as label %}{% include "emails/_button.html" with url=admin_url label=label %}{% endif %}
+{% endblock %}

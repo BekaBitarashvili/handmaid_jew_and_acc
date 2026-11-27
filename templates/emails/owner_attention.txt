@@ -1,0 +1,8 @@
+{% load i18n money phones %}{% autoescape off %}{% blocktranslate with number=order.number %}Order {{ number }} needs attention{% endblocktranslate %}
+
+{{ order.attention_reason }}
+
+{{ order.customer_name }} · {{ order.phone|phone }} · {{ order.email }}
+{% translate "Paid" %}: {{ order.total|gel }}
+{% if admin_url %}{{ admin_url }}{% endif %}
+{% endautoescape %}

@@ -1,0 +1,4 @@
+{% load i18n phones %}{% translate "Delivery" %}: {{ order.delivery_name }}{% if order.requires_address %}, {{ order.address_line }}{% if order.city %}, {{ order.city }}{% endif %}{% endif %}
+{% if order.has_recipient %}{% translate "Recipient" %}: {{ order.recipient_name }}{% if order.recipient_phone %} · {{ order.recipient_phone|phone }}{% endif %}
+{% endif %}{% if order.gift_note %}{% translate "Gift note" %}: “{{ order.gift_note }}”
+{% endif %}

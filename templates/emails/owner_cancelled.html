@@ -1,0 +1,9 @@
+{% extends "emails/base.html" %}
+{% load i18n money phones %}
+{% block preheader %}{{ order.customer_name }} · {{ order.total|gel }}{% endblock %}
+{% block heading %}{% blocktranslate with number=order.number %}Order {{ number }} cancelled{% endblocktranslate %}{% endblock %}
+{% block body %}
+<p style="margin:0 0 12px;">{{ order.customer_name }} &middot; {{ order.total|gel }} &middot; {{ order.get_payment_status_display }}</p>
+{% if order.is_paid %}<p style="margin:0 0 12px;">{% translate "Remember to refund the payment in the bank's merchant portal, then mark the order as refunded." %}</p>{% endif %}
+{% if admin_url %}{% translate "Open in the admin" as label %}{% include "emails/_button.html" with url=admin_url label=label %}{% endif %}
+{% endblock %}

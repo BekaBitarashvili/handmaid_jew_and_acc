@@ -1,0 +1,11 @@
+{% extends "emails/base.html" %}
+{% load i18n money phones %}
+{% block preheader %}{% blocktranslate with number=order.number %}Order {{ number }} was cancelled.{% endblocktranslate %}{% endblock %}
+{% block heading %}{% translate "Order cancelled" %}{% endblock %}
+{% block body %}
+<p style="margin:0 0 12px;">{% blocktranslate with name=order.first_name %}Dear {{ name }},{% endblocktranslate %}</p>
+<p style="margin:0 0 12px;">{% blocktranslate with number=order.number %}your order {{ number }} has been cancelled.{% endblocktranslate %}</p>
+{% if order.customer_note %}<p style="margin:16px 0;padding:12px 16px;border-left:2px solid #6f5b4c;background-color:#efe5db;">{{ order.customer_note|linebreaksbr }}</p>{% endif %}
+<p style="margin:0 0 12px;">{% translate "If you have any questions, just reply to this email." %}</p>
+{% translate "View your order" as label %}{% include "emails/_button.html" with url=order_url label=label %}
+{% endblock %}

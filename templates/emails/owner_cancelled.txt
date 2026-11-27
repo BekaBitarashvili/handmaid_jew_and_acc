@@ -1,0 +1,6 @@
+{% load i18n money %}{% autoescape off %}{% blocktranslate with number=order.number %}Order {{ number }} cancelled{% endblocktranslate %}
+
+{{ order.customer_name }} · {{ order.total|gel }} · {{ order.get_payment_status_display }}
+{% if order.is_paid %}{% translate "Remember to refund the payment in the bank's merchant portal, then mark the order as refunded." %}{% endif %}
+{% if admin_url %}{{ admin_url }}{% endif %}
+{% endautoescape %}

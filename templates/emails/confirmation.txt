@@ -1,0 +1,11 @@
+{% load i18n money %}{% autoescape off %}{% blocktranslate with name=order.first_name %}Dear {{ name }},{% endblocktranslate %}
+
+{% blocktranslate with number=order.number %}we have received your payment for order {{ number }}. Each piece is now being prepared by hand — we will let you know when it is on its way.{% endblocktranslate %}
+
+{% include "emails/_items.txt" %}
+{% include "emails/_delivery.txt" %}
+{% translate "View your order" %}: {{ order_url }}
+
+{% translate "Questions? Just reply to this email." %}
+— {{ brand }}
+{% endautoescape %}

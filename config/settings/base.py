@@ -157,6 +157,8 @@ THUMBNAIL_SUBDIR = "thumbs"
 
 vars().update(env.email_url("EMAIL_URL", default="consolemail://"))
 DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", default="shop@example.com")
+# Absolute links in emails (order page, admin), without a trailing slash.
+SITE_URL = env("SITE_URL", default="http://127.0.0.1:8000").rstrip("/")
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # --- Cache -------------------------------------------------------------------

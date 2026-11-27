@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 
 from django.db import transaction
-from django.utils import timezone
+from django.utils import timezone, translation
 from django.utils.translation import gettext as _
 
 from apps.cart.services import Cart, SessionCart, delivery_price
@@ -100,6 +100,12 @@ def place_order(
 
     Raises EmptyCart / CartChanged / PricesChanged / PieceTaken; then nothing is created.
     """
+    # Snapshots (names, delivery, "Tbilisi") are written in the order's language.
+    with translation.override(language):
+        return _place_order(session_cart, data, language, ip_address, user_agent)
+
+
+def _place_order(session_cart, data, language, ip_address, user_agent) -> Order:
     if session_cart.gift_wrap != data.gift_wrap:
         session_cart.set_gift_wrap(data.gift_wrap)
     cart = session_cart.build()

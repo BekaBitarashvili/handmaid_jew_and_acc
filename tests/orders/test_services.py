@@ -79,6 +79,18 @@ class TestPlaceOrder:
         order = order_for(piece(), option=tbilisi, city="Batumi")
         assert order.city == "Tbilisi"
 
+    def test_snapshots_in_the_order_language_whatever_is_active(self):
+        from django.utils import translation
+
+        variant = piece(name_en="Amber necklace", name_ka="ქარვის ყელსაბამი")
+        tbilisi = courier(code="courier_tbilisi", name_en="Courier in Tbilisi", name_ka="კურიერი")
+        with translation.override("en"):
+            order = place_order(cart_with(variant), data(tbilisi), language="ka")
+        assert order.items.get().product_name == "ქარვის ყელსაბამი"
+        with translation.override("ka"):
+            tbilisi_ka = translation.gettext("Tbilisi")
+        assert (order.delivery_name, order.city) == ("კურიერი", tbilisi_ka)
+
     def test_empty_cart(self):
         with pytest.raises(EmptyCart):
             place_order(cart_with(), data(), language="en")

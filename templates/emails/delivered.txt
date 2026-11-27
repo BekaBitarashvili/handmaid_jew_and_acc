@@ -1,0 +1,11 @@
+{% load i18n %}{% autoescape off %}{% blocktranslate with name=order.first_name %}Dear {{ name }},{% endblocktranslate %}
+
+{% blocktranslate with number=order.number %}your order {{ number }} has arrived. Thank you for choosing a handmade piece — we hope it brings you joy for a long time.{% endblocktranslate %}
+{% if care_tips %}
+{% translate "Caring for your pieces" %}
+{% for name, tip in care_tips %}
+{{ name }}: {{ tip }}
+{% endfor %}{% endif %}
+{% translate "View your order" %}: {{ order_url }}
+— {{ brand }}
+{% endautoescape %}

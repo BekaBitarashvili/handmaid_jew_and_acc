@@ -1,0 +1,12 @@
+{% extends "emails/base.html" %}
+{% load i18n money phones %}
+{% block preheader %}{% blocktranslate with number=order.number %}Order {{ number }} is confirmed.{% endblocktranslate %}{% endblock %}
+{% block heading %}{% translate "Thank you" %}{% endblock %}
+{% block body %}
+<p style="margin:0 0 12px;">{% blocktranslate with name=order.first_name %}Dear {{ name }},{% endblocktranslate %}</p>
+<p style="margin:0 0 12px;">{% blocktranslate with number=order.number %}we have received your payment for order {{ number }}. Each piece is now being prepared by hand — we will let you know when it is on its way.{% endblocktranslate %}</p>
+{% include "emails/_items.html" %}
+{% include "emails/_delivery.html" %}
+{% translate "View your order" as label %}{% include "emails/_button.html" with url=order_url label=label %}
+<p style="margin:16px 0 0;font-size:13px;color:#6e5c48;">{% translate "Questions? Just reply to this email." %}</p>
+{% endblock %}

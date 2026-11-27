@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}{% blocktranslate with name=order.first_name %}Dear {{ name }},{% endblocktranslate %}
+
+{% blocktranslate with number=order.number %}your order {{ number }} has left the atelier.{% endblocktranslate %}
+{% if order.customer_note %}
+{{ order.customer_note }}
+{% endif %}
+{% include "emails/_delivery.txt" %}
+{% translate "View your order" %}: {{ order_url }}
+— {{ brand }}
+{% endautoescape %}

@@ -1,0 +1,47 @@
+{% load i18n catalog_tags money %}{% comment %}
+One cart line: square photo, name (+ variant), price (sale: old struck + new), quantity
+stepper (one-of-a-kind pieces show that instead) and Remove.
+Context: line, view ("drawer" | "page"), target (CSS selector the forms swap into).
+{% endcomment %}{% with product=line.product %}
+<li class="flex gap-4 py-5">
+  <a href="{{ product.get_absolute_url }}" class="block size-20 shrink-0 overflow-hidden bg-shell md:size-24" tabindex="-1" aria-hidden="true">
+    {% if line.image %}{% product_picture line.image alt="" css="h-full w-full object-cover" %}{% endif %}
+  </a>
+  <div class="flex min-w-0 flex-1 flex-col">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0">
+        <h3 class="card-name"><a href="{{ product.get_absolute_url }}" class="hover:text-cocoa">{{ product.name }}</a></h3>
+        {% if line.show_variant_name %}<p class="mt-0.5 text-small text-taupe-text">{{ line.variant.name }}</p>{% endif %}
+      </div>
+      <p class="shrink-0 text-right text-small">
+        {% if line.price.on_sale %}<span class="price price-old"><span class="sr-only">{% translate "Original price" %}: </span>{{ line.original_total|gel }}</span><br>{% endif %}
+        <span class="price {% if line.price.on_sale %}price-sale{% endif %}">{% if line.price.on_sale %}<span class="sr-only">{% translate "Sale price" %}: </span>{% endif %}{{ line.total|gel }}</span>
+      </p>
+    </div>
+    {% if line.qty > 1 %}<p class="mt-1 text-small text-taupe-text">{% blocktranslate with price=line.price.current|gel %}{{ price }} each{% endblocktranslate %}</p>{% endif %}
+
+    <div class="mt-auto flex items-center justify-between gap-3 pt-3">
+      {% if product.is_unique %}
+        <p class="text-small text-taupe-text">{% translate "One of a kind" %}</p>
+      {% else %}
+        <form method="post" action="{% url 'cart:update' line.variant.pk %}"
+              hx-post="{% url 'cart:update' line.variant.pk %}" hx-target="{{ target }}" hx-swap="innerHTML"
+              class="qty-stepper" aria-label="{% blocktranslate with name=product.name %}Quantity of {{ name }}{% endblocktranslate %}">
+          {% csrf_token %}<input type="hidden" name="view" value="{{ view }}">
+          <button type="submit" name="qty" value="{{ line.qty|add:'-1' }}" {% if line.qty <= 1 %}disabled{% endif %}
+                  aria-label="{% translate 'One less' %}">{% include "components/icon.html" with name="minus" size=14 %}</button>
+          <span class="qty-value" aria-label="{% blocktranslate with n=line.qty %}Quantity: {{ n }}{% endblocktranslate %}">{{ line.qty }}</span>
+          <button type="submit" name="qty" value="{{ line.qty|add:'1' }}" {% if line.qty >= line.cap %}disabled{% endif %}
+                  aria-label="{% translate 'One more' %}">{% include "components/icon.html" with name="plus" size=14 %}</button>
+        </form>
+      {% endif %}
+      <form method="post" action="{% url 'cart:remove' line.variant.pk %}"
+            hx-post="{% url 'cart:remove' line.variant.pk %}" hx-target="{{ target }}" hx-swap="innerHTML">
+        {% csrf_token %}<input type="hidden" name="view" value="{{ view }}">
+        <button type="submit" class="link text-small text-taupe-text"
+                aria-label="{% blocktranslate with name=product.name %}Remove {{ name }}{% endblocktranslate %}">{% translate "Remove" %}</button>
+      </form>
+    </div>
+  </div>
+</li>
+{% endwith %}

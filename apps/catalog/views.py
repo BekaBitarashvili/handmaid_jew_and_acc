@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.utils.translation import ngettext, pgettext_lazy
 
+from apps.cart.services import get_cart
 from apps.core.money import format_gel
 from apps.orders.models import DeliveryOption
 from apps.promotions.services import price_for, running_sales
@@ -191,6 +192,10 @@ def product_detail(request: HttpRequest, slug: str) -> HttpResponse:
             "related": related_products(product),
             "delivery_options": DeliveryOption.objects.filter(is_active=True),
             "is_preview": not product.is_public,
+            # One-of-a-kind and already in the cart: the page offers the cart, not "Add".
+            "in_cart": product.is_unique
+            and len(variants) == 1
+            and variants[0].pk in get_cart(request).variant_ids,
             "seo": product_seo(request, product, images),
         },
     )

@@ -1,0 +1,44 @@
+{% load i18n money %}{% comment %}
+Cart drawer content (swapped into #cart-drawer-body). Lines, messages, subtotal and the way
+on: "View cart" (gift wrap, delivery and totals live on the cart page).
+Context: cart, notices, oob, card_variant.
+{% endcomment %}{% if oob %}{% include "cart/_oob.html" with announcer="cart-drawer-announcer" %}{% endif %}
+<div class="flex h-full flex-col">
+  <div class="flex items-center justify-between border-b border-sand px-5 py-4">
+    <h2 id="cart-drawer-title" class="text-h3">{% blocktranslate with n=cart.count %}Your cart ({{ n }}){% endblocktranslate %}</h2>
+    <button type="button" @click="close()" autofocus class="-mr-2 p-2 text-cocoa hover:text-espresso">
+      {% include "components/icon.html" with name="x" %}<span class="sr-only">{% translate "Close cart" %}</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto overscroll-contain px-5">
+    {% if notices %}<div class="pt-5">{% include "cart/_notices.html" %}</div>{% endif %}
+    {% if cart.is_empty %}
+      {% include "components/empty_state.html" with kind="cart" compact=True %}
+    {% else %}
+      {% if cart.lines %}
+        <ul class="divide-y divide-sand">
+          {% for line in cart.lines %}{% include "cart/_line.html" with view="drawer" target="#cart-drawer-body" %}{% endfor %}
+        </ul>
+      {% endif %}
+      {% include "cart/_gone_lines.html" with view="drawer" target="#cart-drawer-body" %}
+    {% endif %}
+  </div>
+
+  {% if cart.lines %}
+    <div class="space-y-4 border-t border-sand px-5 py-5">
+      {% if cart.savings %}
+        <p class="flex justify-between text-small text-clay-text"><span>{% translate "You save" %}</span><span class="price text-clay-text">{{ cart.savings|gel }}</span></p>
+      {% endif %}
+      <p class="flex items-baseline justify-between">
+        <span class="font-serif text-h3 text-espresso">{% translate "Subtotal" %}</span>
+        <span class="price text-h3">{{ cart.subtotal|gel }}</span>
+      </p>
+      <p class="text-small text-taupe-text">{% translate "Gift wrap and delivery are chosen on the next step." %}</p>
+      <div class="grid gap-3">
+        <a href="{% url 'cart:detail' %}" class="btn btn-dark w-full">{% translate "View cart" %}</a>
+        <button type="button" @click="close()" class="btn btn-outline w-full">{% translate "Continue shopping" %}</button>
+      </div>
+    </div>
+  {% endif %}
+</div>

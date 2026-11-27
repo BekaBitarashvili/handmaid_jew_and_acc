@@ -97,8 +97,12 @@ document.addEventListener("alpine:init", () => {
   Alpine.data("variantPicker", (dataId) => ({
     variants: [],
     selected: null,
+    inCart: false, // one-of-a-kind piece already in the cart: "In your cart" instead of "Add"
+    unique: false,
 
     init() {
+      this.inCart = this.$el.dataset.inCart === "true";
+      this.unique = this.$el.dataset.unique === "true";
       const source = document.getElementById(dataId);
       this.variants = source ? JSON.parse(source.textContent) : [];
       const first = this.variants.find((v) => v.available) || this.variants[0];
@@ -173,6 +177,59 @@ document.addEventListener("alpine:init", () => {
       const step = event.shiftKey ? -1 : 1;
       const next = current === -1 ? 0 : (current + step + focusable.length) % focusable.length;
       focusable[next].focus();
+    },
+  }));
+
+  // Cart drawer (SPEC §9.5): a modal <dialog> — focus trap, Esc and inert page for free.
+  // `show(true)` fetches the content first (header icon); after "Add to cart" the response
+  // has already filled it, so `show(false)` only opens it.
+  Alpine.data("cartDrawer", () => ({
+    opener: null,
+    openerForm: null,
+    requester: null, // element that sent the last HTMX request ("Add to cart" forms)
+
+    init() {
+      // hx-disabled-elt disables the clicked button during the request, which drops focus
+      // to <body>; remember the sender so focus can return to it when the drawer closes.
+      document.body.addEventListener("htmx:beforeRequest", (event) => {
+        this.requester = event.detail.elt;
+      });
+    },
+    show(load) {
+      const dialog = this.$refs.dialog;
+      if (load) {
+        htmx.ajax("GET", this.$root.dataset.url, { target: "#cart-drawer-body", swap: "innerHTML" });
+      }
+      if (dialog.open) return;
+      const active = document.activeElement;
+      this.opener = active && active !== document.body ? active : this.requester;
+      if (this.opener?.matches?.("form")) this.opener = this.opener.querySelector("button");
+      this.openerForm = this.opener?.closest?.("form[id]")?.id || null;
+      dialog.showModal();
+      lockPageScroll(true);
+    },
+    close() {
+      this.$refs.dialog.close();
+    },
+    onClose() {
+      lockPageScroll(false);
+      // Back to what opened it; a card button may have been replaced by its "in cart" state.
+      let target = this.opener;
+      if (!target?.isConnected && this.openerForm) {
+        target = document.getElementById(this.openerForm)?.querySelector("button");
+      }
+      target?.focus();
+      this.opener = this.openerForm = null;
+    },
+    backdrop(event) {
+      if (event.target === this.$refs.dialog) this.close(); // click outside the panel
+    },
+    refocus() {
+      // After a swap inside the open drawer, keep focus in it (the clicked button is gone).
+      const dialog = this.$refs.dialog;
+      if (dialog.open && !dialog.contains(document.activeElement)) {
+        dialog.querySelector("[autofocus], button, a[href]")?.focus();
+      }
     },
   }));
 

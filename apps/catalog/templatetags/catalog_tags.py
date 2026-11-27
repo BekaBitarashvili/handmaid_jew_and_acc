@@ -64,6 +64,12 @@ def percent_off(product: Product) -> int:
 
 
 @register.filter
+def in_set(value, collection) -> bool:
+    """{{ product.first_variant_id|in_set:cart_variant_ids }}"""
+    return bool(collection) and value in collection
+
+
+@register.filter
 def availability(product: Product) -> str:
     if product.status == Product.Status.SOLD:
         return "sold"

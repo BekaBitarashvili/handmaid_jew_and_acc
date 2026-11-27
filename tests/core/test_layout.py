@@ -108,10 +108,10 @@ class TestDesignReviewPhase0:
         header = html[html.index("<header") : html.index("</header>")]
         assert "/i18n/setlang/" in header
 
-    def test_header_reserves_cart_slot(self, client):
+    def test_header_has_the_cart(self, client):
         html = client.get("/ka/").content.decode()
         header = html[html.index("<header") : html.index("</header>")]
-        assert "data-cart-placeholder" in header  # cart arrives in 1c
+        assert 'href="/ka/cart/"' in header and "cart-load" in header
 
     def test_styleguide_marks_active_size_adjust(self, client, settings):
         settings.DEBUG = True

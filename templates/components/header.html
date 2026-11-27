@@ -51,12 +51,12 @@ inside, the bar (z-10) stays above the overlay, so the burger turns into ✕ in 
       <a href="{% url 'pages:account' %}" class="hidden p-2 text-espresso hover:text-cocoa desk:block">
         {% include "components/icon.html" with name="user" size=20 %}<span class="sr-only">{% translate "Account" %}</span>
       </a>
-      {# TODO(1c): cart drawer trigger; the count comes from the session cart. #}
-      {% if cart_url %}<a href="{{ cart_url }}" class="-mr-2 flex items-center gap-1 p-2 text-espresso hover:text-cocoa">{% else %}<span class="-mr-2 flex items-center gap-1 p-2 text-espresso" data-cart-placeholder>{% endif %}
+      {# Cart: opens the drawer (a plain link without JS, with a modifier key, or on /cart/). #}
+      <a href="{{ cart_url }}" class="-mr-2 flex items-center gap-1 p-2 text-espresso hover:text-cocoa"
+         {% if request.path != cart_url %}@click="if (!($event.metaKey || $event.ctrlKey || $event.shiftKey)) { $event.preventDefault(); $dispatch('cart-load') }"{% endif %}>
         {% include "components/icon.html" with name="bag" size=20 %}
-        <span class="text-small" aria-hidden="true">({{ cart_count|default:0 }})</span>
-        <span class="sr-only">{% blocktranslate count n=cart_count|default:0 %}Cart, {{ n }} item{% plural %}Cart, {{ n }} items{% endblocktranslate %}</span>
-      {% if cart_url %}</a>{% else %}</span>{% endif %}
+        {% include "cart/_count.html" with count=cart_count %}
+      </a>
     </div>
   </div>
 

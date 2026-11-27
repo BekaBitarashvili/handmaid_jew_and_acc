@@ -6,11 +6,12 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 
 from django.http import HttpRequest
-from django.urls import translate_url
+from django.urls import reverse, translate_url
 from django.utils import translation
 from django.utils.html import strip_tags
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.text import Truncator
+from django.utils.translation import gettext as _
 
 LANGUAGES = ("ka", "en")
 DEFAULT_LANGUAGE = "ka"  # x-default (SPEC §3)
@@ -77,3 +78,19 @@ def breadcrumbs(request: HttpRequest, items: list[tuple[str, str]]) -> dict:
             for position, (name, path) in enumerate(items, start=1)
         ],
     }
+
+
+def simple_seo(
+    request: HttpRequest, name: str, title: str, *, noindex: bool = False, **kwargs
+) -> Seo:
+    """SEO for a plain page addressed by URL name (About, Contact, Account, Cart, Wishlist)."""
+    from apps.core.models import SiteSettings
+
+    brand = SiteSettings.load().brand_name
+    return Seo(
+        title=f"{title} | {brand}",
+        description=describe(_("Handmade jewelry with natural stones")),
+        canonical=request.build_absolute_uri(reverse(name, kwargs=kwargs or None)),
+        alternates=alternates(request, lambda: reverse(name, kwargs=kwargs or None)),
+        noindex=noindex,
+    )

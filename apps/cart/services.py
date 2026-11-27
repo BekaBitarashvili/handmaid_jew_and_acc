@@ -76,8 +76,12 @@ class CartLine:
         return self.price.current * self.qty
 
     @property
+    def original_total(self) -> int:
+        return self.price.original * self.qty
+
+    @property
     def savings(self) -> int:
-        return (self.price.original - self.price.current) * self.qty
+        return self.original_total - self.total
 
     @property
     def cap(self) -> int:

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<div class="container-site py-10 md:py-16">
+  <h1 class="display">{% translate "Your cart" %}</h1>
+  {# Live region that already exists, so HTMX updates are read out (filled out-of-band). #}
+  <div id="cart-page-announcer" class="sr-only" role="status" aria-live="polite"></div>
+  <div id="cart-page" class="mt-10">
+    {% include "cart/_page_partial.html" %}
+  </div>
+</div>
+{% endblock %}

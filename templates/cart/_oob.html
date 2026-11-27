@@ -1,0 +1,8 @@
+{% comment %}
+Out-of-band pieces sent with every HTMX cart response: the header count, the screen-reader
+announcement of messages (into a live region that already exists, so it is read out) and,
+after adding from a product card, that card's button in its "in cart" state.
+Context: cart, notices, announcer (element id), card_variant.
+{% endcomment %}{% include "cart/_count.html" with count=cart.count oob=True %}
+<div id="{{ announcer }}" hx-swap-oob="innerHTML">{% for notice in notices %}{{ notice }} {% endfor %}</div>
+{% if card_variant %}{% include "components/cart_button.html" with name=card_variant.product.name url=card_variant.product.get_absolute_url variant_id=card_variant.pk in_cart=True oob=True %}{% endif %}

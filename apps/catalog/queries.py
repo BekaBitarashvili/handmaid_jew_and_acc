@@ -88,6 +88,9 @@ def with_card_data(queryset: QuerySet[Product], sales: list | None = None) -> Qu
             max_price=Coalesce(
                 _variant_subquery(Max(_VARIANT_PRICE)), F("price"), output_field=_INT
             ),
+            # The card's cart button adds directly when there is exactly one variant.
+            variant_count=Coalesce(_variant_subquery(Count("pk")), 0, output_field=_INT),
+            first_variant_id=_variant_subquery(Min("pk")),
         )
         .annotate(
             sale_min_price=sale_price_expression("min_price", sales),

@@ -1,0 +1,9 @@
+{% comment %}
+Visible cart messages: what just happened, and anything that changed since the last visit
+(sold, quantity lowered, price changed). Screen readers get them from the live region.
+Context: notices.
+{% endcomment %}{% if notices %}
+<ul class="cart-notices">
+  {% for notice in notices %}<li>{{ notice }}</li>{% endfor %}
+</ul>
+{% endif %}

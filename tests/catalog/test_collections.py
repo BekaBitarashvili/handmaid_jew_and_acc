@@ -116,7 +116,15 @@ class TestChipsAndCards:
         ProductFactory(status=ACTIVE, slug_en="ring", published_at=timezone.now())
         page = html(client.get("/en/shop/"))
         assert ">New<" not in page and "One of a kind" not in page
-        assert 'class="cart-button shrink-0"' in page and 'href="/en/product/ring/"' in page
+        assert 'href="/en/product/ring/"' in page
+        assert 'action="/en/cart/add/"' in page and 'class="cart-button"' in page
+
+    def test_card_button_links_to_the_product_when_there_are_variants(self, client, en):
+        product = ProductFactory(status=ACTIVE, slug_en="scarf", is_unique=False)
+        product.variants.create(name_en="Red", stock=2)
+        page = html(client.get("/en/shop/"))
+        assert 'action="/en/cart/add/"' not in page
+        assert re.search(r'<a href="/en/product/scarf/" class="cart-button shrink-0"', page)
 
 
 class TestReservedSlugs:

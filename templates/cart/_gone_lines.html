@@ -1,0 +1,28 @@
+{% load i18n catalog_tags %}{% comment %}
+Pieces that can't be bought any more (sold, out of stock, hidden). Never removed silently:
+they stay here, out of the totals, until the customer removes them.
+Context: cart, view, target.
+{% endcomment %}{% if cart.gone %}
+<section aria-labelledby="gone-title-{{ view }}" class="mt-8">
+  <h3 id="gone-title-{{ view }}" class="label text-taupe-text">{% translate "No longer available" %}</h3>
+  <ul class="mt-2 divide-y divide-sand">
+    {% for line in cart.gone %}{% with product=line.product %}
+      <li class="flex items-center gap-4 py-4">
+        <a href="{{ product.get_absolute_url }}" class="block size-16 shrink-0 overflow-hidden bg-shell opacity-60 grayscale" tabindex="-1" aria-hidden="true">
+          {% if line.image %}{% product_picture line.image alt="" css="h-full w-full object-cover" %}{% endif %}
+        </a>
+        <div class="min-w-0 flex-1">
+          <p class="card-name text-sold-text"><a href="{{ product.get_absolute_url }}" class="hover:text-cocoa">{{ product.name }}</a></p>
+          <p class="text-small text-sold-text">{{ line.reason }}</p>
+        </div>
+        <form method="post" action="{% url 'cart:remove' line.variant.pk %}"
+              hx-post="{% url 'cart:remove' line.variant.pk %}" hx-target="{{ target }}" hx-swap="innerHTML">
+          {% csrf_token %}<input type="hidden" name="view" value="{{ view }}">
+          <button type="submit" class="link text-small text-taupe-text"
+                  aria-label="{% blocktranslate with name=product.name %}Remove {{ name }}{% endblocktranslate %}">{% translate "Remove" %}</button>
+        </form>
+      </li>
+    {% endwith %}{% endfor %}
+  </ul>
+</section>
+{% endif %}

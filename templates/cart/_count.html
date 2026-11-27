@@ -1,0 +1,7 @@
+{% load i18n %}{% comment %}
+Header cart count "(n)". Swapped out-of-band after every cart change (oob=True).
+Context: count.
+{% endcomment %}<span id="cart-count" class="flex items-center"{% if oob %} hx-swap-oob="true"{% endif %}>
+  <span class="text-small" aria-hidden="true">({{ count|default:0 }})</span>
+  <span class="sr-only">{% blocktranslate count n=count|default:0 %}Cart, {{ n }} item{% plural %}Cart, {{ n }} items{% endblocktranslate %}</span>
+</span>

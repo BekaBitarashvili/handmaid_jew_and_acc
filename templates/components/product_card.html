@@ -2,7 +2,7 @@
 Product card (redesign, docs/design/home-reference.jpeg): square photo, name, price and a
 small square cart button. Only a sale gets a badge. Sold pieces are never listed.
 Context: product (with_card_data), eager (bool).
-{% endcomment %}{% with images=product.images.all %}{% percent_off product as off %}
+{% endcomment %}{% with images=product.images.all in_cart=product.first_variant_id|in_set:cart_variant_ids %}{% percent_off product as off %}
 <article class="group">
   <a href="{{ product.get_absolute_url }}" class="relative block aspect-square overflow-hidden bg-shell" tabindex="-1" aria-hidden="true">
     {% product_picture images.0 eager=eager alt="" css="h-full w-full object-cover transition-transform duration-[800ms] ease-atelier group-hover:scale-[1.03]" %}
@@ -19,11 +19,11 @@ Context: product (with_card_data), eager (bool).
       <h3 class="card-name"><a href="{{ product.get_absolute_url }}" class="hover:text-cocoa">{{ product.name }}</a></h3>
       <p class="mt-1 text-small">{% price_block product %}</p>
     </div>
-    {# TODO(1c): becomes add-to-cart for single-variant pieces (HTMX → cart drawer). #}
-    <a href="{{ product.get_absolute_url }}" class="cart-button shrink-0"
-       aria-label="{% blocktranslate with name=product.name %}View {{ name }}{% endblocktranslate %}">
-      {% include "components/icon.html" with name="bag" size=16 %}
-    </a>
+    {% if product.variant_count == 1 %}
+      {% include "components/cart_button.html" with name=product.name url=product.get_absolute_url variant_id=product.first_variant_id in_cart=in_cart %}
+    {% else %}
+      {% include "components/cart_button.html" with name=product.name url=product.get_absolute_url variant_id=None %}
+    {% endif %}
   </div>
 </article>
 {% endwith %}

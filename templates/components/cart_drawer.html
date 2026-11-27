@@ -1,0 +1,21 @@
+{% load i18n %}{% comment %}
+Cart drawer (SPEC §9.5): a native modal <dialog> sliding in from the right, 420px on
+desktop, full width on phones. showModal() gives the focus trap, Esc and an inert page.
+Opened by the header cart icon (`cart-load`: fetch, then open) and after "Add to cart"
+(`cart-open`: the response already filled it).
+{% endcomment %}<div x-data="cartDrawer" data-url="{% url 'cart:drawer' %}"
+     @cart-load.window="show(true)" @cart-open.window="show(false)">
+  <dialog x-ref="dialog" class="cart-drawer" aria-labelledby="cart-drawer-title"
+          @close="onClose()" @click="backdrop($event)" @htmx:after-swap="refocus()">
+    <div id="cart-drawer-announcer" class="sr-only" role="status" aria-live="polite"></div>
+    <div id="cart-drawer-body" class="h-full">
+      <div class="flex items-center justify-between border-b border-sand px-5 py-4">
+        <h2 id="cart-drawer-title" class="text-h3">{% translate "Your cart" %}</h2>
+        <button type="button" @click="close()" class="-mr-2 p-2 text-cocoa">
+          {% include "components/icon.html" with name="x" %}<span class="sr-only">{% translate "Close cart" %}</span>
+        </button>
+      </div>
+      <p class="px-5 py-8 text-small text-taupe-text">{% translate "Loading…" %}</p>
+    </div>
+  </dialog>
+</div>

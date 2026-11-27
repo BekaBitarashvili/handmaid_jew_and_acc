@@ -12,21 +12,10 @@ from apps.catalog.queries import (
     listed_products,
 )
 from apps.core.models import SiteSettings
-from apps.core.seo import Seo, alternates, describe
+from apps.core.seo import Seo, alternates, describe, simple_seo
 from apps.promotions.services import applies, running_sales
 
 from .models import HeroSlide
-
-
-def _simple_seo(request: HttpRequest, name: str, title: str, *, noindex: bool = False) -> Seo:
-    brand = SiteSettings.load().brand_name
-    return Seo(
-        title=f"{title} | {brand}",
-        description=describe(_("Handmade jewelry with natural stones")),
-        canonical=request.build_absolute_uri(reverse(name)),
-        alternates=alternates(request, lambda: reverse(name)),
-        noindex=noindex,
-    )
 
 
 def home(request: HttpRequest) -> HttpResponse:
@@ -81,14 +70,14 @@ def about(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "pages/about.html",
-        {"seo": _simple_seo(request, "pages:about", _("About"), noindex=True)},
+        {"seo": simple_seo(request, "pages:about", _("About"), noindex=True)},
     )
 
 
 def contact(request: HttpRequest) -> HttpResponse:
     """Contact details from Site settings; the contact form arrives in Phase 2."""
     return render(
-        request, "pages/contact.html", {"seo": _simple_seo(request, "pages:contact", _("Contact"))}
+        request, "pages/contact.html", {"seo": simple_seo(request, "pages:contact", _("Contact"))}
     )
 
 
@@ -97,5 +86,5 @@ def account(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "pages/account.html",
-        {"seo": _simple_seo(request, "pages:account", _("Account"), noindex=True)},
+        {"seo": simple_seo(request, "pages:account", _("Account"), noindex=True)},
     )

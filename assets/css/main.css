@@ -382,6 +382,136 @@
     font-weight: 500;
     font-variant-numeric: tabular-nums;
   }
+  .cart-button.is-in-cart {
+    border-color: var(--color-espresso);
+    color: var(--color-espresso);
+  }
+
+  /* Cart drawer: modal <dialog> sliding in from the right (420px; full width on phones). */
+  .cart-drawer {
+    position: fixed;
+    inset: 0 0 0 auto;
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100dvh;
+    max-height: none;
+    padding: 0;
+    border: 0;
+    background-color: var(--color-linen);
+    color: var(--color-espresso);
+    translate: 100% 0;
+    transition:
+      translate 400ms var(--ease-atelier),
+      overlay 400ms allow-discrete,
+      display 400ms allow-discrete;
+    @media (width >= 48rem) {
+      max-width: 26.25rem;
+      border-left: 1px solid var(--color-sand);
+    }
+    &[open] {
+      translate: 0 0;
+      @starting-style {
+        translate: 100% 0;
+      }
+    }
+    &::backdrop {
+      background-color: rgb(36 20 11 / 0);
+      transition:
+        background-color 400ms var(--ease-atelier),
+        overlay 400ms allow-discrete,
+        display 400ms allow-discrete;
+    }
+    &[open]::backdrop {
+      background-color: rgb(36 20 11 / 0.3);
+      @starting-style {
+        background-color: rgb(36 20 11 / 0);
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      &,
+      &::backdrop {
+        transition: none;
+      }
+    }
+  }
+
+  /* Cart messages (sold, quantity lowered, price changed, added). */
+  .cart-notices {
+    display: grid;
+    gap: 0.5rem;
+    & li {
+      padding: 0.75rem 1rem;
+      border-left: 2px solid var(--color-clay-text);
+      background-color: var(--color-shell);
+      color: var(--color-cocoa);
+      font-size: var(--text-small);
+    }
+  }
+
+  /* Quantity stepper: − n + */
+  .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--color-sand);
+    border-radius: var(--radius-sm);
+    & button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.25rem;
+      height: 2.25rem;
+      color: var(--color-cocoa);
+      &:hover:not(:disabled) {
+        color: var(--color-espresso);
+      }
+      &:disabled {
+        color: var(--color-sand);
+        cursor: not-allowed;
+      }
+    }
+    & .qty-value {
+      min-width: 1.75rem;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+      font-size: var(--text-small);
+    }
+  }
+
+  /* On/off switch (gift wrap): a real button with role="switch". */
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 2.75rem;
+    & .switch-track {
+      position: relative;
+      width: 2.25rem;
+      height: 1.25rem;
+      border: 1px solid var(--color-taupe-text);
+      border-radius: 999px;
+      transition: background-color 300ms var(--ease-atelier);
+    }
+    & .switch-thumb {
+      position: absolute;
+      top: 0.1875rem;
+      left: 0.1875rem;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 999px;
+      background-color: var(--color-taupe-text);
+      transition: translate 300ms var(--ease-atelier);
+    }
+    &[aria-checked="true"] .switch-track {
+      background-color: var(--color-espresso);
+      border-color: var(--color-espresso);
+    }
+    &[aria-checked="true"] .switch-thumb {
+      translate: 1rem 0;
+      background-color: var(--color-linen);
+    }
+  }
+
   /* Round "-30%" badge (banner, product page): linen on clay-text (5.2:1). */
   .sale-badge-round {
     display: inline-flex;

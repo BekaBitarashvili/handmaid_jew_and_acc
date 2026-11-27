@@ -1,0 +1,23 @@
+{% load i18n %}{% comment %}
+Small square cart button on product cards (SPEC §9.5).
+- One variant: a real add-to-cart form (HTMX -> cart drawer; without JS it posts and shows /cart/).
+- Several variants: a link to the product page to choose one.
+Context: name, url, variant_id (None when the piece has several variants), in_cart, oob.
+{% endcomment %}{% if variant_id %}
+<form id="cart-btn-{{ variant_id }}" method="post" action="{% url 'cart:add' %}"
+      hx-post="{% url 'cart:add' %}" hx-target="#cart-drawer-body" hx-swap="innerHTML" hx-disabled-elt="find button"
+      class="shrink-0"{% if oob %} hx-swap-oob="true"{% endif %}>
+  {% csrf_token %}
+  <input type="hidden" name="variant" value="{{ variant_id }}">
+  <input type="hidden" name="source" value="card">
+  <button type="submit" class="cart-button{% if in_cart %} is-in-cart{% endif %}"
+          aria-label="{% if in_cart %}{% blocktranslate %}{{ name }} — in your cart{% endblocktranslate %}{% else %}{% blocktranslate %}Add {{ name }} to cart{% endblocktranslate %}{% endif %}">
+    {% if in_cart %}{% include "components/icon.html" with name="check" size=16 %}{% else %}{% include "components/icon.html" with name="bag" size=16 %}{% endif %}
+  </button>
+</form>
+{% else %}
+<a href="{{ url }}" class="cart-button shrink-0"
+   aria-label="{% blocktranslate %}Choose options for {{ name }}{% endblocktranslate %}">
+  {% include "components/icon.html" with name="bag" size=16 %}
+</a>
+{% endif %}

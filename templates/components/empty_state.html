@@ -1,0 +1,20 @@
+{% load i18n %}{% comment %}
+Empty states in the reference style: star, italic heading, one calm line, quiet buttons.
+Context: kind ("cart" | "wishlist"), compact (drawer).
+{% endcomment %}<div class="mx-auto max-w-md text-center {% if compact %}py-12{% else %}py-16 md:py-24{% endif %}">
+  {% include "components/star.html" with size=18 class="mx-auto text-clay" %}
+  {% if kind == "cart" %}
+    <p class="italic-serif mt-6 font-serif text-h2 text-espresso">{% translate "Your cart is empty" %}</p>
+    <p class="mt-4 text-cocoa">{% translate "Pieces you add will wait here." %}</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="{% url 'catalog:shop' %}" class="btn btn-light">{% translate "Visit the shop" %}</a>
+      <a href="{% url 'catalog:new' %}" class="btn btn-outline">{% translate "New Arrivals" %}</a>
+    </div>
+  {% else %}
+    <p class="italic-serif mt-6 font-serif text-h2 text-espresso">{% translate "Nothing saved yet" %}</p>
+    <p class="mt-4 text-cocoa">{% translate "Tap ♡ on a piece you love to keep it here." %}</p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <a href="{% url 'catalog:shop' %}" class="btn btn-light">{% translate "Visit the shop" %}</a>
+    </div>
+  {% endif %}
+</div>

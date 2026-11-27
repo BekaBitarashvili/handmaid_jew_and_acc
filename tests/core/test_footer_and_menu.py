@@ -40,7 +40,7 @@ class TestHeader:
         header = section(page, "<header", "</header>")
         assert 'aria-controls="site-search"' in header
         assert 'href="/en/account/"' in header
-        assert "data-cart-placeholder" in header and "(0)" in header
+        assert 'href="/en/cart/"' in header and 'id="cart-count"' in header and "(0)" in header
 
     def test_search_panel_submits_to_the_shop(self, page):
         search = section(page, 'id="site-search"', "</form>")

@@ -48,7 +48,7 @@ class TestAvailablePiece:
 
     def test_no_variant_picker_for_a_single_variant(self, client, en):
         html = page(client, ProductFactory(status=ACTIVE))
-        assert 'name="variant"' not in html
+        assert 'type="radio" name="variant"' not in html
 
 
 class TestSoldPiece:
@@ -88,7 +88,7 @@ class TestVariants:
             ("Olive", True, 1),
         ]
         assert data[1]["price"] == "90 ₾"
-        assert html.count('name="variant"') == 2
+        assert html.count('type="radio" name="variant"') == 2
         assert "is-unavailable" in html  # Beige is out of stock
 
     def test_out_of_stock_product_offers_commission(self, client, en, shop_email):

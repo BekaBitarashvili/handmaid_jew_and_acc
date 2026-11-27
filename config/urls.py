@@ -20,6 +20,7 @@ urlpatterns += i18n_patterns(
     path("", include("apps.core.urls")),
     path("", include("apps.catalog.urls")),
     path("", include("apps.pages.urls")),
+    path("", include("apps.cart.urls")),
     prefix_default_language=True,
 )
 

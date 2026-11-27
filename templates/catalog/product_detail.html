@@ -23,7 +23,9 @@
     {% include "catalog/_gallery.html" %}
 
     {# ---------------------------------------------------------- Buy box #}
-    <div class="lg:sticky lg:top-28 lg:self-start" x-data="variantPicker('variant-data')">
+    <div class="lg:sticky lg:top-28 lg:self-start" x-data="variantPicker('variant-data')"
+         data-in-cart="{{ in_cart|yesno:'true,false' }}" data-unique="{{ product.is_unique|yesno:'true,false' }}"
+         @cart-added.window="if (unique && $event.detail.variant === selected) inCart = true">
       {{ variant_data|json_script:"variant-data" }}
       <h1>{{ product.name }}</h1>
       {% if product.short_description %}<p class="mt-3 text-cocoa">{{ product.short_description }}</p>{% endif %}
@@ -79,14 +81,21 @@
       <div class="mt-8 space-y-4">
         {% if product.status == "active" and product.is_available %}
           <div class="flex gap-3">
-            {# TODO(1c): becomes the real add-to-cart (HTMX → cart drawer). #}
-            <button type="button" class="btn btn-dark flex-1" disabled aria-describedby="cart-soon">{% translate "Add to cart" %}</button>
-            {# TODO(1c): wishlist toggle (signed cookie); the count shows in the menu and account page. #}
-            <button type="button" class="btn btn-outline px-4" disabled aria-label="{% translate 'Add to wishlist' %}">
-              {% include "components/icon.html" with name="heart" size=20 %}
-            </button>
+            {# Add to cart: the selected variant; the response fills and opens the drawer. #}
+            <form method="post" action="{% url 'cart:add' %}" class="flex-1"
+                  hx-post="{% url 'cart:add' %}" hx-target="#cart-drawer-body" hx-swap="innerHTML"
+                  hx-disabled-elt="find button" x-show="!inCart" {% if in_cart %}x-cloak{% endif %}>
+              {% csrf_token %}
+              <input type="hidden" name="variant" value="{{ selected.id }}" :value="selected">
+              <button type="submit" class="btn btn-dark w-full" :disabled="current && !current.available">{% translate "Add to cart" %}</button>
+            </form>
+            {# One-of-a-kind piece already in the cart: there is nothing more to add. #}
+            <a href="{% url 'cart:detail' %}" class="btn btn-outline flex-1" x-show="inCart" {% if not in_cart %}x-cloak{% endif %}
+               @click="if (!($event.metaKey || $event.ctrlKey)) { $event.preventDefault(); $dispatch('cart-load') }">
+              {% include "components/icon.html" with name="check" size=18 %}{% translate "In your cart" %}
+            </a>
+            {# TODO(1c step 5): wishlist heart. #}
           </div>
-          <p id="cart-soon" class="text-small text-taupe-text">{% translate "Online ordering opens soon." %}</p>
         {% endif %}
         {% if product.allow_commission_request and commission %}
           {% if product.status == "sold" or not product.is_available %}

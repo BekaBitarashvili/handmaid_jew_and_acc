@@ -1,0 +1,90 @@
+{% load i18n money %}{% comment %}
+Cart page content (swapped into #cart-page): lines on the left, summary on the right
+(desktop); on phones the summary follows the lines and a bar with the total stays at the
+bottom. Context: cart, notices, oob.
+{% endcomment %}{% if oob %}{% include "cart/_oob.html" with announcer="cart-page-announcer" %}{% endif %}
+{% if notices %}<div class="mb-8">{% include "cart/_notices.html" %}</div>{% endif %}
+{% if cart.is_empty %}
+  {% include "components/empty_state.html" with kind="cart" %}
+{% else %}
+<div class="grid gap-12 pb-24 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16 lg:pb-0">
+  <div>
+    {% if cart.lines %}
+      <ul class="divide-y divide-sand border-y border-sand">
+        {% for line in cart.lines %}{% include "cart/_line.html" with view="page" target="#cart-page" %}{% endfor %}
+      </ul>
+    {% endif %}
+    {% include "cart/_gone_lines.html" with view="page" target="#cart-page" %}
+    <a href="{% url 'catalog:shop' %}" class="link mt-8 inline-flex items-center gap-2 text-small">
+      {% include "components/icon.html" with name="chevron-left" size=14 %}{% translate "Continue shopping" %}
+    </a>
+  </div>
+
+  <aside aria-labelledby="summary-title" class="self-start border border-sand p-6 lg:sticky lg:top-28">
+    <h2 id="summary-title" class="text-h3">{% translate "Summary" %}</h2>
+    <dl class="mt-6 space-y-3 text-small">
+      <div class="flex justify-between gap-4"><dt class="text-cocoa">{% translate "Subtotal" %}</dt><dd class="price">{{ cart.subtotal|gel }}</dd></div>
+      {% if cart.savings %}
+        <div class="flex justify-between gap-4 text-clay-text"><dt>{% translate "You save" %}</dt><dd class="price text-clay-text">−{{ cart.savings|gel }}</dd></div>
+      {% endif %}
+
+      {# Gift wrap: one switch per order; the price comes from Site settings (0 = free). #}
+      <div class="flex items-center justify-between gap-4">
+        <dt>
+          <form method="post" action="{% url 'cart:gift_wrap' %}" hx-post="{% url 'cart:gift_wrap' %}" hx-target="#cart-page" hx-swap="innerHTML">
+            {% csrf_token %}<input type="hidden" name="gift_wrap" value="{% if cart.gift_wrap %}0{% else %}1{% endif %}">
+            <button type="submit" role="switch" aria-checked="{% if cart.gift_wrap %}true{% else %}false{% endif %}" class="switch text-cocoa">
+              <span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span>
+              {% translate "Gift wrap" %}
+            </button>
+          </form>
+        </dt>
+        <dd class="price">{% if cart.gift_wrap_price %}{{ cart.gift_wrap_price|gel }}{% else %}{% translate "Free" %}{% endif %}</dd>
+      </div>
+
+      {% with ship=cart.shipping %}{% if ship.delivery_from is not None or ship.pickup is not None %}
+        <div class="flex justify-between gap-4">
+          <dt class="text-cocoa">{% translate "Delivery" %}</dt>
+          <dd class="text-right">
+            {% if ship.delivery_from is not None %}
+              {% if ship.delivery_from %}{% blocktranslate with price=ship.delivery_from|gel %}from {{ price }}{% endblocktranslate %}{% else %}{% translate "Free" %}{% endif %}
+            {% endif %}
+            {% if ship.pickup is not None %}<span class="block text-taupe-text">{% if ship.pickup %}{% blocktranslate with price=ship.pickup|gel %}Pickup {{ price }}{% endblocktranslate %}{% else %}{% translate "Pickup free" %}{% endif %}</span>{% endif %}
+          </dd>
+        </div>
+      {% endif %}{% endwith %}
+    </dl>
+
+    {% if cart.shipping.threshold %}
+      <div class="mt-5">
+        {% if cart.shipping.free %}
+          <p class="flex items-center gap-2 text-small text-cocoa">{% include "components/icon.html" with name="check" size=16 class="text-clay-text" %}{% translate "Free delivery" %}</p>
+        {% else %}
+          <p class="text-small text-cocoa">{% blocktranslate with amount=cart.shipping.remaining|gel %}Add {{ amount }} more for free delivery.{% endblocktranslate %}</p>
+        {% endif %}
+        <div class="mt-2 h-px bg-sand" aria-hidden="true"><div class="h-px bg-clay-text" style="width: {{ cart.shipping.progress }}%"></div></div>
+      </div>
+    {% endif %}
+
+    <div class="mt-6 flex items-baseline justify-between border-t border-sand pt-5">
+      <p class="font-serif text-h3 text-espresso">{% translate "Total" %}</p>
+      <p class="price text-h3">{{ cart.total|gel }}</p>
+    </div>
+    <p class="mt-1 text-small text-taupe-text">{% translate "Delivery is added at checkout, once we know the address." %}</p>
+
+    {# TODO(1d): checkout. #}
+    <button type="button" class="btn btn-dark mt-6 w-full" disabled aria-describedby="checkout-soon">{% translate "Checkout" %}</button>
+    <p id="checkout-soon" class="mt-2 text-center text-small text-taupe-text">{% translate "Checkout opens soon." %}</p>
+  </aside>
+</div>
+
+{# Phones: the total and the way on stay in reach. #}
+{% if cart.lines %}
+<div class="fixed inset-x-0 bottom-0 z-30 border-t border-sand bg-linen lg:hidden">
+  <div class="container-site flex items-center justify-between gap-4 py-3">
+    <p><span class="block text-small text-taupe-text">{% translate "Total" %}</span><span class="price text-h3">{{ cart.total|gel }}</span></p>
+    <button type="button" class="btn btn-dark" disabled>{% translate "Checkout" %}</button>
+  </div>
+</div>
+{% endif %}
+{% endif %}

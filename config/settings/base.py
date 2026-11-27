@@ -163,6 +163,12 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # Per-process memory cache by default; production uses Redis (prod.py).
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
 
+# --- Payments (SPEC §8) -----------------------------------------------------
+# Payment method -> provider. Phase 1d: both banks go to the fake provider; 1e adds
+# the real BOG / TBC providers. The fake one is refused outside dev/test (payments.E001).
+PAYMENT_PROVIDERS = {"bog": "fake", "tbc": "fake"}
+PAYMENTS_ALLOW_FAKE = False
+
 # --- Background jobs (huey) -------------------------------------------------
 
 REDIS_URL = env("REDIS_URL", default="redis://127.0.0.1:6379/0")

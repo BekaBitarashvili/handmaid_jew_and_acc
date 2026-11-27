@@ -16,3 +16,6 @@ MIDDLEWARE = ["debug_toolbar.middleware.DebugToolbarMiddleware", *MIDDLEWARE]
 INTERNAL_IPS = ["127.0.0.1"]
 # Start as a small handle on the right edge instead of covering the page.
 DEBUG_TOOLBAR_CONFIG = {"SHOW_COLLAPSED": True}
+
+# Fake payment provider (success / failure / delay) is allowed here only.
+PAYMENTS_ALLOW_FAKE = True

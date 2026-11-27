@@ -70,6 +70,7 @@ def confirm_payment(order_id: int) -> Order:
     order.payment_status = Order.PaymentStatus.PAID
     order.paid_at = timezone.now()
     order.reservation_expires_at = None
+    order.cancel_reason = ""
     order.save()
     note = owner_text(lambda: _("Paid after the hold ended; the pieces were still free."))
     history(order, previous, note=note if late else "")
@@ -89,6 +90,13 @@ def fail_payment(order_id: int, *, expired: bool = False, replaced: bool = False
     order.status = Order.Status.CANCELLED
     order.payment_status = Order.PaymentStatus.FAILED
     order.reservation_expires_at = None
+    order.cancel_reason = (
+        Order.CancelReason.REPLACED
+        if replaced
+        else Order.CancelReason.EXPIRED
+        if expired
+        else Order.CancelReason.PAYMENT_FAILED
+    )
     order.save()
     if replaced:
         note = owner_text(lambda: _("The customer started a new checkout."))

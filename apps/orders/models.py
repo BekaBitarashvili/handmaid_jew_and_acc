@@ -68,6 +68,12 @@ class Order(models.Model):
         FAILED = "failed", _("Failed")
         REFUNDED = "refunded", _("Refunded")
 
+    class CancelReason(models.TextChoices):
+        PAYMENT_FAILED = "payment_failed", _("Payment did not go through")
+        EXPIRED = "expired", _("Not paid in time")
+        REPLACED = "replaced", _("Replaced by a new checkout")
+        OWNER = "owner", _("Cancelled by the shop")
+
     class PaymentMethod(models.TextChoices):
         BOG = "bog", _("Bank of Georgia")
         TBC = "tbc", _("TBC Bank")
@@ -138,6 +144,9 @@ class Order(models.Model):
     internal_notes = models.TextField(
         _("internal notes"), blank=True, help_text=_("Only you see these.")
     )
+    cancel_reason = models.CharField(
+        _("cancelled because"), max_length=20, choices=CancelReason.choices, blank=True
+    )
     needs_attention = models.BooleanField(_("needs attention"), default=False)
     attention_reason = models.TextField(_("what needs attention"), blank=True)
     created_at = models.DateTimeField(_("placed"), auto_now_add=True)
@@ -196,6 +205,10 @@ class OrderItem(models.Model):
     @property
     def on_sale(self) -> bool:
         return self.unit_price < self.original_unit_price
+
+    @property
+    def original_total(self) -> int:
+        return self.original_unit_price * self.qty
 
 
 class OrderStatusHistory(models.Model):

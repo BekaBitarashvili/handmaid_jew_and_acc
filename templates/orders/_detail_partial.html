@@ -1,0 +1,119 @@
+{% load i18n money phones %}{% comment %}
+Order page body. While the order awaits payment it re-fetches itself every few seconds
+(HTMX, outerHTML), at most ~60 s; then it says we'll email instead.
+Context: order, items, steps, polling, gave_up_waiting, next_poll, poll_every, cart_cleared.
+{% endcomment %}<div id="order-page"{% if polling %} hx-get="{{ request.path }}?poll={{ next_poll }}" hx-trigger="every {{ poll_every }}s" hx-swap="outerHTML"{% endif %}>
+  {% if cart_cleared and request.htmx %}{% include "cart/_count.html" with count=0 oob=True %}{% endif %}
+
+  {# ------------------------------------------------------------- headline #}
+  <header class="text-center" role="status">
+    {% include "components/star.html" with size=18 class="mx-auto text-clay" %}
+    {% if order.status == "awaiting_payment" %}
+      {% if gave_up_waiting %}
+        <h1 class="display mt-6">{% translate "Still waiting for confirmation" %}</h1>
+        <p class="mx-auto mt-4 max-w-md text-cocoa">{% blocktranslate with email=order.email %}We'll email you at {{ email }} as soon as the bank confirms the payment.{% endblocktranslate %}</p>
+        <a href="{{ request.path }}" class="link mt-6 inline-block text-small">{% translate "Check again" %}</a>
+      {% else %}
+        <h1 class="display mt-6">{% translate "Waiting for the bank…" %}</h1>
+        <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "This usually takes a few seconds. Please keep this page open." %}</p>
+      {% endif %}
+    {% elif order.status == "cancelled" and not order.is_paid %}
+      {% if order.cancel_reason == "expired" %}
+        <h1 class="display mt-6">{% translate "The time to pay ran out" %}</h1>
+        <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "Pieces are held for 15 minutes while you pay. They are back in your cart, as long as they are still available." %}</p>
+      {% elif order.cancel_reason == "replaced" %}
+        <h1 class="display mt-6">{% translate "This checkout was closed" %}</h1>
+        <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "You started a new checkout, so this one was closed." %}</p>
+      {% elif order.cancel_reason == "owner" %}
+        <h1 class="display mt-6">{% translate "This order was cancelled" %}</h1>
+      {% else %}
+        <h1 class="display mt-6">{% translate "The payment did not go through" %}</h1>
+        <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "No money was taken. Your pieces are back in your cart, as long as they are still available." %}</p>
+      {% endif %}
+      {% if order.cancel_reason != "owner" %}<a href="{% url 'cart:detail' %}" class="btn btn-dark mt-8">{% translate "Back to your cart" %}</a>{% endif %}
+    {% elif order.status == "cancelled" %}
+      {% if order.needs_attention %}
+        <h1 class="display mt-6">{% translate "Thank you — we received your payment" %}</h1>
+        <p class="mx-auto mt-4 max-w-md text-cocoa">{% translate "We will contact you shortly about your order." %}</p>
+      {% else %}
+        <h1 class="display mt-6">{% translate "This order was cancelled" %}</h1>
+      {% endif %}
+    {% else %}
+      <h1 class="display mt-6">{% translate "Thank you" %}</h1>
+      <p class="mx-auto mt-4 max-w-md text-cocoa">{% blocktranslate with email=order.email %}A confirmation is on its way to {{ email }}.{% endblocktranslate %}</p>
+    {% endif %}
+    <p class="label mt-6 text-taupe-text">{% blocktranslate with number=order.number %}Order {{ number }}{% endblocktranslate %}</p>
+  </header>
+
+  {% if order.customer_note %}
+    <section aria-labelledby="note-title" class="mx-auto mt-10 max-w-xl border-l-2 border-clay-text bg-shell px-5 py-4">
+      <h2 id="note-title" class="label text-taupe-text">{% translate "A note from us" %}</h2>
+      <p class="mt-2 whitespace-pre-line text-cocoa">{{ order.customer_note }}</p>
+    </section>
+  {% endif %}
+
+  {# ------------------------------------------------------------- timeline #}
+  {% if order.status != "cancelled" %}
+    <ol class="order-timeline mx-auto mt-12 max-w-3xl" aria-label="{% translate 'Order progress' %}">
+      {% for step in steps %}
+        <li class="{% if step.done %}is-done{% endif %}{% if step.current %} is-current{% endif %}"{% if step.current %} aria-current="step"{% endif %}>
+          <span class="order-timeline-dot" aria-hidden="true"></span>
+          <span class="order-timeline-label">{{ step.label }}</span>
+          {% if step.done and step.at %}<span class="order-timeline-date">{{ step.at|date:"j M" }}</span>{% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  {% endif %}
+
+  {# ------------------------------------------------------------- details #}
+  <div class="mx-auto mt-14 grid max-w-4xl gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
+    <section aria-labelledby="items-title">
+      <h2 id="items-title" class="text-h3">{% translate "Your pieces" %}</h2>
+      <ul class="mt-4 divide-y divide-sand border-y border-sand">
+        {% for item in items %}
+          <li class="flex gap-4 py-4">
+            <div class="size-16 shrink-0 overflow-hidden bg-shell">{% if item.image_url %}<img src="{{ item.image_url }}" alt="" width="64" height="64" class="h-full w-full object-cover" loading="lazy">{% endif %}</div>
+            <div class="min-w-0 flex-1">
+              <p class="card-name">{{ item.product_name }}</p>
+              <p class="text-small text-taupe-text">{% if item.variant_name %}{{ item.variant_name }} · {% endif %}× {{ item.qty }}</p>
+            </div>
+            <p class="text-right text-small">
+              {% if item.on_sale %}<span class="price price-old"><span class="sr-only">{% translate "Original price" %}: </span>{{ item.original_total|gel }}</span><br>{% endif %}
+              <span class="price">{{ item.line_total|gel }}</span>
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+      <dl class="mt-5 space-y-2 text-small">
+        <div class="flex justify-between"><dt class="text-cocoa">{% translate "Subtotal" %}</dt><dd class="price">{{ order.subtotal|gel }}</dd></div>
+        {% if order.gift_wrap %}<div class="flex justify-between"><dt class="text-cocoa">{% translate "Gift wrap" %}</dt><dd class="price">{% if order.gift_wrap_price %}{{ order.gift_wrap_price|gel }}{% else %}{% translate "Free" %}{% endif %}</dd></div>{% endif %}
+        <div class="flex justify-between"><dt class="text-cocoa">{% translate "Delivery" %}</dt><dd class="price">{% if order.shipping_price %}{{ order.shipping_price|gel }}{% else %}{% translate "Free" %}{% endif %}</dd></div>
+        <div class="flex items-baseline justify-between border-t border-sand pt-3"><dt class="font-serif text-h3 text-espresso">{% translate "Total" %}</dt><dd class="price text-h3">{{ order.total|gel }}</dd></div>
+      </dl>
+    </section>
+
+    <aside class="space-y-8 text-small">
+      <section aria-labelledby="delivery-title">
+        <h2 id="delivery-title" class="label text-taupe-text">{% translate "Delivery" %}</h2>
+        <p class="mt-2 text-cocoa">{{ order.delivery_name }}</p>
+        {% if order.requires_address %}<p class="text-cocoa">{{ order.address_line }}{% if order.city %}, {{ order.city }}{% endif %}</p>{% endif %}
+        {% if order.has_recipient %}
+          <p class="mt-3 text-taupe-text">{% translate "Recipient" %}</p>
+          <p class="text-cocoa">{{ order.recipient_name }}{% if order.recipient_phone %} · {{ order.recipient_phone|phone }}{% endif %}</p>
+        {% endif %}
+      </section>
+      {% if order.gift_wrap or order.gift_note %}
+        <section aria-labelledby="gift-title">
+          <h2 id="gift-title" class="label text-taupe-text">{% translate "Gift" %}</h2>
+          {% if order.gift_wrap %}<p class="mt-2 text-cocoa">{% translate "Gift wrapped" %}</p>{% endif %}
+          {% if order.gift_note %}<p class="mt-2 whitespace-pre-line italic text-cocoa">“{{ order.gift_note }}”</p>{% endif %}
+        </section>
+      {% endif %}
+      <section aria-labelledby="contact-title">
+        <h2 id="contact-title" class="label text-taupe-text">{% translate "Questions?" %}</h2>
+        <p class="mt-2 text-cocoa">{% translate "Reply to your confirmation email or write to us — mention your order number." %}</p>
+        {% if site_settings.contact_email %}<a href="mailto:{{ site_settings.contact_email }}?subject={{ order.number|urlencode }}" class="link mt-2 inline-block">{{ site_settings.contact_email }}</a>{% endif %}
+      </section>
+    </aside>
+  </div>
+</div>

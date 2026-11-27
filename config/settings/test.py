@@ -12,3 +12,6 @@ HUEY = {"immediate": True, "name": "shop-test"}
 CACHES = {"default": {"BACKEND": "django.core.cache.backends.dummy.DummyCache"}}
 # Don't require a collectstatic run (STATIC_ROOT) before tests.
 WHITENOISE_AUTOREFRESH = True
+
+# Fake payment provider (success / failure / delay) is allowed here only.
+PAYMENTS_ALLOW_FAKE = True

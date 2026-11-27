@@ -56,6 +56,7 @@ def change_status(
             order.reservation_expires_at = None
         elif return_to_shop:
             inventory.restock(lines(order))
+        order.cancel_reason = Order.CancelReason.OWNER
     if customer_note is not None:
         order.customer_note = customer_note.strip()
     order.status = to

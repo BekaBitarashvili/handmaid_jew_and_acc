@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n money %}
+{% comment %}
+The fake provider's "hosted payment page" (dev and tests only, never in production).
+It stands in for the BOG / TBC pages: success, failure, or a success the shop only learns
+about by asking the bank later (the order page polls).
+{% endcomment %}
+{% block content %}
+<div class="container-site py-12 md:py-20">
+  <div class="mx-auto max-w-md border border-sand p-6 md:p-8">
+    <p class="label text-error">{% translate "Test payment — no money moves" %}</p>
+    <h1 class="mt-4 text-h2">{{ order.get_payment_method_display }}</h1>
+    <dl class="mt-6 space-y-2 text-small">
+      <div class="flex justify-between gap-4"><dt class="text-taupe-text">{% translate "Order" %}</dt><dd>{{ order.number }}</dd></div>
+      <div class="flex justify-between gap-4"><dt class="text-taupe-text">{% translate "Amount" %}</dt><dd class="price text-h3">{{ payment.amount|gel }}</dd></div>
+    </dl>
+    <form method="post" class="mt-8 grid gap-3">
+      {% csrf_token %}
+      <button type="submit" name="decision" value="paid" class="btn btn-dark">{% translate "Pay" %}</button>
+      <button type="submit" name="decision" value="failed" class="btn btn-outline">{% translate "Decline" %}</button>
+      <button type="submit" name="decision" value="delay" class="btn btn-outline">{% translate "Pay with a 15-second delay" %}</button>
+    </form>
+    <p class="mt-6 text-small text-taupe-text">{% translate "In production this is the bank's own payment page." %}</p>
+  </div>
+</div>
+{% endblock %}

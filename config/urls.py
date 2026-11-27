@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 from apps.core.views import apple_touch_icon, favicon_ico, healthz
+from apps.payments.urls import api_urlpatterns as payment_api_urls
 
 # Language-neutral URLs.
 urlpatterns = [
@@ -12,6 +13,7 @@ urlpatterns = [
     path("favicon.ico", favicon_ico),
     path("apple-touch-icon.png", apple_touch_icon),
     path("i18n/", include("django.conf.urls.i18n")),  # POST /i18n/setlang/
+    path("", include((payment_api_urls, "payments_api"))),
     path(settings.ADMIN_URL, admin.site.urls),
 ]
 
@@ -22,6 +24,8 @@ urlpatterns += i18n_patterns(
     path("", include("apps.pages.urls")),
     path("", include("apps.cart.urls")),
     path("", include("apps.wishlist.urls")),
+    path("", include("apps.payments.urls")),
+    path("", include("apps.orders.urls")),
     prefix_default_language=True,
 )
 

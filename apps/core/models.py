@@ -33,7 +33,14 @@ class SiteSettings(models.Model):
         _("free shipping threshold (₾)"),
         null=True,
         blank=True,
-        help_text=_("Order subtotal in lari. Empty means no free shipping."),
+        help_text=_(
+            "Measured on the pieces after sales, without gift wrap. Empty means no free shipping."
+        ),
+    )
+    gift_wrap_price = MoneyField(
+        _("gift wrap price (₾)"),
+        default=0,
+        help_text=_("One price per order. 0 means gift wrap is free."),
     )
 
     owner_notification_email = models.EmailField(_("owner notification email"), blank=True)

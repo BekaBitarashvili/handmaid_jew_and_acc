@@ -41,7 +41,7 @@ class SiteSettingsAdmin(BaseModelAdmin, TabbedTranslationAdmin):
             {"fields": ("instagram_url", "pinterest_url", "facebook_url", "tiktok_url")},
         ),
         (_("Legal entity"), {"fields": ("legal_entity_name", "legal_entity_id")}),
-        (_("Shipping"), {"fields": ("free_shipping_threshold",)}),
+        (_("Shipping & gift wrap"), {"fields": ("free_shipping_threshold", "gift_wrap_price")}),
         (
             _("Owner notifications"),
             {"fields": ("owner_notification_email", "owner_notification_phone")},
